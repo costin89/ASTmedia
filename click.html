@@ -3,19 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pinch-Steuerung für HoloLens mit A-Frame</title>
+    <title>A-Frame und WebXR HoloLens Click</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
 </head>
 <body>
     <a-scene>
-        <a-entity id="meinObjekt" geometry="primitive: box; depth: 1; height: 1; width: 1" material="color: blue" position="0 1.5 -3"></a-entity>
+        <a-box id="meinObjekt" position="0 1.5 -3" color="blue"></a-box>
         <a-sky color="#ECECEC"></a-sky>
     </a-scene>
 
     <script>
-        document.querySelector('#meinObjekt').addEventListener('click', function() {
-            alert('Objekt wurde angepincht!');
+        const sceneEl = document.querySelector('a-scene');
+
+        sceneEl.addEventListener('enter-vr', function() {
+            if (sceneEl.xrSession) {
+                sceneEl.xrSession.addEventListener('selectstart', onSelectStart);
+                sceneEl.xrSession.addEventListener('selectend', onSelectEnd);
+            }
         });
+
+        let selecting = false;
+
+        function onSelectStart(event) {
+            selecting = true;
+            // Code, der ausgeführt wird, wenn die Select-Geste beginnt (z. B. Air Tap startet)
+        }
+
+        function onSelectEnd(event) {
+            if (selecting) {
+                const intersectedEls = sceneEl.systems.interaction.intersectedEls;
+                if (intersectedEls.length > 0 && intersectedEls[0] === document.querySelector('#meinObjekt')) {
+                    alert('Box wurde angepincht!');
+                }
+            }
+            selecting = false;
+            // Code, der ausgeführt wird, wenn die Select-Geste endet (z. B. Air Tap endet)
+        }
     </script>
 </body>
 </html>
