@@ -10,8 +10,8 @@
       <a-box id="colorBox" class="clickable" position="0 1 -3" color="blue"></a-box>
     </a-scene>
     <script>
-      var leftHand = document.querySelector('#right-hand');
-      leftHand.addEventListener('buttondown', function(evt) {
+      var rightHand = document.querySelector('#right-hand');
+      rightHand.addEventListener('buttondown', function(evt) {
         if (evt.detail.index === 1) { // Button[1]
           // Ihre Aktion hier
           console.log('Button[1] gedrückt!');
