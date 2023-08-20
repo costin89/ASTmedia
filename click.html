@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pinch-Steuerung für HoloLens mit A-Frame</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+</head>
+<body>
+    <a-scene>
+        <a-entity id="meinObjekt" geometry="primitive: box; depth: 1; height: 1; width: 1" material="color: blue" position="0 1.5 -3"></a-entity>
+        <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
+
+    <script>
+        document.querySelector('#meinObjekt').addEventListener('click', function() {
+            alert('Objekt wurde angepincht!');
+        });
+    </script>
+</body>
+</html>
