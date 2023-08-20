@@ -6,6 +6,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gamepad API Test</title>
     <style>
+        body{
+            background-color: gray;
+        }
         .button-label {
             margin: 5px;
         }
@@ -14,45 +17,64 @@
 
 <body>
     <center>
-    <h1>Gamepad Eingaben</h1>
+    <!-- Bild über den Buttons -->
+    <img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300">
+    <h1>Gamepad API Test</h1>
+    <br>
+    <button onclick="toggleGamepad()">Gamepad Aktivieren</button>
+    <br>
+    <div id="settings" style="display:none;">
+        <h2>Einstellungen</h2>
+        <label>
+            Achsen Umkehren: <input type="checkbox" id="invertAxis">
+        </label>
+    </div>
+    <br><br>
     <div id="gamepadContainer"></div>
     </center>
     <script>
         let gamepadContainer = document.getElementById("gamepadContainer");
+        let invertAxisCheckbox = document.getElementById("invertAxis");
+        let gamepadActive = false;
+
+        function toggleGamepad() {
+            gamepadActive = !gamepadActive;
+            if (gamepadActive) {
+                updateStatus();
+                document.getElementById("settings").style.display = "block";
+            } else {
+                document.getElementById("settings").style.display = "none";
+            }
+        }
 
         function updateStatus() {
-            // Die Gamepads abrufen
+            if (!gamepadActive) return;
+
             let gamepads = navigator.getGamepads();
 
             for (let i = 0; i < gamepads.length; i++) {
                 let gamepad = gamepads[i];
 
-                // Falls ein Gamepad verbunden ist
                 if (gamepad) {
                     for (let j = 0; j < gamepad.buttons.length; j++) {
                         let buttonLabel = document.getElementById("button" + j);
-                        if (gamepad.buttons[j].pressed) {
-                            buttonLabel.textContent = "Button " + j + ": Gedrückt";
-                        } else {
-                            buttonLabel.textContent = "Button " + j + ": Nicht gedrückt";
-                        }
+                        buttonLabel.textContent = gamepad.buttons[j].pressed ? "Button " + j + ": Gedrückt" : "Button " + j + ": Nicht gedrückt";
                     }
 
                     for (let k = 0; k < gamepad.axes.length; k++) {
                         let axisLabel = document.getElementById("axis" + k);
-                        axisLabel.textContent = "Achse " + k + ": " + gamepad.axes[k].toFixed(2);
+                        let value = invertAxisCheckbox.checked ? -gamepad.axes[k] : gamepad.axes[k];
+                        axisLabel.textContent = "Achse " + k + ": " + value.toFixed(2);
                     }
                 }
             }
 
-            // Diese Funktion regelmäßig aufrufen, um den Status zu aktualisieren
             requestAnimationFrame(updateStatus);
         }
 
         window.addEventListener("gamepadconnected", function (e) {
             console.log("Ein Gamepad wurde verbunden:", e.gamepad);
 
-            // Für jedes Button des Gamepads ein Label erstellen
             for (let i = 0; i < e.gamepad.buttons.length; i++) {
                 let buttonLabel = document.createElement("label");
                 buttonLabel.className = "button-label";
@@ -62,7 +84,6 @@
                 gamepadContainer.appendChild(document.createElement("br"));
             }
 
-            // Für jede Achse des Gamepads ein Label erstellen
             for (let i = 0; i < e.gamepad.axes.length; i++) {
                 let axisLabel = document.createElement("label");
                 axisLabel.className = "button-label";
@@ -72,19 +93,17 @@
                 gamepadContainer.appendChild(document.createElement("br"));
             }
 
-            updateStatus();
+            if (gamepadActive) {
+                updateStatus();
+            }
         });
 
         window.addEventListener("gamepaddisconnected", function (e) {
             console.log("Ein Gamepad wurde getrennt:", e.gamepad);
-
-            // Alle Labels entfernen
             gamepadContainer.innerHTML = "";
         });
 
-        // Es kann sein, dass Gamepads bereits vor dem Laden der Seite verbunden wurden,
-        // also starten wir die Überprüfung sofort
-        if (navigator.getGamepads()[0]) {
+        if (navigator.getGamepads()[0] && gamepadActive) {
             updateStatus();
         }
     </script>
