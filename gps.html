@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPS Koordinaten Zugriff</title>
+</head>
+<body>
+
+<label for="latitude">Latitude: </label><span id="latitude">Warte auf Daten...</span><br>
+<label for="longitude">Longitude: </label><span id="longitude">Warte auf Daten...</span>
+
+<script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(showPosition, showError);
+        } else { 
+            alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
+        }
+    }
+
+    function showPosition(position) {
+        document.getElementById("latitude").textContent = position.coords.latitude;
+        document.getElementById("longitude").textContent = position.coords.longitude;
+    }
+
+    function showError(error) {
+        switch(error.code) {
+            case error.PERMISSION_DENIED:
+                alert("Benutzer lehnte den Standortzugriff ab.");
+                break;
+            case error.POSITION_UNAVAILABLE:
+                alert("Standortinformationen sind nicht verfügbar.");
+                break;
+            case error.TIMEOUT:
+                alert("Die Anfrage zum Abrufen des Standorts ist abgelaufen.");
+                break;
+            case error.UNKNOWN_ERROR:
+                alert("Ein unbekannter Fehler ist aufgetreten.");
+                break;
+        }
+    }
+
+    // Sofortige Abfrage bei Seitenladung
+    getLocation();
+</script>
+
+</body>
+</html>
