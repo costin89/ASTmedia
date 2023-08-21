@@ -1,4 +1,4 @@
-AFRAME.registerPrimitive('a-holoDeck', {
+AFRAME.registerPrimitive('a-holoBack', {
   defaultComponents: {
     geometry: {primitive: 'box', depth: '100', height: '100', width: '100'},
     material: {color: 'black', side: 'double'}
