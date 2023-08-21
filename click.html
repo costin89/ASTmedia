@@ -8,7 +8,7 @@
         <a-entity id="rightHand" rotation="0 0 0" position ="0 0 0" raycaster="showLine: true;"></a-entity>
       </a-entity>
       <a-entity id="left-hand" tracked-controls="controller: 5; hand:left; idPrefix: lefttHand">
-        <a-entity id="lefttHand" rotation="0 0 0" position ="0 0 0" raycaster="showLine: true;"></a-entity>
+        <a-entity id="lefttHand" rotation="0 0 0" position ="0 0 0"></a-entity>
       </a-entity>
       <a-box id="colorBox" class="clickable" position="0 1 -3" color="blue"></a-box>
       <a-sky src="#sky" color="black" segments-height="4" segments-width="4" radius="100"></a-sky>
@@ -18,7 +18,7 @@
       rightHand.addEventListener('buttondown', function(evt) {
         if (evt.detail.index === 1) { // Button[1]
           // Ihre Aktion hier
-          console.log('Button[1] gedrückt!');
+          console.log('Button[0] gedrückt!');
         }
       });
     </script>
