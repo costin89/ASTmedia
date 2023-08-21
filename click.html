@@ -2,6 +2,7 @@
   <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
     <script src="helper/infoCard.js"></script>
+    <script src="helper/holoDeck.js"></script>
   </head>
   <body>
     <a-scene vr-mode-ui="enabled: true">
@@ -10,7 +11,7 @@
       </a-entity>
      <a-infoCard position="0 2 -3" rotation="0 0 0" main-plane-color="#253950" left-plane-color="#52d5ef" right-plane-color="#52d5ef" step-text-value="Step:" steps-text-value="1" titel-text-value="Titel" main-text-value="Haupttext" counter-text-value="1/100"></a-infoCard>
      <!-- HoloLens Transparent Background -->
-     <a-box material="color: black; side: double;" depth="100" height="100" width="100"></a-box>
+     <a-holoDeck></a-holoDeck>
     </a-scene>
     <script>
       var rightHand = document.querySelector('#right-hand');
