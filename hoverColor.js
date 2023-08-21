@@ -1,13 +1,16 @@
  AFRAME.registerComponent('hoverColor', {
+        schema: {
+            color: {type: 'color', default: 'yellow'}
+        },
+
         init: function() {
-            // Die Referenz des Elements, auf das die Komponente angewendet wird
             let el = this.el;
+            let data = this.data; // Referenz auf die Komponenten-Daten
 
             el.classList.add('selectable');
 
-            // Setze die Event-Listener für Raycaster-Interaktionen
             el.addEventListener('raycaster-intersected', function() {
-                el.setAttribute('color', 'yellow');
+                el.setAttribute('color', data.color);
             });
 
             el.addEventListener('raycaster-intersected-cleared', function() {
