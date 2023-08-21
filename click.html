@@ -8,8 +8,8 @@
       <a-entity id="right-hand" tracked-controls="controller: 5; hand:right; idPrefix: rightHand">
         <a-entity id="rightHand" rotation="0 0 0" position ="0 0 0" raycaster="showLine: true; objects: .selectable;"></a-entity>
       </a-entity>
-      <a-entity infoCard="position: 0 2 -3; rotation: 0 0 0; mainPlaneColor: #253950; leftPlaneColor: #52d5ef; rightPlaneColor: #52d5ef; stepTextValue: Step:; stepsTextValue: 1; titelTextValue: Titel; mainTextValue: Haupttext; counterTextValue: 1/100;"></a-entity>
-      <a-sky src="#sky" color="black" segments-height="4" segments-width="4" radius="100"></a-sky>
+     <a-infoCard position="0 2 -3" rotation="0 0 0" main-plane-color="#253950" left-plane-color="#52d5ef" right-plane-color="#52d5ef" step-text-value="Step:" steps-text-value="1" titel-text-value="Titel" main-text-value="Haupttext" counter-text-value="1/100"></a-infoCard>
+     <a-sky src="#sky" color="black" segments-height="4" segments-width="4" radius="100"></a-sky>
     </a-scene>
     <script>
       var rightHand = document.querySelector('#right-hand');
