@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gamepad API Test</title>
+    <style>
+        .button-label {
+            margin: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Gamepad Eingaben</h1>
+    <button onclick="toggleGamepad()">Gamepad Aktivieren</button>
+    <div id="settings" style="display:none;">
+        <h2>Einstellungen</h2>
+        <label>
+            Achsen Umkehren: <input type="checkbox" id="invertAxis">
+        </label>
+    </div>
+    <!-- Labels für ID und Mapping -->
+    <label id="gamepadID">ID: Unbekannt</label><br>
+    <label id="gamepadMapping">Mapping: Unbekannt</label><br>
+    
+    <div id="gamepadContainer"></div>
+
+    <script>
+        let gamepadContainer = document.getElementById("gamepadContainer");
+        let gamepadIDLabel = document.getElementById("gamepadID");
+        let gamepadMappingLabel = document.getElementById("gamepadMapping");
+        let invertAxisCheckbox = document.getElementById("invertAxis");
+        let gamepadActive = false;
+
+        // Prüfung, ob ein Gamepad ein VR-Controller ist
+        function isVRController(gamepad) {
+            return gamepad.id.includes("VR Controller");
+        }
+        
+        function toggleGamepad() {
+            gamepadActive = !gamepadActive;
+            if (gamepadActive) {
+                updateStatus();
+                document.getElementById("settings").style.display = "block";
+            } else {
+                document.getElementById("settings").style.display = "none";
+            }
+        }
+
+        function updateStatus() {
+            if (!gamepadActive) return;
+
+            let gamepads = navigator.getGamepads();
+
+            for (let i = 0; i < gamepads.length; i++) {
+                let gamepad = gamepads[i];
+
+                if (gamepad) {
+                    for (let j = 0; j < gamepad.buttons.length; j++) {
+                        let buttonLabel = document.getElementById("button" + j);
+                        buttonLabel.textContent = gamepad.buttons[j].pressed ? "Button " + j + ": Gedrückt" : "Button " + j + ": Nicht gedrückt";
+                    }
+
+                    for (let k = 0; k < gamepad.axes.length; k++) {
+                        let axisLabel = document.getElementById("axis" + k);
+                        let value = invertAxisCheckbox.checked ? -gamepad.axes[k] : gamepad.axes[k];
+                        axisLabel.textContent = "Achse " + k + ": " + value.toFixed(2);
+                    }
+                }
+            }
+
+            requestAnimationFrame(updateStatus);
+        }
+
+        window.addEventListener("gamepadconnected", function (e) {
+            let gamepad = e.gamepad;
+            console.log("Ein Gamepad wurde verbunden:", e.gamepad);
+            
+            if (isVRController(gamepad)) {
+                alert("Ein VR-Controller wurde erkannt!");
+            }
+            
+            gamepadIDLabel.textContent = "ID: " + gamepad.id;
+            gamepadMappingLabel.textContent = "Mapping: " + gamepad.mapping;
+
+            for (let i = 0; i < e.gamepad.buttons.length; i++) {
+                let buttonLabel = document.createElement("label");
+                buttonLabel.className = "button-label";
+                buttonLabel.id = "button" + i;
+                buttonLabel.textContent = "Button " + i + ": Nicht gedrückt";
+                gamepadContainer.appendChild(buttonLabel);
+                gamepadContainer.appendChild(document.createElement("br"));
+            }
+
+            for (let i = 0; i < e.gamepad.axes.length; i++) {
+                let axisLabel = document.createElement("label");
+                axisLabel.className = "button-label";
+                axisLabel.id = "axis" + i;
+                axisLabel.textContent = "Achse " + i + ": 0.00";
+                gamepadContainer.appendChild(axisLabel);
+                gamepadContainer.appendChild(document.createElement("br"));
+            }
+
+            if (gamepadActive) {
+                updateStatus();
+            }
+        });
+
+        window.addEventListener("gamepaddisconnected", function (e) {
+            console.log("Ein Gamepad wurde getrennt:", e.gamepad);
+            gamepadContainer.innerHTML = "";
+        });
+
+        if (navigator.getGamepads()[0] && gamepadActive) {
+            updateStatus();
+        }
+    </script>
+</body>
+
+</html>
