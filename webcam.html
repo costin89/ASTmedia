@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Test</title>
+    <style>
+        body{
+            background-color: gray;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
+</head>
+
+<body>
+    <center>
+    <img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300">
+    <h1>Webcam Test</h1>
+    <br>
+    <select id="cameras"></select>
+    <br><br>
+    <button onclick="startStream()">Berechtigungen erteilen und Stream starten</button>
+    <br>
+    <canvas id="videoCanvas" width="649" height="480"></canvas>
+    </center>
+    <script>
+        const camerasDropdown = document.getElementById('cameras');
+        const canvas = document.getElementById('videoCanvas');
+        const ctx = canvas.getContext('2d');
+        let videoStream = null;
+
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+            devices.forEach(device => {
+                if (device.kind === 'videoinput') {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Kamera ${camerasDropdown.length + 1}`;
+                    camerasDropdown.appendChild(option);
+                }
+            });
+        });
+
+        function startStream() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
+            }
+
+            const constraints = {
+                video: {
+                    deviceId: camerasDropdown.value ? { exact: camerasDropdown.value } : undefined
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+                videoStream = stream;
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                // Stream auf Canvas zeichnen
+                requestAnimationFrame(drawVideoToCanvas);
+
+                function drawVideoToCanvas() {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    requestAnimationFrame(drawVideoToCanvas);
+                }
+            }).catch(error => {
+                console.error('Fehler beim Zugriff auf die Webcam:', error);
+            });
+        }
+    </script>
+</body>
+
+</html>
