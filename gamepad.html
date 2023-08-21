@@ -11,7 +11,6 @@
         }
         .button-label {
             margin: 5px;
-            color: red;
         }
     </style>
 </head>
@@ -59,13 +58,13 @@
                 if (gamepad) {
                     for (let j = 0; j < gamepad.buttons.length; j++) {
                         let buttonLabel = document.getElementById("button" + j);
-                        buttonLabel.textContent = gamepad.buttons[j].pressed ? "Button " + j + ": Gedrückt" : "Button " + j + ": Nicht gedrückt";
+                        buttonLabel.textContent = gamepad.buttons[j].pressed ? "Button     " + j + ": Gedrückt" : "Button " + j + ": Nicht gedrückt";
                     }
 
                     for (let k = 0; k < gamepad.axes.length; k++) {
                         let axisLabel = document.getElementById("axis" + k);
                         let value = invertAxisCheckbox.checked ? -gamepad.axes[k] : gamepad.axes[k];
-                        axisLabel.textContent = "Achse " + k + ": " + value.toFixed(2);
+                        axisLabel.textContent = "Achse     " + k + ": " + value.toFixed(2);
                     }
                 }
             }
