@@ -3,54 +3,74 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>A-Frame mit Gamepad API</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Webcam Test</title>
+    <style>
+        body{
+            background-color: gray;
+        }
+        canvas {
+            border: 1px solid black;
+        }
+    </style>
 </head>
 
 <body>
-    <a-scene>
-        <a-camera position="0 1.6 3"></a-camera>
-        <a-text id="gamepadInfo" value="Warte auf Tastendruck..." position="-1.5 1 -3" scale="1.5 1.5 1.5"></a-text>
-        <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
-        <a-sky color="#ECECEC"></a-sky>
-    </a-scene>
-
+    <center>
+    <a href="index.html"><img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300"></a>
+    <h1>Webcam Test</h1>
+    <br>
+    <select id="cameras"></select>
+    <br><br>
+    <button onclick="startStream()">Berechtigungen erteilen und Stream starten</button>
+    <br>
+    <canvas id="videoCanvas" width="649" height="480"></canvas>
+    </center>
     <script>
-        let textElement = document.querySelector("#gamepadInfo");
+        const camerasDropdown = document.getElementById('cameras');
+        const canvas = document.getElementById('videoCanvas');
+        const ctx = canvas.getContext('2d');
+        let videoStream = null;
 
-        function checkGamepad() {
-            let gamepads = navigator.getGamepads();
-            for (let i = 0; i < gamepads.length; i++) {
-                if (gamepads[i]) {
-                    let pressedButtons = [];
-                    for (let j = 0; j < gamepads[i].buttons.length; j++) {
-                        if (gamepads[i].buttons[j].pressed) {
-                            pressedButtons.push("Button " + j);
-                        }
-                    }
-
-                    if (pressedButtons.length > 0) {
-                        textElement.setAttribute("value", "Gedrückt: " + pressedButtons.join(", "));
-                    } else {
-                        textElement.setAttribute("value", "Warte auf Tastendruck...");
-                    }
-                    break; // Nehmen Sie nur den ersten verbundenen Controller.
+        navigator.mediaDevices.enumerateDevices().then(devices => {
+            devices.forEach(device => {
+                if (device.kind === 'videoinput') {
+                    const option = document.createElement('option');
+                    option.value = device.deviceId;
+                    option.text = device.label || `Kamera ${camerasDropdown.length + 1}`;
+                    camerasDropdown.appendChild(option);
                 }
+            });
+        });
+
+        function startStream() {
+            if (videoStream) {
+                videoStream.getTracks().forEach(track => track.stop());
             }
 
-            // Die Informationen regelmäßig aktualisieren
-            requestAnimationFrame(checkGamepad);
+            const constraints = {
+                video: {
+                    deviceId: camerasDropdown.value ? { exact: camerasDropdown.value } : undefined
+                }
+            };
+
+            navigator.mediaDevices.getUserMedia(constraints).then(stream => {
+                videoStream = stream;
+                const video = document.createElement('video');
+                video.srcObject = stream;
+                video.play();
+
+                // Stream auf Canvas zeichnen
+                requestAnimationFrame(drawVideoToCanvas);
+
+                function drawVideoToCanvas() {
+                    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                    requestAnimationFrame(drawVideoToCanvas);
+                }
+            }).catch(error => {
+                console.error('Fehler beim Zugriff auf die Webcam:', error);
+            });
         }
-
-        window.addEventListener("gamepadconnected", function(e) {
-            console.log("Gamepad verbunden:", e.gamepad);
-            checkGamepad();
-        });
-
-        window.addEventListener("gamepaddisconnected", function(e) {
-            console.log("Gamepad getrennt:", e.gamepad);
-            textElement.setAttribute("value", "Warte auf Tastendruck...");
-        });
     </script>
 </body>
 
