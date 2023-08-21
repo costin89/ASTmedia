@@ -1,7 +1,7 @@
 <html>
   <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="helper/infoCard.js"></script>
+    <script src="helper/holoCard.js"></script>
     <script src="helper/holoBack.js"></script>
   </head>
   <body>
@@ -9,7 +9,7 @@
       <a-entity id="right-hand" tracked-controls="controller: 5; hand:right; idPrefix: rightHand">
         <a-entity id="rightHand" rotation="0 0 0" position ="0 0 0" raycaster="showLine: true; objects: .selectable;"></a-entity>
       </a-entity>
-     <a-infoCard position="0 2 -3" rotation="0 0 0" main-plane-color="#253950" left-plane-color="#52d5ef" right-plane-color="#52d5ef" step-text-value="Step:" steps-text-value="1" titel-text-value="Titel" main-text-value="Haupttext" counter-text-value="1/100"></a-infoCard>
+     <a-holoCard position="0 2 -3" orientation="0 0 0" mainPlaneColor="#253950" leftPlaneColor="#52d5ef" rightPlaneColor="#52d5ef" stepTextValue="Step" stepsTextValue="1" titelTextValue="Mein Titel" mainTextValue="Mein Main Text" counterTextValue="1/100"></a-holoCard>
      <!-- HoloLens Transparent Background -->
      <a-holoBack></a-holoBack>
     </a-scene>
