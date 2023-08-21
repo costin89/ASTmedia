@@ -9,26 +9,30 @@
     <video id="frontCamera" autoplay></video>
     <script>
         document.addEventListener("DOMContentLoaded", function() {
-            const videoElement = document.getElementById("frontCamera");
-            
-            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                let constraints = {
-                    video: {
-                        facingMode: "user" // "user" steht für die Frontkamera, "environment" für die Rückkamera
-                    }
-                };
-                
-                navigator.mediaDevices.getUserMedia(constraints)
+        const videoElement = document.getElementById("frontCamera");
+        const statusElement = document.getElementById("status");
+    
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            let constraints = {
+                video: {
+                    facingMode: "user"
+                }
+            };
+    
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(function(stream) {
                     videoElement.srcObject = stream;
+                    statusElement.textContent = "Kamerazugriff erlaubt!";
                 })
                 .catch(function(err) {
                     console.error("Fehler beim Zugriff auf die Kamera: ", err);
+                    statusElement.textContent = "Kamerazugriff abgelehnt oder ein Fehler ist aufgetreten.";
                 });
-            } else {
-                alert("Ihr Browser unterstützt nicht den Zugriff auf die Kamera.");
-            }
-        });
+        } else {
+            alert("Ihr Browser unterstützt nicht den Zugriff auf die Kamera.");
+        }
+    });
+
     </script>
 </body>
 </html>
