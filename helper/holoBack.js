@@ -1,7 +1,7 @@
 AFRAME.registerPrimitive('a-holoBack', {
   defaultComponents: {
     geometry: {primitive: 'box', depth: '100', height: '100', width: '100'},
-    material: {color: 'black', side: 'double'}
+    material: {color: 'black', side: 'double', roughness: '1'}
   },
   mappings: {
     // Hier können Sie Attribute hinzufügen, die auf Komponenten gemappt werden sollen. 
