@@ -4,11 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webcam Test</title>
+    <title>Webcam Stream</title>
     <style>
-        body{
-            background-color: gray;
-        }
         canvas {
             border: 1px solid black;
         }
@@ -16,16 +13,15 @@
 </head>
 
 <body>
-    <center>
-    <img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300">
-    <h1>Webcam Test</h1>
-    <br>
-    <select id="cameras"></select>
-    <br><br>
+
+    <select id="cameras">
+        <!-- Kameraoptionen werden hier eingefügt -->
+    </select>
+
     <button onclick="startStream()">Berechtigungen erteilen und Stream starten</button>
-    <br>
+
     <canvas id="videoCanvas" width="649" height="480"></canvas>
-    </center>
+
     <script>
         const camerasDropdown = document.getElementById('cameras');
         const canvas = document.getElementById('videoCanvas');
@@ -50,7 +46,8 @@
 
             const constraints = {
                 video: {
-                    deviceId: camerasDropdown.value ? { exact: camerasDropdown.value } : undefined
+                    deviceId: camerasDropdown.value ? { exact: camerasDropdown.value } : undefined,
+                    facingMode: camerasDropdown.options[camerasDropdown.selectedIndex].text.includes("front") ? "user" : "environment"
                 }
             };
 
