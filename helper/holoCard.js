@@ -29,10 +29,11 @@ AFRAME.registerComponent('holo-card', {
   
       // Text elements
       const texts = [
-        { id: 'stepsText', value: this.data.stepsTextValue, position: '-0.310 0.282 0' },
-        { id: 'titelText', value: this.data.titelTextValue, position: '-0.385 0.200 0' },
-        { id: 'mainText', value: this.data.mainTextValue, position: '-0.385 0.100 0', attributes: { width: '1.5', baseline: 'top', letterSpacing: '-0.17', lineHeight: '50', wrapCount: '38.1' } },
-        { id: 'counterText', value: this.data.counterTextValue, position: '-0.385 -0.420 0' }
+        { id: 'stepText', value: 'Step:', position: '-0.385 0.282 0', scale:'0.597 1 1', anchor: 'left', width: '1', color:'#52d5ef', material:' side: double; visible: true;'},
+        { id: 'stepsText', value: this.data.stepsTextValue, position:'-0.310 0.282 0', scale:'0.597 1 1', anchor: 'left', width: '1', color:'#52d5ef', material:' side: double; visible: true;'},
+        { id: 'titelText', value: this.data.titelTextValue, position:'-0.385 0.200 0', scale:'0.597 1 1', anchor: 'left', width: '0.95', material:'color: #ffffff; side: double; opacity: 1; visible: true;'},
+        { id: 'mainText', value: this.data.mainTextValue, position:'-0.385 0.100 0', scale:'0.597 1 1', anchor: 'left', width: '1.5', baseline: 'top', letterSpacing: '-0.17', lineHeight:'50', wrapCount:'38.1', material:'color: #ffffff; side: double; opacity: 1; visible: true;'} },
+        { id: 'counterText', value: this.data.counterTextValue, position:'-0.385 -0.420 0', scale:'0.597 1 1', anchor: 'left', width: '0.75', material:'color: #ffffff; side: double; opacity: 1; visible: true;'}
       ];
   
       texts.forEach(textData => {
@@ -95,4 +96,3 @@ AFRAME.registerPrimitive('a-holoCard', {
     counterTextValue: 'holo-card.counterTextValue'
   }
 });
-
