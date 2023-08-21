@@ -5,7 +5,6 @@ AFRAME.registerComponent('holo-card', {
     mainPlaneColor: { type: 'color', default: '#253950' },
     leftPlaneColor: { type: 'color', default: '#52d5ef' },
     rightPlaneColor: { type: 'color', default: '#52d5ef' },
-    stepTextValue: { type: 'string', default: 'Step:' },
     stepsTextValue: { type: 'string', default: '1' },
     titelTextValue: { type: 'string', default: 'der titel kommt hier rein' },
     mainTextValue: { type: 'string', default: 'Default Main Text' },
@@ -30,7 +29,6 @@ AFRAME.registerComponent('holo-card', {
   
       // Text elements
       const texts = [
-        { id: 'stepText', value: this.data.stepTextValue, position: '-0.385 0.282 0' },
         { id: 'stepsText', value: this.data.stepsTextValue, position: '-0.310 0.282 0' },
         { id: 'titelText', value: this.data.titelTextValue, position: '-0.385 0.200 0' },
         { id: 'mainText', value: this.data.mainTextValue, position: '-0.385 0.100 0', attributes: { width: '1.5', baseline: 'top', letterSpacing: '-0.17', lineHeight: '50', wrapCount: '38.1' } },
@@ -91,7 +89,6 @@ AFRAME.registerPrimitive('a-holoCard', {
     mainPlaneColor: 'holo-card.mainPlaneColor',
     leftPlaneColor: 'holo-card.leftPlaneColor',
     rightPlaneColor: 'holo-card.rightPlaneColor',
-    stepTextValue: 'holo-card.stepTextValue',
     stepsTextValue: 'holo-card.stepsTextValue',
     titelTextValue: 'holo-card.titelTextValue',
     mainTextValue: 'holo-card.mainTextValue',
