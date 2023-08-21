@@ -53,3 +53,22 @@ AFRAME.registerComponent('infoCard', {
         el.appendChild(rightPlane);
     }
 });
+
+AFRAME.registerPrimitive('a-infoCard', {
+    defaultComponents: {
+        infoCard: {}
+    },
+
+    mappings: {
+        'position': 'infoCard.position',
+        'rotation': 'infoCard.rotation',
+        'main-plane-color': 'infoCard.mainPlaneColor',
+        'left-plane-color': 'infoCard.leftPlaneColor',
+        'right-plane-color': 'infoCard.rightPlaneColor',
+        'step-text-value': 'infoCard.stepTextValue',
+        'steps-text-value': 'infoCard.stepsTextValue',
+        'titel-text-value': 'infoCard.titelTextValue',
+        'main-text-value': 'infoCard.mainTextValue',
+        'counter-text-value': 'infoCard.counterTextValue'
+    }
+});
