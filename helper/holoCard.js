@@ -41,11 +41,6 @@ AFRAME.registerComponent('holo-card', {
         textEl.setAttribute('id', textData.id);
         textEl.setAttribute('value', textData.value);
         textEl.setAttribute('position', textData.position);
-        textEl.setAttribute('scale', '0.597 1 1');
-        textEl.setAttribute('anchor', 'left');
-        textEl.setAttribute('width', '1');
-        textEl.setAttribute('color', '#52d5ef');
-        textEl.setAttribute('material', 'side: double; visible: true;');
         
         // Add any additional attributes
         if(textData.attributes) {
