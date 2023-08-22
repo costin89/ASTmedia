@@ -39,6 +39,18 @@
           console.log('Button[1] gedrückt!');
         }
       });
+
+      let left = document.getElementById('leftPlane');
+        
+      left.classList.add('selectable'); // Mache den Cube 'clickable' für den Raycaster
+
+      left.addEventListener('raycaster-intersected', function() {
+          left.setAttribute('color', 'yellow');
+      });
+
+      left.addEventListener('raycaster-intersected-cleared', function() {
+          left.setAttribute('color', '#52d5ef');
+      });
     </script>
   </body>
 </html>
