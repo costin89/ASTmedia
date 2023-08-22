@@ -29,14 +29,15 @@
       <a-holoBack></a-holoBack>
     </a-scene>
     <script>
+      // HoloLens Airtap
       var rightHand = document.querySelector('#right-hand');
       rightHand.addEventListener('buttondown', function(evt) {
         if (evt.detail.index === 1) { // Button[1]
-          // Ihre Aktion hier
           console.log('Button[1] gedrückt!');
         }
       });
-
+      
+      //linke Hand Farbe
       let left = document.getElementById('leftPlane');
       left.classList.add('selectable'); // Mache den Cube 'clickable' für den Raycaster
       left.addEventListener('raycaster-intersected', function() {
@@ -45,6 +46,8 @@
       left.addEventListener('raycaster-intersected-cleared', function() {
           left.setAttribute('color', '#52d5ef');
       });
+      
+      //rechte Hand Farbe
       let right = document.getElementById('rightPlane');
       right.classList.add('selectable'); // Mache den Cube 'clickable' für den Raycaster
       right.addEventListener('raycaster-intersected', function() {
