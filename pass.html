@@ -16,6 +16,16 @@
 
     <script>
         let box = document.querySelector('#targetBox');
+        const controller = document.querySelector('[laser-controls]');
+
+        // Überprüfen Sie regelmäßig, ob der Controller noch verbunden ist
+        setInterval(() => {
+            if (!controller.components['laser-controls'].data.hand) {
+                // Hier können Sie versuchen, den Controller erneut zu initialisieren oder andere Schritte zu unternehmen
+                controller.removeAttribute('laser-controls');
+                controller.setAttribute('laser-controls', 'hand: right');
+            }
+        }, 1000);  // Jede Sekunde überprüfen    
         
         document.querySelector('[laser-controls]').addEventListener('triggerdown', function() {
             if (box.getAttribute('color') === "#4CC3D9") { // Wenn der Würfel blau ist
