@@ -34,8 +34,11 @@
         if (evt.detail.index === 1) { // Button[1]
           console.log('Button[1] gedrückt!');
         }
+        if (evt.detail.index === 0) { // Button[0]
+          console.log('Button[0] gedrückt!');
+        }
       });
-      
+
       //linke Hand Farbe
       let left = document.getElementById('leftPlane');
       left.classList.add('selectable'); // Mache den Cube 'clickable' für den Raycaster
