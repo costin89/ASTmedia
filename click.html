@@ -27,6 +27,18 @@
       <a-holoBack></a-holoBack>
     </a-scene>
     <script>
+      const scene = document.querySelector('a-scene');
+      const controller = document.querySelector('[laser-controls]');
+
+      // Überprüfen Sie regelmäßig, ob der Controller noch verbunden ist
+      setInterval(() => {
+        if (!controller.components['laser-controls'].data.hand) {
+            // Hier können Sie versuchen, den Controller erneut zu initialisieren oder andere Schritte zu unternehmen
+            controller.removeAttribute('laser-controls');
+            controller.setAttribute('laser-controls', 'hand: right');
+        }
+      }, 1000);  // Jede Sekunde überprüfen
+
       // HoloLens Airtap
       
       // HoloLens Hover Effect
