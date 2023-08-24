@@ -6,8 +6,7 @@
   <body>
     <a-scene vr-mode-ui="enabled: true">
       <a-entity id="right-hand" tracked-controls="controller: 5; hand:right; idPrefix: rightHand">
-        <a-entity id="rightHand" rotation="0 0 0" position ="0 0 0"></a-entity>
-         <a-cursor raycaster="objects: .selectable; showLine: true;"></a-cursor>
+        <a-entity id="rightHand" rotation="0 0 0" position ="0 0 0" raycaster="objects: .selectable; showLine: true;"></a-entity>
       </a-entity>
       <a-entity position="0 2 -3">
         <!-- mainPlane -->
@@ -34,6 +33,9 @@
       rightHand.addEventListener('buttondown', function(evt) {
         if (evt.detail.index === 1) { // Button[1]
           console.log('Button[1] gedrückt!');
+        }
+        if (evt.detail.index === 4) { // Button[1]
+          console.log('Button[4] gedrückt!');
         }
       });
       
