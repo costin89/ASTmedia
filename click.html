@@ -6,7 +6,7 @@
   <body>
     <a-scene vr-mode-ui="enabled: true">
       <!-- HoloLens controls -->
-      <a-entity laser-controls="hand: right"></a-entity>
+      <a-entity laser-controls="hand: right" raycaster="showLine: true; objects: .selectable; lineColor: purple; lineOpacity: 0.5;"></a-entity>
       <a-entity position="0 2 -3">
         <!-- mainPlane -->
         <a-plane id="mainPlane" position="0 0 0" rotation="0 0 0" material="color: #253950; side: double; opacity: 1; visible: true;" scale="2 1 1">
@@ -28,18 +28,14 @@
     </a-scene>
     <script>
       // HoloLens Airtap
-      let left = document.getElementById('leftPlane');
-      let right = document.getElementById('rightPlane');
-      document.querySelector('[laser-controls]').addEventListener('triggerdown', function() {
-          if (left.getAttribute('color') === '#52d5ef') { // Wenn der Würfel blau ist
-              left.setAttribute('color', "#fcc434"); // Ändern Sie die Farbe auf Rot
-          } else {
-              left.setAttribute('color', '#52d5ef'); // Andernfalls ändern Sie sie zurück zu Blau
-          }
-          if (right.getAttribute('color') === '#52d5ef') { // Wenn der Würfel blau ist
-              right.setAttribute('color', "#fcc434"); // Ändern Sie die Farbe auf Rot
-          } else {
-              right.setAttribute('color', '#52d5ef'); // Andernfalls ändern Sie sie zurück zu Blau
+      let left  = document.querySelector('leftPlane');
+      let right = document.querySelector('rightPlane');
+      targetBox.addEventListener('selectable', function() {
+          if(targetBox.getAttribute('color') === 'blue') {
+              targetBox.setAttribute('color', 'fcc434');
+              setTimeout(() => {
+                  targetBox.setAttribute('color', 'blue');
+              }, 1000);  // Farbwechsel zurück zu Blau nach 1 Sekunde (1000 Millisekunden)
           }
       });
     </script>
