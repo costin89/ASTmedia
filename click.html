@@ -29,34 +29,19 @@
     </a-scene>
     <script>
       // HoloLens Airtap
-       let box = document.querySelector('#targetBox');
-        
-        document.querySelector('[laser-controls]').addEventListener('triggerdown', function() {
-            if (box.getAttribute('color') === "#4CC3D9") { // Wenn der Würfel blau ist
-                box.setAttribute('color', "#FF0000"); // Ändern Sie die Farbe auf Rot
-            } else {
-                box.setAttribute('color', "#4CC3D9"); // Andernfalls ändern Sie sie zurück zu Blau
-            }
-        });
-
-      //linke Hand Farbe
       let left = document.getElementById('leftPlane');
-      left.classList.add('selectable'); // Mache den Cube 'clickable' für den Raycaster
-      left.addEventListener('raycaster-intersected', function() {
-          left.setAttribute('color', 'yellow');
-      });
-      left.addEventListener('raycaster-intersected-cleared', function() {
-          left.setAttribute('color', '#52d5ef');
-      });
-      
-      //rechte Hand Farbe
       let right = document.getElementById('rightPlane');
-      right.classList.add('selectable'); // Mache den Cube 'clickable' für den Raycaster
-      right.addEventListener('raycaster-intersected', function() {
-          right.setAttribute('color', 'yellow');
-      });
-      right.addEventListener('raycaster-intersected-cleared', function() {
-          right.setAttribute('color', '#52d5ef');
+      document.querySelector('[laser-controls]').addEventListener('triggerdown', function() {
+          if (left.getAttribute('color') === '#52d5ef') { // Wenn der Würfel blau ist
+              left.setAttribute('color', "#fcc434"); // Ändern Sie die Farbe auf Rot
+          } else {
+              left.setAttribute('color', '#52d5ef'); // Andernfalls ändern Sie sie zurück zu Blau
+          }
+         if (right.getAttribute('color') === '#52d5ef') { // Wenn der Würfel blau ist
+              right.setAttribute('color', "#fcc434"); // Ändern Sie die Farbe auf Rot
+          } else {
+              right.setAttribute('color', '#52d5ef'); // Andernfalls ändern Sie sie zurück zu Blau
+          }
       });
     </script>
   </body>
