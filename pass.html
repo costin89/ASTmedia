@@ -1,38 +1,29 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frontkamera-Zugriff</title>
+    <title>HoloLens Airtap Beispiel</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
 </head>
 <body>
-    <video id="frontCamera" autoplay></video>
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-        const videoElement = document.getElementById("frontCamera");
-        const statusElement = document.getElementById("status");
-    
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            let constraints = {
-                video: {
-                    facingMode: "user"
-                }
-            };
-    
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(function(stream) {
-                    videoElement.srcObject = stream;
-                    statusElement.textContent = "Kamerazugriff erlaubt!";
-                })
-                .catch(function(err) {
-                    console.error("Fehler beim Zugriff auf die Kamera: ", err);
-                    statusElement.textContent = "Kamerazugriff abgelehnt oder ein Fehler ist aufgetreten.";
-                });
-        } else {
-            alert("Ihr Browser unterstützt nicht den Zugriff auf die Kamera.");
-        }
-    });
+    <a-scene>
+        <!-- HoloLens controls -->
+        <a-entity laser-controls="hand: right"></a-entity>
+        
+        <!-- Ein 3D-Objekt, auf das der Nutzer zielen kann -->
+        <a-box id="targetBox" position="0 1.5 -3" color="#4CC3D9"></a-box>
+    </a-scene>
 
+    <script>
+        let box = document.querySelector('#targetBox');
+        
+        document.querySelector('[laser-controls]').addEventListener('triggerdown', function() {
+            if (box.getAttribute('color') === "#4CC3D9") { // Wenn der Würfel blau ist
+                box.setAttribute('color', "#FF0000"); // Ändern Sie die Farbe auf Rot
+            } else {
+                box.setAttribute('color', "#4CC3D9"); // Andernfalls ändern Sie sie zurück zu Blau
+            }
+        });
     </script>
 </body>
 </html>
