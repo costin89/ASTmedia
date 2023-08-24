@@ -29,15 +29,15 @@
     </a-scene>
     <script>
       // HoloLens Airtap
-      var rightHand = document.querySelector('#right-hand');
-      rightHand.addEventListener('buttonup', function(evt) {
-        if (evt.detail.index === 1) { // Button[1]
-          console.log('Button[1] gedrückt!');
-        }
-        if (evt.detail.index === 0) { // Button[0]
-          console.log('Button[0] gedrückt!');
-        }
-      });
+       let box = document.querySelector('#targetBox');
+        
+        document.querySelector('[laser-controls]').addEventListener('triggerdown', function() {
+            if (box.getAttribute('color') === "#4CC3D9") { // Wenn der Würfel blau ist
+                box.setAttribute('color', "#FF0000"); // Ändern Sie die Farbe auf Rot
+            } else {
+                box.setAttribute('color', "#4CC3D9"); // Andernfalls ändern Sie sie zurück zu Blau
+            }
+        });
 
       //linke Hand Farbe
       let left = document.getElementById('leftPlane');
