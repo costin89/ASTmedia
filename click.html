@@ -31,16 +31,16 @@
       let left  = document.querySelector('leftPlane');
       let right = document.querySelector('rightPlane');
       targetBox.addEventListener('selectable', function() {
-          if(right.getAttribute('color') === 'blue') {
+          if(right.getAttribute('color') === '#52d5ef') {
               right.setAttribute('color', 'fcc434');
               setTimeout(() => {
-                  right.setAttribute('color', 'blue');
+                  right.setAttribute('color', '#52d5ef');
               }, 1000);  // Farbwechsel zurück zu Blau nach 1 Sekunde (1000 Millisekunden)
           }
-          if(left.getAttribute('color') === 'blue') {
+          if(left.getAttribute('color') === '#52d5ef') {
                 left.setAttribute('color', 'fcc434');
                 setTimeout(() => {
-                    left.setAttribute('color', 'blue');
+                    left.setAttribute('color', '#52d5ef');
                 }, 1000);  // Farbwechsel zurück zu Blau nach 1 Sekunde (1000 Millisekunden)
             }
       });
