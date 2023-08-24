@@ -28,15 +28,19 @@
     </a-scene>
     <script>
       // HoloLens Airtap
+      
+      // HoloLens Hover Effect
       let left  = document.querySelector('leftPlane');
       let right = document.querySelector('rightPlane');
-      targetBox.addEventListener('selectable', function() {
+      right.addEventListener('selectable', function() {
           if(right.getAttribute('color') === '#52d5ef') {
               right.setAttribute('color', 'fcc434');
               setTimeout(() => {
                   right.setAttribute('color', '#52d5ef');
               }, 1000);  // Farbwechsel zurück zu Blau nach 1 Sekunde (1000 Millisekunden)
           }
+        });
+       left.addEventListener('selectable', function() {
           if(left.getAttribute('color') === '#52d5ef') {
                 left.setAttribute('color', 'fcc434');
                 setTimeout(() => {
