@@ -29,13 +29,20 @@
     </a-scene>
     <script>
       // HoloLens Airtap
-      var rightHand = document.querySelector('#right-hand');
-      rightHand.addEventListener('buttondown', function(evt) {
-        if (evt.detail.index === 1) { // Button[1]
-          console.log('Button[1] gedrückt!');
-        }
-        if (evt.detail.index === 4) { // Button[1]
-          console.log('Button[4] gedrückt!');
+      document.querySelector('a-scene').addEventListener('loaded', function() {
+        var rightHand = document.querySelector('#right-hand');
+      
+        if (rightHand) { // Stellen Sie sicher, dass das Element vorhanden ist
+          rightHand.addEventListener('buttondown', function(evt) {
+            if (evt.detail.index === 1) {
+              console.log('Button[1] gedrückt!');
+            }
+            if (evt.detail.index === 4) {
+              console.log('Button[4] gedrückt!');
+            }
+          });
+        } else {
+          console.error('Element #right-hand nicht gefunden!');
         }
       });
       
