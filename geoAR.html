@@ -39,13 +39,7 @@
                     facingMode: 'environment'
                 }
             };
-        } else {
-            constraints = {
-                video: {
-                    facingMode: 'user'
-                }
-            };
-        }
+        } 
 
         // Stream der Kamera erhalten
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
