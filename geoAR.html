@@ -1,17 +1,16 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>a-frame-geoAR</title>
+  <head>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-</head>
-<body>
+    <script src="path-to-your/a-frame-seethrough-component.js"></script>
+  </head>
+  <body>
     <a-scene>
-        <!-- Kamera mit device-orientation Steuerung -->
-        <a-camera position="0 1.75 0" look-controls="enabled: true;" vr-mode-ui="enabled: false"></a-camera>
-        <!-- Würfel -->
-        <a-box position="0 5 0" rotation="0 45 45" scale="1 1 1" color="red"></a-box>
+      <a-entity seethrough="vw: 1280; vh: 720; cam: true; cammode: back;"></a-entity>
+      <!-- Kamera mit device-orientation Steuerung -->
+      <a-camera position="0 1.75 0" look-controls="enabled: true;"></a-camera>
+      <!-- Würfel -->
+      <a-box position="0 2 0" rotation="0 45 45" scale="1 1 1" color="red"></a-box>
     </a-scene>
-</body>
+  </body>
 </html>
