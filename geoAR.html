@@ -5,7 +5,8 @@
     <script src="helper/aframe-seethrough-component.js"></script>
 </head>
 <body>
-    <a-scene renderer="alpha: true;">
+    <canvas id="videoCanvas" style="position: absolute; z-index: 1;"></canvas>
+    <a-scene style="position: absolute; z-index: 2;" renderer="alpha: true;">
         <!-- Kamera mit device-orientation Steuerung -->
         <a-camera look-controls="enabled: true;"></a-camera>
         <!-- Würfel -->
