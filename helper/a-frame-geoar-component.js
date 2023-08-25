@@ -43,6 +43,14 @@ AFRAME.registerComponent('a-geotag', {
         console.log("Entfernung zum Ziel: ", distance); // Zum Debuggen
 
         this.el.setAttribute('visible', distance <= 250);
+
+        if (distance <= 250) {
+            this.el.setAttribute('visible', true);
+            console.log('Objekt ist sichtbar.'); // Zum Debuggen
+        } else {
+            this.el.setAttribute('visible', false);
+            console.log('Objekt ist nicht sichtbar.'); // Zum Debuggen
+        }
     },
 
     getDistanceFromLatLonInM: function(lat1, lon1, lat2, lon2) {
