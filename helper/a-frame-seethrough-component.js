@@ -1,3 +1,4 @@
+// Registrieren Sie die seethrough-Komponente wie zuvor
 AFRAME.registerComponent('seethrough', {
   schema: {
     vw: {type: 'number', default: 1280},
@@ -18,6 +19,11 @@ AFRAME.registerComponent('seethrough', {
     if(this.data.cam) {
       this.getCameraStream();
     }
+    // Setzen Sie den z-Index der A-Frame-Canvas
+    const aframeCanvas = document.querySelector('canvas');
+    if (aframeCanvas) {
+      aframeCanvas.style.zIndex = '2';
+    }
   },
 
   getCameraStream: function() {
@@ -37,5 +43,18 @@ AFRAME.registerComponent('seethrough', {
       .catch((err) => {
         console.error('Error accessing the camera', err);
       });
+  }
+});
+
+// Registrieren Sie das <a-seethrough> primitive
+AFRAME.registerPrimitive('a-seethrough', {
+  defaultComponents: {
+    seethrough: {}
+  },
+  mappings: {
+    vw: 'seethrough.vw',
+    vh: 'seethrough.vh',
+    cam: 'seethrough.cam',
+    cammode: 'seethrough.cammode'
   }
 });
