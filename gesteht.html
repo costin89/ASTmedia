@@ -27,7 +27,10 @@
                 Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
                 Math.sin(dLon / 2) * Math.sin(dLon / 2);
             const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // in Metern
+            return {
+                latDistance: R * c * Math.sin(dLon),
+                lonDistance: R * c * Math.sin(dLat)
+            };
         }
 
         function getPosition() {
@@ -35,13 +38,14 @@
                 const userLat = position.coords.latitude;
                 const userLong = position.coords.longitude;
                 
-                const distance = calculateDistance(baseLat, baseLong, userLat, userLong);
+                const { latDistance, lonDistance } = calculateDistance(baseLat, baseLong, userLat, userLong);
                 
                 // Skalierung: 1 Meter in der echten Welt entspricht 0.01 A-Frame-Einheiten
-                const aFrameDistance = -distance * 0.01;
+                const aFrameX = lonDistance * 0.01;
+                const aFrameZ = -latDistance * 0.01;
 
                 // Box basierend auf der berechneten Distanz positionieren
-                document.getElementById('box').setAttribute('position', `0 1.5 ${aFrameDistance}`);
+                document.getElementById('box').setAttribute('position', `${aFrameX} 1.5 ${aFrameZ}`);
             });
         }
     </script>
