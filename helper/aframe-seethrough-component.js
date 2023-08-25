@@ -22,9 +22,9 @@ AFRAME.registerComponent('seethrough', {
     tick: function() {
         if (this.video.readyState >= 2) {  // Video-Daten sind verfügbar
             // Canvas-Größe an Videoauflösung anpassen
-            this.videoCanvas.width = this.video.videoWidth;
-            this.videoCanvas.height = this.video.videoHeight;
-            this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
+            this.videoCanvas.width = this.video.videoWidth * window.devicePixelRatio;
+            this.videoCanvas.height = this.video.videoHeight * window.devicePixelRatio;
+            this.ctx.drawImage(this.video, 0, 0, this.videoCanvas.width, this.videoCanvas.height);
         }
     },
 
