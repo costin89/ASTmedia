@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="path/to/seethrough-component.js"></script>
+</head>
+<body>
+    <a-scene renderer="alpha: true;">
+        <!-- Kamera mit device-orientation Steuerung -->
+        <a-camera look-controls="enabled: true;"></a-camera>
+        <!-- Würfel -->
+        <a-box position="0 1.5 -3" rotation="0 45 45" color="#4CC3D9"></a-box>
+        <a-seethrough seethrough="front"></a-seethrough>
+    </a-scene>
+</body>
+</html>
