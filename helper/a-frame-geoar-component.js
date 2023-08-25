@@ -6,8 +6,6 @@ AFRAME.registerComponent('a-geotag', {
     },
 
     init: function() {
-        const el = this.el;
-
         if (this.data.getLocation && 'geolocation' in navigator) {
             navigator.geolocation.getCurrentPosition((position) => {
                 this.setUserLocation(position);
@@ -23,33 +21,33 @@ AFRAME.registerComponent('a-geotag', {
         };
     },
 
-    haversineDistance: function(coords1, coords2) {
-        function toRad(x) {
-            return x * Math.PI / 180;
-        }
-
+    computeOffset: function(lat1, lon1, lat2, lon2) {
         const R = 6371e3; // Radius der Erde in Metern
 
-        const dLat = toRad(coords2.lat - coords1.lat);
-        const dLong = toRad(coords2.long - coords1.long);
-        const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                  Math.cos(toRad(coords1.lat)) * Math.cos(toRad(coords2.lat)) *
-                  Math.sin(dLong / 2) * Math.sin(dLong / 2);
-        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        
-        return R * c;
+        // Umwandlung von Breitengrad-Differenz in Entfernung in Metern
+        const dy = (lat2 - lat1) * (Math.PI / 180) * R;
+
+        // Umwandlung von Längengrad-Differenz in Entfernung in Metern
+        const dx = (lon2 - lon1) * (Math.PI / 180) * R * Math.cos(lat1 * Math.PI / 180);
+
+        return { x: dx, z: dy };
     },
 
     placeObject: function() {
-        const distance = this.haversineDistance(this.userLocation, {lat: this.data.lat, long: this.data.long});
+        const offset = this.computeOffset(this.userLocation.lat, this.userLocation.long, this.data.lat, this.data.long);
 
-        if (distance <= 250) { // Wenn sich das Objekt in einem Umkreis von 250 Metern befindet
-            this.el.setAttribute('visible', true);
-            // Positionierung basierend auf der Distanz könnte hier verbessert werden, da wir momentan nur die direkte Distanz haben.
-            // Für eine einfache Implementierung setzen wir jedoch die z-Koordinate (vorwärts/rückwärts) auf die Distanz:
-            this.el.setAttribute('position', {x: 0, y: 0, z: -distance});
-        } else {
-            this.el.setAttribute('visible', false);
-        }
+        this.el.setAttribute('position', {x: offset.x, y: 0, z: -offset.z});
+    }
+});
+
+AFRAME.registerPrimitive('a-geotag', {
+    defaultComponents: {
+        'a-geotag': {}
+    },
+
+    mappings: {
+        'lat': 'a-geotag.lat',
+        'long': 'a-geotag.long',
+        'getlocation': 'a-geotag.getLocation'
     }
 });
