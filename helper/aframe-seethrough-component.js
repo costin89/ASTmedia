@@ -29,10 +29,6 @@ AFRAME.registerComponent('seethrough', {
 
         // Das Video in der erhöhten Auflösung zeichnen
         this.ctx.drawImage(this.video, 0, 0, this.videoCanvas.width, this.videoCanvas.height);
-
-        // Stellen Sie sicher, dass der Canvas in CSS immer noch die Größe des Videos hat
-        this.videoCanvas.style.width = `${this.video.videoWidth}px`;
-        this.videoCanvas.style.height = `${this.video.videoHeight}px`;
     }
 }
 
