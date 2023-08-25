@@ -1,42 +1,44 @@
 // seethrough-component.js by Alexander - Costin Ast
 AFRAME.registerComponent('seethrough', {
     schema: {
-        type: 'string', // 'front' oder 'back'
-        default: 'back'
+        cam: {type: 'string', default: 'back'},
+        enable: {type: 'boolean', default: false}
     },
 
     init: function() {
         this.video = document.createElement('video');
-        this.video.setAttribute('autoplay', true);
-        this.video.setAttribute('playsinline', true); // wichtig für iOS
-        document.body.appendChild(this.video); // fügt das Video-Element zum DOM hinzu
+        this.video.setAttribute('autoplay', '');
+        this.video.setAttribute('playsinline', '');
+        this.videoCanvas = document.getElementById('videoCanvas');
+        this.ctx = this.videoCanvas.getContext('2d');
 
-        this.setupCamera();
+        // Aktualisiert das Video-Canvas, wenn das Video spielt
+        this.video.addEventListener('play', () => {
+            this.tick = AFRAME.utils.throttleTick(this.tick, 33, this);  // 30 fps
+        });
     },
 
-    setupCamera: function() {
-        const constraints = {
+    tick: function() {
+        if (this.video.readyState >= 2) {  // Video-Daten sind verfügbar
+            this.ctx.drawImage(this.video, 0, 0, this.videoCanvas.width, this.videoCanvas.height);
+        }
+    },
+
+    update: function(oldData) {
+        if (!this.data.enable) {
+            return;
+        }
+
+        navigator.mediaDevices.getUserMedia({
             video: {
-                facingMode: this.data === 'front' ? 'user' : 'environment'
+                facingMode: this.data.cam === 'back' ? 'environment' : 'user'
             }
-        };
-
-        navigator.mediaDevices.getUserMedia(constraints)
-            .then(stream => {
-                this.setupCameraStream(stream);
-            })
-            .catch(err => {
-                console.error('Fehler beim Zugriff auf die Kamera:', err);
-            });
-    },
-
-    setupCameraStream: function(stream) {
-        this.video.srcObject = stream;
-        const videoTexture = new THREE.VideoTexture(this.video);
-
-        this.el.setObject3D('mesh', new THREE.Mesh(
-            new THREE.PlaneBufferGeometry(2, 2),
-            new THREE.MeshBasicMaterial({ map: videoTexture })
-        ));
+        }).then(stream => {
+            this.video.srcObject = stream;
+            this.video.play();
+        }).catch(error => {
+            console.error('Kamera-Zugriff fehlgeschlagen:', error);
+        });
     }
 });
+
