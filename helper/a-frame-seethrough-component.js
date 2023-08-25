@@ -23,6 +23,7 @@ AFRAME.registerComponent('seethrough', {
     const aframeCanvas = document.querySelector('canvas');
     if (aframeCanvas) {
       aframeCanvas.style.zIndex = '2';
+      aframeCanvas.style.backgroundColor = 'transparent';
     }
   },
 
