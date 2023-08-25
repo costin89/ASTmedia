@@ -3,48 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A-Frame mit Webcam</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <title>Video Canvas</title>
     <style>
-        /* Der Video-Canvas */
-        #webcam {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100vw;
+        /* Stil für ein fensterfüllendes Video */
+        #video {
+            width: 100vw; 
             height: 100vh;
             object-fit: cover;
-            z-index: -1; /* Stellt sicher, dass er hinter dem A-Frame-Canvas liegt */
         }
     </style>
 </head>
 <body>
-    <video id="webcam" autoplay playsinline muted></video>
-
-    <!-- A-Frame Szene -->
-    <a-scene look-controls="enabled: false" embedded style="width:100vw; height:100vh; z-index: 0;" renderer="antialias: true; alpha: true;" background="color: transparent">
-        <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-    </a-scene>
+    <video id="video" autoplay playsinline></video>
 
     <script>
-        // Zugriff auf die Webcam
-        function isMobile() {
-            return /Mobi|Android/i.test(navigator.userAgent) || typeof window.orientation !== "undefined";
-        }
+        const videoElement = document.getElementById('video');
 
-        const constraints = isMobile() 
-            ? { video: { facingMode: "environment" } } // Rückkamera für Mobilgeräte
-            : { video: true }; // Erste verfügbare Kamera für Desktops
-
+        // Überprüfen Sie, ob MediaDevices-API verfügbar ist
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            // Einstellungen für die Nutzung der Umgebungskamera auf mobilen Geräten
+            const constraints = {
+                video: {
+                    facingMode: 'environment'
+                }
+            };
+
+            // Stream der Kamera erhalten
             navigator.mediaDevices.getUserMedia(constraints)
-                .then(function(stream) {
-                    const video = document.getElementById('webcam');
-                    video.srcObject = stream;
+                .then(stream => {
+                    videoElement.srcObject = stream;
+                    videoElement.play();
                 })
-                .catch(function(err) {
-                    console.error("Fehler beim Zugriff auf die Webcam: " + err);
+                .catch(error => {
+                    console.error("Es gab einen Fehler beim Zugriff auf die Kamera:", error);
                 });
+        } else {
+            alert("Ihr Browser unterstützt die MediaDevices-API nicht.");
         }
     </script>
 </body>
