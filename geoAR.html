@@ -15,7 +15,12 @@
 </head>
 <body>
     <video id="video" autoplay playsinline></video>
-
+    <a-scene renderer="alpha: true">
+        <!-- Kamera mit device-orientation Steuerung -->
+        <a-camera look-controls="enabled: true;"></a-camera>
+        <!-- Würfel -->
+        <a-box position="0 1.5 -3" rotation="0 45 45" color="#4CC3D9"></a-box>
+    </a-scene>
     <script>
         const videoElement = document.getElementById('video');
 
