@@ -25,6 +25,8 @@ AFRAME.registerComponent('seethrough', {
       aframeCanvas.style.zIndex = '2';
       aframeCanvas.style.backgroundColor = 'transparent';
     }
+    // Setzen Sie den alpha-Wert des Renderers auf true
+    this.el.sceneEl.setAttribute('renderer', 'alpha', true);
   },
 
   getCameraStream: function() {
