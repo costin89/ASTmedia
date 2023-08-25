@@ -5,57 +5,45 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>A-Frame mit GPS-Daten</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
 </head>
 
 <body>
     <a-scene>
-        <a-entity id="box" geometry="primitive: box" material="color: red" position="0 1 -5"></a-entity>
+        <a-entity id="box" geometry="primitive: box" material="color: red" position="0 1.5 -5"></a-entity>
         <a-camera></a-camera>
     </a-scene>
 
+    <button onclick="getPosition()">Position abrufen</button>
+
     <script>
-        // Basis-Koordinaten (zum Beispiel der Kölner Dom)
-        const baseLat = 49.812583825597365;
-        const baseLong = 8.649315722294757;
+        const baseLat = 50.9413;
+        const baseLong = 6.9582;
 
         function calculateOffset(lat1, lon1, lat2, lon2) {
-            const R = 6371e3;  // Erdradius in Metern
-        
-            const dLatRad = (lat2 - lat1) * Math.PI / 180;
-            const dLonRad = (lon2 - lon1) * Math.PI / 180;
-        
-            const lat1Rad = lat1 * Math.PI / 180;
-            const lat2Rad = lat2 * Math.PI / 180;
-        
-            // Haversine Formel
-            const a = Math.sin(dLatRad / 2) * Math.sin(dLatRad / 2) +
-                      Math.sin(dLonRad / 2) * Math.sin(dLonRad / 2) * Math.cos(lat1Rad) * Math.cos(lat2Rad);
+            // Diese Umwandlung basiert auf einer Annäherung und ist nur für kurze Distanzen geeignet.
+            const dx = (lon2 - lon1) * 111.32 * 1000; // Längengrade zu Metern (ca. 111,32 km pro Grad)
+            const dy = (lat2 - lat1) * 110.574 * 1000; // Breitengrade zu Metern (ca. 110,57 km pro Grad)
             
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-        
-            const totalDistance = R * c;
-        
-            // Die tatsächliche Entfernung in X und Z für A-Frame berechnen
-            const dx = totalDistance * Math.sin(dLonRad);
-            const dz = totalDistance * Math.sin(dLatRad);
-        
-            return { dx, dz };
+            return { dx, dy };
         }
-        
+
         function getPosition() {
             navigator.geolocation.getCurrentPosition((position) => {
                 const userLat = position.coords.latitude;
                 const userLong = position.coords.longitude;
-        
-                const { dx, dz } = calculateOffset(baseLat, baseLong, userLat, userLong);
-        
-                // Skalierung für A-Frame
+
+                const { dx, dy } = calculateOffset(baseLat, baseLong, userLat, userLong);
+
+                // Skalierung: 1 Meter in der echten Welt entspricht 0.01 A-Frame-Einheiten
                 const aFrameX = dx * 0.01;
-                const aFrameZ = dz * 0.01;
-        
-                // Box basierend auf den berechneten Offsets positionieren
-                document.getElementById('box').setAttribute('position', `${aFrameX} 1.5 ${aFrameZ}`);
+                const aFrameZ = dy * 0.01;
+
+                const boxEntity = document.getElementById('box');
+                boxEntity.setAttribute('position', `${aFrameX} 1.5 ${aFrameZ}`);
+                console.log(`Box positioniert bei: ${aFrameX}, 1.5, ${aFrameZ}`);
+            }, (error) => {
+                console.log("Fehler beim Abrufen der GPS-Position:", error);
             });
         }
     </script>
