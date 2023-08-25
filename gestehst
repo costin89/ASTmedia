@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Frame mit GPS-Daten</title>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+</head>
+
+<body>
+    <a-scene>
+        <a-entity id="box" geometry="primitive: box" material="color: red" position="0 1 -5"></a-entity>
+        <a-camera></a-camera>
+    </a-scene>
+
+    <script>
+        // Basis-Koordinaten (zum Beispiel der Kölner Dom)
+        const baseLat = 49.812583825597365;
+        const baseLong = 8.649315722294757;
+
+        // Berechnen der Distanz zwischen zwei GPS-Koordinaten (einfache Version)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // Radius der Erde in Metern
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c;
+            return distance; // in Metern
+        }
+
+        // Aktuelle Position abfragen
+        navigator.geolocation.getCurrentPosition((position) => {
+            const userLat = position.coords.latitude;
+            const userLong = position.coords.longitude;
+            
+            const distance = calculateDistance(baseLat, baseLong, userLat, userLong);
+
+            // Skalierung: 1 Meter in der echten Welt entspricht 10 A-Frame-Einheiten
+            const aFrameDistance = distance / 10;
+
+            // Box basierend auf der berechneten Distanz positionieren
+            document.getElementById('box').setAttribute('position', `0 1 ${-aFrameDistance}`);
+        });
+    </script>
+</body>
+
+</html>
