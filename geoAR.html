@@ -28,10 +28,17 @@
 
     <script>
         // Zugriff auf die Webcam
+        function isMobile() {
+            return /Mobi|Android/i.test(navigator.userAgent) || typeof window.orientation !== "undefined";
+        }
+
+        const constraints = isMobile() 
+            ? { video: { facingMode: "environment" } } // Rückkamera für Mobilgeräte
+            : { video: true }; // Erste verfügbare Kamera für Desktops
+
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ video: true })
+            navigator.mediaDevices.getUserMedia(constraints)
                 .then(function(stream) {
-                    // Setzt den Video-Stream der Webcam auf das video-Element
                     const video = document.getElementById('webcam');
                     video.srcObject = stream;
                 })
