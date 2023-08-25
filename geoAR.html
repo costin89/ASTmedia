@@ -6,6 +6,7 @@
     <title>a-frame-geoAR</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="helper/aframe-seethrough-component.js"></script>
+    <script src="helper/a-frame-geoar-component.js"></script>
 </head>
 <body>
     <canvas id="videoCanvas" style="position: absolute; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 1;"></canvas>
@@ -13,7 +14,9 @@
         <!-- Kamera mit device-orientation Steuerung -->
         <a-camera look-controls="enabled: true;"></a-camera>
         <!-- Würfel -->
-        <a-box position="0 1.5 -3" rotation="0 45 45" color="#4CC3D9"></a-box>
+        <a-entity a-geotag="lat: 49.812409566620545; long: 8.64956966459181; getLocation: true;">
+            <a-box position="0 5 0" rotation="0 45 45" color="#4CC3D9"></a-box>
+        </a-entity>
         <a-scene seethrough="enable: true; cam: back">
     </a-scene>
 </body>
