@@ -7,18 +7,17 @@ AFRAME.registerComponent('a-geotag', {
 
     init: function() {
         if (this.data.getLocation && 'geolocation' in navigator) {
-            navigator.geolocation.getCurrentPosition((position) => {
+            this.watchId = navigator.geolocation.watchPosition((position) => {
                 this.setUserLocation(position);
                 this.placeObject();
             });
         }
     },
 
-    setUserLocation: function(position) {
-        this.userLocation = {
-            lat: position.coords.latitude,
-            long: position.coords.longitude
-        };
+    remove: function() {
+        if (this.watchId) {
+            navigator.geolocation.clearWatch(this.watchId);
+        }
     },
 
     computeOffset: function(lat1, lon1, lat2, lon2) {
