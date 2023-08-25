@@ -19,16 +19,29 @@
     <script>
         const videoElement = document.getElementById('video');
 
-        // Überprüfen Sie, ob MediaDevices-API verfügbar ist
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            // Einstellungen für die Nutzung der Umgebungskamera auf mobilen Geräten
-            const constraints = {
+        // Funktion, um zu überprüfen, ob der Benutzer ein Mobilgerät verwendet
+        function isMobileDevice() {
+            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+        }
+
+        // Entscheidung für Constraints basierend auf Gerätetyp
+        let constraints;
+        if (isMobileDevice()) {
+            constraints = {
                 video: {
                     facingMode: 'environment'
                 }
             };
+        } else {
+            constraints = {
+                video: {
+                    facingMode: 'user'
+                }
+            };
+        }
 
-            // Stream der Kamera erhalten
+        // Stream der Kamera erhalten
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia(constraints)
                 .then(stream => {
                     videoElement.srcObject = stream;
