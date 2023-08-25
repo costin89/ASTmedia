@@ -9,6 +9,7 @@ AFRAME.registerComponent('seethrough', {
         this.video = document.createElement('video');
         this.video.setAttribute('autoplay', '');
         this.video.setAttribute('playsinline', '');
+
         this.videoCanvas = document.getElementById('videoCanvas');
         this.ctx = this.videoCanvas.getContext('2d');
 
@@ -20,7 +21,10 @@ AFRAME.registerComponent('seethrough', {
 
     tick: function() {
         if (this.video.readyState >= 2) {  // Video-Daten sind verfügbar
-            this.ctx.drawImage(this.video, 0, 0, this.videoCanvas.width, this.videoCanvas.height);
+            // Canvas-Größe an Videoauflösung anpassen
+            this.videoCanvas.width = this.video.videoWidth;
+            this.videoCanvas.height = this.video.videoHeight;
+            this.ctx.drawImage(this.video, 0, 0, this.video.videoWidth, this.video.videoHeight);
         }
     },
 
@@ -31,7 +35,9 @@ AFRAME.registerComponent('seethrough', {
 
         navigator.mediaDevices.getUserMedia({
             video: {
-                facingMode: this.data.cam === 'back' ? 'environment' : 'user'
+                facingMode: this.data.cam === 'back' ? 'environment' : 'user',
+                width: { ideal: 1280 },
+                height: { ideal: 720 }
             }
         }).then(stream => {
             this.video.srcObject = stream;
@@ -41,4 +47,3 @@ AFRAME.registerComponent('seethrough', {
         });
     }
 });
-
