@@ -20,13 +20,22 @@ AFRAME.registerComponent('seethrough', {
     },
 
     tick: function() {
-        if (this.video.readyState >= 2) {  // Video-Daten sind verfügbar
-            // Canvas-Größe an Videoauflösung anpassen
-            this.videoCanvas.width = this.video.videoWidth * window.devicePixelRatio;
-            this.videoCanvas.height = this.video.videoHeight * window.devicePixelRatio;
-            this.ctx.drawImage(this.video, 0, 0, this.videoCanvas.width, this.videoCanvas.height);
-        }
-    },
+    if (this.video.readyState >= 2) {  // Video-Daten sind verfügbar
+        // Canvas-Größe an Videoauflösung anpassen unter Berücksichtigung von devicePixelRatio
+        const pixelRatio = window.devicePixelRatio || 1;
+        
+        this.videoCanvas.width = this.video.videoWidth * pixelRatio;
+        this.videoCanvas.height = this.video.videoHeight * pixelRatio;
+
+        // Das Video in der erhöhten Auflösung zeichnen
+        this.ctx.drawImage(this.video, 0, 0, this.videoCanvas.width, this.videoCanvas.height);
+
+        // Stellen Sie sicher, dass der Canvas in CSS immer noch die Größe des Videos hat
+        this.videoCanvas.style.width = `${this.video.videoWidth}px`;
+        this.videoCanvas.style.height = `${this.video.videoHeight}px`;
+    }
+}
+
 
     update: function(oldData) {
         if (!this.data.enable) {
