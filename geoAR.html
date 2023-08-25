@@ -1,24 +1,45 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <script src="https://aframe.io/releases/1.4.0/aframe.min.js"></script>
-    <script src="helper/a-frame-seethrough-component.js"></script>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Frame mit Webcam</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <style>
-      body, a-scene, a-scene canvas {
-        background: transparent !important;
-      }
-
+        /* Der Video-Canvas */
+        #webcam {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -1; /* Stellt sicher, dass er hinter dem A-Frame-Canvas liegt */
+        }
     </style>
-  </head>
-  <body>
-    <a-scene>
-      <a-seethrough vw="1280" vh="720" cam="true" cammode="back"></a-seethrough>
-      <!-- Kamera mit device-orientation Steuerung -->
-      <a-camera position="0 1.75 0" look-controls="enabled: true;"></a-camera>
-      <!-- Würfel -->
-      <a-box position="0 2 -5" rotation="0 45 45" scale="1 1 1" color="red"></a-box>
-      <!-- Dim ambient lighting. -->
-      <a-light type="ambient" color="#222"></a-light>
+</head>
+<body>
+    <video id="webcam" autoplay playsinline muted></video>
+
+    <!-- A-Frame Szene -->
+    <a-scene embedded style="width:100vw; height:100vh;">
+        <a-box position="0 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+        <a-sky color="#ECECEC"></a-sky>
     </a-scene>
-  </body>
+
+    <script>
+        // Zugriff auf die Webcam
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: true })
+                .then(function(stream) {
+                    // Setzt den Video-Stream der Webcam auf das video-Element
+                    const video = document.getElementById('webcam');
+                    video.srcObject = stream;
+                })
+                .catch(function(err) {
+                    console.error("Fehler beim Zugriff auf die Webcam: " + err);
+                });
+        }
+    </script>
+</body>
 </html>
