@@ -16,11 +16,9 @@ Longitude Ziel: <input type="text" id="lonTarget"><br><br>
 <p id="headingResult"></p><br>
 <p id="distanceResult"></p><br>
 <br>
-<button onclick="drawCanvas()">Canvas zeichnen</button>
-<canvas id="myCanvas" width="512" height="512" style="border:1px solid #000;"></canvas>
 </center>
 <script>
-var lat1, lon1, x2, y2;
+var lat1, lon1;
 
 function getLocation() {
   if (navigator.geolocation) {
@@ -96,27 +94,6 @@ function calculateHeadingAndDistance() {
   heading = heading - 20; // magnetischer deklination hier ungefähr 20°
   
   document.getElementById("headingResult").innerHTML = "Das Heading beträgt: " + heading.toFixed(2) + " Grad";
-
-  var thetaRad = toRadians(heading);
-  x2 = distance * Math.sin(thetaRad);
-  y2 = distance * Math.cos(thetaRad);
-}
-  
-function drawCanvas() {
-  var canvas = document.getElementById("myCanvas");
-  var ctx = canvas.getContext("2d");
-
-  var scale = 1; // Anpassen, um sicherzustellen, dass die Punkte ins Canvas passen
-
-  // Ursprungspunkt
-  ctx.fillStyle = "#FF0000";
-  ctx.fillRect(256, 256, 4, 4);
-
-  // Ziel-Punkt
-  ctx.fillStyle = "#00FF00";
-  var scaledX = 256 + x2 * scale;
-  var scaledY = 256 - y2 * scale; // y-Achse ist in Canvas umgekehrt
-  ctx.fillRect(scaledX, scaledY, 4, 4);
 }
 </script>
 
