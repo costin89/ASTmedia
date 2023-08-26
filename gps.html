@@ -78,7 +78,7 @@ function calculateHeadingAndDistance() {
   var lon2 = parseFloat(document.getElementById("lonTarget").value);
 
   var distance = vincentyDistance(lat1, lon1, lat2, lon2);
-  document.getElementById("distanceResult").innerHTML = "Die Distanz beträgt: " + distance.toFixed(2) + " km";
+  document.getElementById("distanceResult").innerHTML = "Die Distanz beträgt: " + distance.toFixed(4) + " km";
 
   // Formel für das Heading (Kurswinkel)
   var dLon = toRadians(lon2 - lon1);
