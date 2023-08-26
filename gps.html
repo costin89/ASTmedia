@@ -1,177 +1,56 @@
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS Koordinaten Zugriff</title>
-    <style>
-        body{
-            background-color: gray;
-            text-align: center; /* Verwenden Sie CSS anstelle des veralteten <center>-Tags */
-        }
-    </style>
+  <title>Geolocation mit Heading</title>
 </head>
 <body>
-    <!-- Bild über den Buttons -->
-    <a href="index.html"><img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300"></a>
-    <br>
-    <label for="latitude">Latitude:</label>
-    <span id="latitude">N/A</span><br>
-    <br><br>
-    <label for="longitude">Longitude:</label>
-    <span id="longitude">N/A</span><br>
-    <br><br>
-    <label for="heading">Heading:</label>
-    <span id="heading">N/A</span>
-    <br><br>
-    <input type="text" id="lat1" placeholder="lat1">
-    <input type="text" id="long1" placeholder="long1">
-    <input type="text" id="lat2" placeholder="lat2">
-    <input type="text" id="long2" placeholder="long2">
-    <br><br>
-    <button onclick="calculateDistances()">Calculate</button><br>
-    <br>
-    <label for="haversine">Haversine Distance:</label>
-    <span id="haversine">N/A</span><br>
-    <br>
-    <label for="vincenty">Vincenty Distance:</label>
-    <span id="vincenty">N/A</span><br>
-    <br>
-    <label for="lambert">Lambert Distance:</label>
-    <span id="lambert">N/A</span>    
+
+<h1>Mein Standort und Ziel</h1>
+<button onclick="getLocation()">Standort abrufen</button>
+<p id="demo"></p>
+
+Latitude Ziel: <input type="text" id="latTarget"><br>
+Longitude Ziel: <input type="text" id="lonTarget"><br>
+<button onclick="calculateHeading()">Heading berechnen</button>
+<p id="headingResult"></p>
+
 <script>
-        // Überprüfen Sie, ob die Geolocation-API verfügbar ist
-        if ("geolocation" in navigator) {
-            // Abonnieren Sie Positionsaktualisierungen
-            navigator.geolocation.watchPosition(function(position) {
-                // Aktualisieren Sie die Labels mit den neuen Daten
-                document.getElementById("latitude").textContent = position.coords.latitude;
-                document.getElementById("longitude").textContent = position.coords.longitude;
-                document.getElementById("heading").textContent = position.coords.heading || 'N/A';
-            }, function(error) {
-                // Fehlerbehandlung
-                alert("Error: " + error.message);
-            }, {
-                enableHighAccuracy: true
-            });
+var lat1, lon1;
 
-            // Überprüfen Sie, ob das Gerät eine Ausrichtung unterstützt
-            if ("ondeviceorientation" in window) {
-                // Abonnieren Sie Ausrichtungsaktualisierungen
-                window.addEventListener("deviceorientation", function(event) {
-                    // Aktualisieren Sie das Label mit der neuen Ausrichtung
-                    document.getElementById("heading").textContent = event.alpha || 'N/A';
-                });
-            }
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-        // Haversine-Formel zur Entfernungsberechnung
-        function haversineDistance(lat1, long1, lat2, long2) {
-            var R = 6371; // Earth radius in km
-            var dLat = (lat2 - lat1) * Math.PI / 180;
-            var dLon = (long2 - long1) * Math.PI / 180;
-            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
-            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c; // Distance in km
-        }
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    document.getElementById("demo").innerHTML = "Geolocation wird von diesem Browser nicht unterstützt.";
+  }
+}
 
-         function vincentyDistance(lat1, lon1, lat2, lon2) {
-            var a = 6378137,
-                f = 1 / 298.257223563,
-                L = (lon2 - lon1) * Math.PI / 180,
-                U1 = Math.atan((1 - f) * Math.tan(lat1 * Math.PI / 180)),
-                U2 = Math.atan((1 - f) * Math.tan(lat2 * Math.PI / 180)),
-                sinU1 = Math.sin(U1),
-                cosU1 = Math.cos(U1),
-                sinU2 = Math.sin(U2),
-                cosU2 = Math.cos(U2),
-                lambda = L,
-                sinLambda, cosLambda;
+function showPosition(position) {
+  lat1 = position.coords.latitude;
+  lon1 = position.coords.longitude;
+  document.getElementById("demo").innerHTML = "Breitengrad: " + lat1 + "<br>Längengrad: " + lon1;
+}
 
-            for (var i = 0; i < 1000; ++i) {
-                sinLambda = Math.sin(lambda);
-                cosLambda = Math.cos(lambda);
-                var sinSigma = Math.sqrt((cosU2 * sinLambda) * (cosU2 * sinLambda) + (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) * (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda));
-                var cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
-                var sigma = Math.atan2(sinSigma, cosSigma);
-                var sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
-                var cos2Alpha = 1 - sinAlpha * sinAlpha;
-                var cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cos2Alpha;
-                var C = f / 16 * cos2Alpha * (4 + f * (4 - 3 * cos2Alpha));
-                var lambdaPrev = lambda;
-                lambda = L + (1 - C) * f * sinAlpha * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
-                if (Math.abs(lambda - lambdaPrev) < 1e-12) {
-                    break;
-                }
-            }
-            var u2 = cos2Alpha * (a * a - (a * (1 - f)) * (a * (1 - f))) / ((a * (1 - f)) * (a * (1 - f)));
-            var A = 1 + u2 / 16384 * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
-            var B = u2 / 1024 * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
-            var deltaSigma = B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)));
-            var s = a * (1 - f) * A * (sigma - deltaSigma);
-            return s / 1000; // Entfernung in Kilometern
-        }
-    
-        // Lambert-Formel zur Entfernungsberechnung
-        function lambertDistance(lat1, lon1, lat2, lon2) {
-            var R = 6378137; // Earth radius in meters
-            lat1 = lat1 * (Math.PI / 180);
-            lon1 = lon1 * (Math.PI / 180);
-            lat2 = lat2 * (Math.PI / 180);
-            lon2 = lon2 * (Math.PI / 180);
+function toRadians(degrees) {
+  return degrees * Math.PI / 180;
+}
 
-            var n = 1 + (Math.sin(lat1) + Math.sin(lat2)) / 2;
-            var F = ((Math.pow(Math.cos(lat1), n)) * Math.exp(n * lon1)) / n;
-            var rho1 = R * F / (Math.pow(Math.cos(lat1), n) * Math.exp(n * lon1));
-            var rho2 = R * F / (Math.pow(Math.cos(lat2), n) * Math.exp(n * lon2));
+function calculateHeading() {
+  var lat2 = parseFloat(document.getElementById("latTarget").value);
+  var lon2 = parseFloat(document.getElementById("lonTarget").value);
 
-            var theta1 = n * (lon2 - lon1);
-            var theta2 = n * (lon2 - lon1);
+  var dLon = toRadians(lon2 - lon1);
 
-            return Math.sqrt(Math.pow((rho2 * Math.cos(theta2) - rho1 * Math.cos(theta1)), 2) + Math.pow((rho2 * Math.sin(theta2) - rho1 * Math.sin(theta1)), 2)) / 1000; // distance in km
-        }
+  var x = Math.sin(dLon) * Math.cos(toRadians(lat2));
+  var y = Math.cos(toRadians(lat1)) * Math.sin(toRadians(lat2)) -
+            Math.sin(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.cos(dLon);
 
-        // Funktion, die bei Klick auf den Button aufgerufen wird
-        function calculateDistances() {
-            var lat1 = parseFloat(document.getElementById("lat1").value);
-            var long1 = parseFloat(document.getElementById("long1").value);
-            var lat2 = parseFloat(document.getElementById("lat2").value);
-            var long2 = parseFloat(document.getElementById("long2").value);
-
-            if (isNaN(lat1) || isNaN(long1) || isNaN(lat2) || isNaN(long2)) {
-                alert('Please enter valid numbers for all latitude and longitude values.');
-                return;
-            }
-
-            var haversine = haversineDistance(lat1, long1, lat2, long2).toFixed(2);
-            var vincenty = vincentyDistance(lat1, long1, lat2, long2).toFixed(2);
-            var lambert = lambertDistance(lat1, long1, lat2, long2).toFixed(2);
-
-            document.getElementById("haversine").textContent = haversine + ' km';
-            document.getElementById("vincenty").textContent = vincenty + ' km';
-            document.getElementById("lambert").textContent = lambert + ' km';
-        }
-    
-        function calculateHeading(lat1, lon1, lat2, lon2) {
-            lat1 = lat1 * Math.PI / 180;
-            lon1 = lon1 * Math.PI / 180;
-            lat2 = lat2 * Math.PI / 180;
-            lon2 = lon2 * Math.PI / 180;
-        
-            var dLon = (lon2 - lon1);
-        
-            var y = Math.sin(dLon) * Math.cos(lat2);
-            var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
-            var theta = Math.atan2(y, x);
-        
-            theta = theta * 180 / Math.PI; // convert to degrees
-            theta = (theta + 360) % 360; // normalize to 0 - 360 degrees
-        
-            return theta;
-    }
+  var heading = Math.atan2(x, y);
+  heading = heading * 180 / Math.PI;
+  heading = (heading + 360) % 360; // Um negative Werte zu vermeiden
+  document.getElementById("headingResult").innerHTML = "Das Heading beträgt: " + heading + " Grad";
+}
 </script>
+
 </body>
 </html>
