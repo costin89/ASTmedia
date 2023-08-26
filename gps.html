@@ -13,7 +13,8 @@ Latitude Ziel: <input type="text" id="latTarget"><br>
 Longitude Ziel: <input type="text" id="lonTarget"><br>
 <button onclick="calculateHeading()">Heading berechnen</button>
 <p id="headingResult"></p>
-
+<p id="distanceResult"></p>
+  
 <script>
 var lat1, lon1;
 
@@ -49,6 +50,17 @@ function calculateHeading() {
   heading = heading * 180 / Math.PI;
   heading = (heading + 360) % 360; // Um negative Werte zu vermeiden
   document.getElementById("headingResult").innerHTML = "Das Heading beträgt: " + heading + " Grad";
+  
+  // Haversine Formel für die Distanz
+  var R = 6371; // Radius der Erde in km
+  var dLat = toRadians(lat2 - lat1);
+  var dLon = toRadians(lon2 - lon1);
+  var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) *
+          Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  var distance = R * c;
+  document.getElementById("distanceResult").innerHTML = "Die Distanz beträgt: " + distance.toFixed(2) + " km";
 }
 </script>
 
