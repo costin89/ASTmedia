@@ -15,44 +15,42 @@
 <!-- Bild über den Buttons -->
 <a href="index.html"><img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300"></a>
 <br>
-<label for="latitude">Latitude: </label><span id="latitude">Warte auf Daten...</span>
+<label for="latitude">Latitude:</label>
+<span id="latitude">N/A</span><br>
 <br><br>
-<label for="longitude">Longitude: </label><span id="longitude">Warte auf Daten...</span>
+<label for="longitude">Longitude:</label>
+<span id="longitude">N/A</span><br>
+<br><br>
+<label for="heading">Heading:</label>
+<span id="heading">N/A</span>
 </center>
 <script>
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(showPosition, showError);
-        } else { 
-            alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
+        // Überprüfen Sie, ob die Geolocation-API verfügbar ist
+        if ("geolocation" in navigator) {
+            // Abonnieren Sie Positionsaktualisierungen
+            navigator.geolocation.watchPosition(function(position) {
+                // Aktualisieren Sie die Labels mit den neuen Daten
+                document.getElementById("latitude").textContent = position.coords.latitude;
+                document.getElementById("longitude").textContent = position.coords.longitude;
+                document.getElementById("heading").textContent = position.coords.heading || 'N/A';
+            }, function(error) {
+                // Fehlerbehandlung
+                alert("Error: " + error.message);
+            }, {
+                enableHighAccuracy: true
+            });
+
+            // Überprüfen Sie, ob das Gerät eine Ausrichtung unterstützt
+            if ("ondeviceorientation" in window) {
+                // Abonnieren Sie Ausrichtungsaktualisierungen
+                window.addEventListener("deviceorientation", function(event) {
+                    // Aktualisieren Sie das Label mit der neuen Ausrichtung
+                    document.getElementById("heading").textContent = event.alpha || 'N/A';
+                });
+            }
+        } else {
+            alert("Geolocation is not supported by this browser.");
         }
-    }
-
-    function showPosition(position) {
-        document.getElementById("latitude").textContent = position.coords.latitude;
-        document.getElementById("longitude").textContent = position.coords.longitude;
-    }
-
-    function showError(error) {
-        switch(error.code) {
-            case error.PERMISSION_DENIED:
-                alert("Benutzer lehnte den Standortzugriff ab.");
-                break;
-            case error.POSITION_UNAVAILABLE:
-                alert("Standortinformationen sind nicht verfügbar.");
-                break;
-            case error.TIMEOUT:
-                alert("Die Anfrage zum Abrufen des Standorts ist abgelaufen.");
-                break;
-            case error.UNKNOWN_ERROR:
-                alert("Ein unbekannter Fehler ist aufgetreten.");
-                break;
-        }
-    }
-
-    // Sofortige Abfrage bei Seitenladung
-    getLocation();
 </script>
-
 </body>
 </html>
