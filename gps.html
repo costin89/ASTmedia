@@ -124,13 +124,18 @@
             var lat2 = parseFloat(document.getElementById("lat2").value);
             var long2 = parseFloat(document.getElementById("long2").value);
 
-            var haversine = haversineDistance(lat1, long1, lat2, long2);
-            var vincenty = vincentyDistance(lat1, long1, lat2, long2);
-            var lambert = lambertDistance(lat1, long1, lat2, long2);
+            if (isNaN(lat1) || isNaN(long1) || isNaN(lat2) || isNaN(long2)) {
+                alert('Please enter valid numbers for all latitude and longitude values.');
+                return;
+            }
 
-            document.getElementById("haversine").textContent = haversine || 'N/A';
-            document.getElementById("vincenty").textContent = vincenty || 'N/A';
-            document.getElementById("lambert").textContent = lambert || 'N/A';
+            var haversine = haversineDistance(lat1, long1, lat2, long2).toFixed(2);
+            var vincenty = vincentyDistance(lat1, long1, lat2, long2).toFixed(2);
+            var lambert = lambertDistance(lat1, long1, lat2, long2).toFixed(2);
+
+            document.getElementById("haversine").textContent = haversine + ' km';
+            document.getElementById("vincenty").textContent = vincenty + ' km';
+            document.getElementById("lambert").textContent = lambert + ' km';
         }
     
         function calculateHeading(lat1, lon1, lat2, lon2) {
