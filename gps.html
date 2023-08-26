@@ -23,6 +23,22 @@
 <br><br>
 <label for="heading">Heading:</label>
 <span id="heading">N/A</span>
+<br><br>
+<input type="text" id="lat1" placeholder="lat1">
+<input type="text" id="long1" placeholder="long1">
+<input type="text" id="lat2" placeholder="lat2">
+<input type="text" id="long2" placeholder="long2">
+<br>
+<button onclick="calculateDistances()">Calculate</button><br>
+<br>
+<label for="haversine">Haversine Distance:</label>
+<span id="haversine">N/A</span><br>
+<br>
+<label for="vincenty">Vincenty Distance:</label>
+<span id="vincenty">N/A</span><br>
+<br>
+<label for="lambert">Lambert Distance:</label>
+<span id="lambert">N/A</span>    
 </center>
 <script>
         // Überprüfen Sie, ob die Geolocation-API verfügbar ist
@@ -50,6 +66,71 @@
             }
         } else {
             alert("Geolocation is not supported by this browser.");
+        }
+        // Haversine-Formel zur Entfernungsberechnung
+        function haversineDistance(lat1, long1, lat2, long2) {
+            var R = 6371; // Earth radius in km
+            var dLat = (lat2 - lat1) * Math.PI / 180;
+            var dLon = (long2 - long1) * Math.PI / 180;
+            var a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c; // Distance in km
+        }
+
+        // Vincenty-Formel zur Entfernungsberechnung
+        var lambda = L, sinLambda, cosLambda;
+        for (var i = 0; i < 1000; ++i) {
+            sinLambda = Math.sin(lambda);
+            cosLambda = Math.cos(lambda);
+            var sinSigma = Math.sqrt((cosU2 * sinLambda) * (cosU2 * sinLambda) + (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) * (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda));
+            var cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
+            var sigma = Math.atan2(sinSigma, cosSigma);
+            var sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
+            var cos2Alpha = 1 - sinAlpha * sinAlpha;
+            var cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cos2Alpha;
+            var C = f / 16 * cos2Alpha * (4 + f * (4 - 3 * cos2Alpha));
+            var LambdaPrev = lambda;
+            lambda = L + (1 - C) * f * sinAlpha * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
+            if (Math.abs(lambda - LambdaPrev) < 1e-12) {
+                break;
+            }
+        }
+    
+        // Lambert-Formel zur Entfernungsberechnung
+        function lambertDistance(lat1, lon1, lat2, lon2) {
+            var R = 6378137; // Earth radius in meters
+            lat1 = lat1 * (Math.PI / 180);
+            lon1 = lon1 * (Math.PI / 180);
+            lat2 = lat2 * (Math.PI / 180);
+            lon2 = lon2 * (Math.PI / 180);
+
+            var n = 1 + (Math.sin(lat1) + Math.sin(lat2)) / 2;
+            var F = ((Math.pow(Math.cos(lat1), n)) * Math.exp(n * lon1)) / n;
+            var rho1 = R * F / (Math.pow(Math.cos(lat1), n) * Math.exp(n * lon1));
+            var rho2 = R * F / (Math.pow(Math.cos(lat2), n) * Math.exp(n * lon2));
+
+            var theta1 = n * (lon2 - lon1);
+            var theta2 = n * (lon2 - lon1);
+
+            return Math.sqrt(Math.pow((rho2 * Math.cos(theta2) - rho1 * Math.cos(theta1)), 2) + Math.pow((rho2 * Math.sin(theta2) - rho1 * Math.sin(theta1)), 2)) / 1000; // distance in km
+        }
+
+        // Funktion, die bei Klick auf den Button aufgerufen wird
+        function calculateDistances() {
+            var lat1 = parseFloat(document.getElementById("lat1").value);
+            var long1 = parseFloat(document.getElementById("long1").value);
+            var lat2 = parseFloat(document.getElementById("lat2").value);
+            var long2 = parseFloat(document.getElementById("long2").value);
+
+            var haversine = haversineDistance(lat1, long1, lat2, long2);
+            var vincenty = vincentyDistance(lat1, long1, lat2, long2);
+            var lambert = lambertDistance(lat1, long1, lat2, long2);
+
+            document.getElementById("haversine").textContent = haversine || 'N/A';
+            document.getElementById("vincenty").textContent = vincenty || 'N/A';
+            document.getElementById("lambert").textContent = lambert || 'N/A';
         }
 </script>
 </body>
