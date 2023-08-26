@@ -89,6 +89,7 @@ function calculateHeadingAndDistance() {
   var heading = Math.atan2(x, y);
   heading = heading * 180 / Math.PI;
   heading = (heading + 360) % 360;
+  heading = heading - 20; // magnetischer deklination hier ungefähr 20°
   
   document.getElementById("headingResult").innerHTML = "Das Heading beträgt: " + heading.toFixed(2) + " Grad";
 }
