@@ -28,7 +28,7 @@
 <input type="text" id="long1" placeholder="long1">
 <input type="text" id="lat2" placeholder="lat2">
 <input type="text" id="long2" placeholder="long2">
-<br>
+<br><br>
 <button onclick="calculateDistances()">Calculate</button><br>
 <br>
 <label for="haversine">Haversine Distance:</label>
@@ -132,6 +132,24 @@
             document.getElementById("vincenty").textContent = vincenty || 'N/A';
             document.getElementById("lambert").textContent = lambert || 'N/A';
         }
+    
+        function calculateHeading(lat1, lon1, lat2, lon2) {
+            lat1 = lat1 * Math.PI / 180;
+            lon1 = lon1 * Math.PI / 180;
+            lat2 = lat2 * Math.PI / 180;
+            lon2 = lon2 * Math.PI / 180;
+        
+            var dLon = (lon2 - lon1);
+        
+            var y = Math.sin(dLon) * Math.cos(lat2);
+            var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
+            var theta = Math.atan2(y, x);
+        
+            theta = theta * 180 / Math.PI; // convert to degrees
+            theta = (theta + 360) % 360; // normalize to 0 - 360 degrees
+        
+            return theta;
+    }
 </script>
 </body>
 </html>
