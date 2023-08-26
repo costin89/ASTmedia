@@ -7,39 +7,38 @@
     <style>
         body{
             background-color: gray;
+            text-align: center; /* Verwenden Sie CSS anstelle des veralteten <center>-Tags */
         }
     </style>
 </head>
 <body>
-<center>
-<!-- Bild über den Buttons -->
-<a href="index.html"><img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300"></a>
-<br>
-<label for="latitude">Latitude:</label>
-<span id="latitude">N/A</span><br>
-<br><br>
-<label for="longitude">Longitude:</label>
-<span id="longitude">N/A</span><br>
-<br><br>
-<label for="heading">Heading:</label>
-<span id="heading">N/A</span>
-<br><br>
-<input type="text" id="lat1" placeholder="lat1">
-<input type="text" id="long1" placeholder="long1">
-<input type="text" id="lat2" placeholder="lat2">
-<input type="text" id="long2" placeholder="long2">
-<br><br>
-<button onclick="calculateDistances()">Calculate</button><br>
-<br>
-<label for="haversine">Haversine Distance:</label>
-<span id="haversine">N/A</span><br>
-<br>
-<label for="vincenty">Vincenty Distance:</label>
-<span id="vincenty">N/A</span><br>
-<br>
-<label for="lambert">Lambert Distance:</label>
-<span id="lambert">N/A</span>    
-</center>
+    <!-- Bild über den Buttons -->
+    <a href="index.html"><img src="img/ASTmedia_logo.png" alt="Bildbeschreibung" width="300"></a>
+    <br>
+    <label for="latitude">Latitude:</label>
+    <span id="latitude">N/A</span><br>
+    <br><br>
+    <label for="longitude">Longitude:</label>
+    <span id="longitude">N/A</span><br>
+    <br><br>
+    <label for="heading">Heading:</label>
+    <span id="heading">N/A</span>
+    <br><br>
+    <input type="text" id="lat1" placeholder="lat1">
+    <input type="text" id="long1" placeholder="long1">
+    <input type="text" id="lat2" placeholder="lat2">
+    <input type="text" id="long2" placeholder="long2">
+    <br><br>
+    <button onclick="calculateDistances()">Calculate</button><br>
+    <br>
+    <label for="haversine">Haversine Distance:</label>
+    <span id="haversine">N/A</span><br>
+    <br>
+    <label for="vincenty">Vincenty Distance:</label>
+    <span id="vincenty">N/A</span><br>
+    <br>
+    <label for="lambert">Lambert Distance:</label>
+    <span id="lambert">N/A</span>    
 <script>
         // Überprüfen Sie, ob die Geolocation-API verfügbar ist
         if ("geolocation" in navigator) {
@@ -79,23 +78,41 @@
             return R * c; // Distance in km
         }
 
-        // Vincenty-Formel zur Entfernungsberechnung
-        var lambda = L, sinLambda, cosLambda;
-        for (var i = 0; i < 1000; ++i) {
-            sinLambda = Math.sin(lambda);
-            cosLambda = Math.cos(lambda);
-            var sinSigma = Math.sqrt((cosU2 * sinLambda) * (cosU2 * sinLambda) + (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) * (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda));
-            var cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
-            var sigma = Math.atan2(sinSigma, cosSigma);
-            var sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
-            var cos2Alpha = 1 - sinAlpha * sinAlpha;
-            var cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cos2Alpha;
-            var C = f / 16 * cos2Alpha * (4 + f * (4 - 3 * cos2Alpha));
-            var LambdaPrev = lambda;
-            lambda = L + (1 - C) * f * sinAlpha * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
-            if (Math.abs(lambda - LambdaPrev) < 1e-12) {
-                break;
+         function vincentyDistance(lat1, lon1, lat2, lon2) {
+            var a = 6378137,
+                f = 1 / 298.257223563,
+                L = (lon2 - lon1) * Math.PI / 180,
+                U1 = Math.atan((1 - f) * Math.tan(lat1 * Math.PI / 180)),
+                U2 = Math.atan((1 - f) * Math.tan(lat2 * Math.PI / 180)),
+                sinU1 = Math.sin(U1),
+                cosU1 = Math.cos(U1),
+                sinU2 = Math.sin(U2),
+                cosU2 = Math.cos(U2),
+                lambda = L,
+                sinLambda, cosLambda;
+
+            for (var i = 0; i < 1000; ++i) {
+                sinLambda = Math.sin(lambda);
+                cosLambda = Math.cos(lambda);
+                var sinSigma = Math.sqrt((cosU2 * sinLambda) * (cosU2 * sinLambda) + (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda) * (cosU1 * sinU2 - sinU1 * cosU2 * cosLambda));
+                var cosSigma = sinU1 * sinU2 + cosU1 * cosU2 * cosLambda;
+                var sigma = Math.atan2(sinSigma, cosSigma);
+                var sinAlpha = cosU1 * cosU2 * sinLambda / sinSigma;
+                var cos2Alpha = 1 - sinAlpha * sinAlpha;
+                var cos2SigmaM = cosSigma - 2 * sinU1 * sinU2 / cos2Alpha;
+                var C = f / 16 * cos2Alpha * (4 + f * (4 - 3 * cos2Alpha));
+                var lambdaPrev = lambda;
+                lambda = L + (1 - C) * f * sinAlpha * (sigma + C * sinSigma * (cos2SigmaM + C * cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM)));
+                if (Math.abs(lambda - lambdaPrev) < 1e-12) {
+                    break;
+                }
             }
+            var u2 = cos2Alpha * (a * a - (a * (1 - f)) * (a * (1 - f))) / ((a * (1 - f)) * (a * (1 - f)));
+            var A = 1 + u2 / 16384 * (4096 + u2 * (-768 + u2 * (320 - 175 * u2)));
+            var B = u2 / 1024 * (256 + u2 * (-128 + u2 * (74 - 47 * u2)));
+            var deltaSigma = B * sinSigma * (cos2SigmaM + B / 4 * (cosSigma * (-1 + 2 * cos2SigmaM * cos2SigmaM) - B / 6 * cos2SigmaM * (-3 + 4 * sinSigma * sinSigma) * (-3 + 4 * cos2SigmaM * cos2SigmaM)));
+            var s = a * (1 - f) * A * (sigma - deltaSigma);
+            return s / 1000; // Entfernung in Kilometern
         }
     
         // Lambert-Formel zur Entfernungsberechnung
