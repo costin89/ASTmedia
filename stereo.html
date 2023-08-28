@@ -1,17 +1,25 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="UTF-8">
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   </head>
   <body>
     <a-scene>
       <!-- Kamera -->
-      <a-camera position="0 1.6 3"></a-camera>
+      <a-camera id="camera" position="0 1.6 3" fov="80">
+        <!-- Ebene -->
+        <a-plane position="0 0 -10" rotation="0 0 0" width="32" height="24" color="grey"></a-plane>
+      </a-camera>
       <!-- Umgebungslicht -->
       <a-light type="ambient" color="#888"></a-light>
+
       <!-- Würfel -->
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-box position="-1 0.5 -3" rotation="0 45 0" color="red"></a-box>
     </a-scene>
+
+    <script>
+    
+    </script> 
   </body>
 </html>
+vr-mode-ui=""
