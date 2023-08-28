@@ -54,11 +54,7 @@
           camera.rotation.y = THREE.Math.degToRad(deviceOrientationHandler.alpha);
           camera.rotation.z = THREE.Math.degToRad(deviceOrientationHandler.gamma);
         }
-
-        // Objekt drehen
-        cube.rotation.x += 0.01;
-        cube.rotation.y += 0.01;
-
+        
         // Erste Hälfte rendern
         renderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
         renderer.setScissor(0, 0, window.innerWidth / 2, window.innerHeight);
