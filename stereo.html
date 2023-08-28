@@ -15,6 +15,7 @@
   <body>
     <script src="https://threejs.org/build/three.js"></script>
     <script src="helper/DeviceOrientation.js"></script>
+    <button id="myButton">Klicken Sie mich!</button>
     <script>
       var scene, camera, renderer;
 
@@ -65,6 +66,16 @@
       }
 
       animate();
+
+      // Füge Event-Listener für den Button hinzu
+      document.addEventListener('DOMContentLoaded', function() {
+        const button = document.getElementById('myButton');
+        
+        button.addEventListener('click', function() {
+          // Führe eine Aktion durch, wenn der Button geklickt wird
+          alert('Button geklickt!');
+        });
+      });
     </script>
   </body>
 </html>
