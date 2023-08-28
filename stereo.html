@@ -40,9 +40,10 @@
       scene.add(cube);
 
       // EventListener um Berechtigung für Geräteorientierung zu beantragen
-      document.addEventListener("click", function() {
-        deviceOrientationHandler.requestPermission();
+      document.getElementById("requestPermissionButton").addEventListener("click", async function() {
+        await deviceOrientationHandler.requestPermission();
       });
+
 
       // Render-Schleife
       function animate() {
