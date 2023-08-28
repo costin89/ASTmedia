@@ -1,79 +1,83 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8" />
-    <title>Three.js Split Screen Example with Transparent Background</title>
-    <style>
-      body {
-        margin: 0;
-      }
-      canvas {
-        display: block;
-      }
-    </style>
+    <meta charset="UTF-8">
+    <title>Device Orientation and Three.js</title>
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="helper/DeviceOrientationHandler.js"></script>
   </head>
   <body>
-    <button onclick="deviceOrientationHandler.requestPermission();">Enable Device Orientation</button>
+
+    <button id="requestPermissionButton">Enable Device Orientation</button>
+
     <script>
+      // Device Orientation Handler Klasse
+      class DeviceOrientationHandler {
+        constructor() {
+          this.alpha = 0;
+          this.beta = 0;
+          this.gamma = 0;
+          this.permissionGranted = false;
+        }
+
+        async requestPermission() {
+          if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
+            try {
+              const permission = await DeviceOrientationEvent.requestPermission();
+              if (permission === 'granted') {
+                this.permissionGranted = true;
+                window.addEventListener('deviceorientation', this.handleOrientation.bind(this));
+              }
+            } catch (error) {
+              console.error('Permission denied:', error);
+            }
+          } else {
+            this.permissionGranted = true;
+            window.addEventListener('deviceorientation', this.handleOrientation.bind(this));
+          }
+        }
+
+        handleOrientation(event) {
+          this.alpha = event.alpha;
+          this.beta = event.beta;
+          this.gamma = event.gamma;
+        }
+      }
+
       const deviceOrientationHandler = new DeviceOrientationHandler();
-      
+      document.getElementById('requestPermissionButton').addEventListener('click', () => deviceOrientationHandler.requestPermission());
+
+      // Three.js Code
       var scene, camera, renderer;
 
-      // Szene erstellen
       scene = new THREE.Scene();
-
-      // Kamera erstellen
       camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
       camera.position.z = 5;
 
-      // Renderer erstellen mit Transparenz
       renderer = new THREE.WebGLRenderer({ alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      // Objekt hinzufügen
       var geometry = new THREE.BoxGeometry();
       var material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
       var cube = new THREE.Mesh(geometry, material);
       scene.add(cube);
 
-      // EventListener um Berechtigung für Geräteorientierung zu beantragen
-      document.getElementById("requestPermissionButton").addEventListener("click", async function() {
-        await deviceOrientationHandler.requestPermission();
-      });
-
-
-      // Render-Schleife
       function animate() {
         requestAnimationFrame(animate);
 
         if (deviceOrientationHandler.permissionGranted) {
-          // Kamera-Drehung entsprechend der Geräteorientierung
           camera.rotation.x = THREE.Math.degToRad(deviceOrientationHandler.beta);
           camera.rotation.y = THREE.Math.degToRad(deviceOrientationHandler.alpha);
-          camera.rotation.z = THREE.Math.degToRad(deviceOrientationHandler.gamma);
         }
-        
-        // Erste Hälfte rendern
-        renderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
-        renderer.setScissor(0, 0, window.innerWidth / 2, window.innerHeight);
-        renderer.setScissorTest(true);
-        camera.aspect = (window.innerWidth / 2) / window.innerHeight; // Aspect-Ratio anpassen
-        camera.updateProjectionMatrix(); // Kamera aktualisieren
-        renderer.render(scene, camera);
-        
-        // Zweite Hälfte rendern
-        renderer.setViewport(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-        renderer.setScissor(window.innerWidth / 2, 0, window.innerWidth / 2, window.innerHeight);
-        renderer.setScissorTest(true);
-        camera.aspect = (window.innerWidth / 2) / window.innerHeight; // Aspect-Ratio bleibt gleich
-        camera.updateProjectionMatrix(); // Kamera aktualisieren
+
+        cube.rotation.x += 0.01;
+        cube.rotation.y += 0.01;
+
         renderer.render(scene, camera);
       }
 
       animate();
     </script>
+
   </body>
 </html>
