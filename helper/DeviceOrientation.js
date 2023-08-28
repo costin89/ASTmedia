@@ -19,21 +19,25 @@ document.addEventListener("DOMContentLoaded", function() {
         deviceOrientation.gamma = event.gamma;
     }
 
-    // Button-Event für die Erlaubnisanforderung
+   // Button-Event für die Erlaubnisanforderung
     requestPermissionButton.addEventListener('click', function() {
         // Erlaubnis anfordern, falls erforderlich (nur für iOS 13+)
         if (typeof DeviceOrientationEvent.requestPermission === 'function') {
             DeviceOrientationEvent.requestPermission()
                 .then(permissionState => {
-                    // Aktualisieren Sie den Teil, in dem die Berechtigung erteilt wird
                     if (permissionState === 'granted') {
                         deviceOrientation.hasPermission = true;
                         window.addEventListener('deviceorientation', handleOrientation, true);
+                    } else {
+                        alert('Berechtigung wurde nicht erteilt.');
                     }
                 })
-                .catch(console.error);
+                .catch(error => {
+                    alert('Ein Fehler ist aufgetreten: ' + error);
+                });
         } else {
             // Für andere Browser einfach den Event-Listener hinzufügen
+            deviceOrientation.hasPermission = true;
             window.addEventListener('deviceorientation', handleOrientation, true);
         }
     });
