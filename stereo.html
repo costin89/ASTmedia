@@ -44,26 +44,27 @@
         const rightContext = rightCanvas.getContext('2d');
 
         async function setupWebcam() {
-        const constraints = {
-            video: {
-                facingMode: {
-                    ideal: 'user', // Frontkamera auf PCs
-                    exact: 'environment' // Hintere Kamera auf Mobilgeräten
+            const constraints = {
+                video: {
+                    facingMode: {
+                        ideal: 'user', // Frontkamera auf PCs
+                        exact: 'environment' // Hintere Kamera auf Mobilgeräten
+                    }
                 }
+            };
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia(constraints);
+                const videoElement = document.createElement('video');
+                videoElement.srcObject = stream;
+                await videoElement.play();
+                
+                return videoElement;
+            } catch (error) {
+                console.error('Webcam setup error:', error);
             }
-        };
-    
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia(constraints);
-            const videoElement = document.createElement('video');
-            videoElement.srcObject = stream;
-            await videoElement.play();
-    
-            return videoElement;
-        } catch (error) {
-            console.error('Webcam setup error:', error);
         }
-    }
+
 
         async function main() {
             const videoElement = await setupWebcam();
