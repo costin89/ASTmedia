@@ -22,13 +22,18 @@
             font-size: 24px;
             padding-top: 20%;
             display: none;
+            z-index: 9999;  /* Setzt den z-index höher als den des Canvas */
+        }
+        button {
+            margin-top: 20px;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
     <div id="permission-popup">
         Bitte aktiviere die Geräteorientierung in den Browsereinstellungen.
-        <button onclick="document.getElementById('permission-popup').style.display='none'">OK</button>
+        <button onclick="document.getElementById('permission-popup').style.display='none'">Bestätigen</button>
     </div>
     <script src="https://threejs.org/build/three.js"></script>
     <script>
@@ -61,6 +66,10 @@
             var gamma = event.gamma ? THREE.MathUtils.degToRad(event.gamma) : 0;
 
             camera.rotation.set(beta, alpha - Math.PI / 2, -gamma);
+        }
+        
+        function closePopup() {
+            document.getElementById('permission-popup').style.display = 'none';
         }
 
         // Event-Listener für Geräteorientierung hinzufügen
