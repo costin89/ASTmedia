@@ -11,10 +11,11 @@
         display: block;
       }
     </style>
-  </head>
-  <body>
     <script src="https://threejs.org/build/three.js"></script>
     <script src="helper/DeviceOrientationHandler.js"></script>
+  </head>
+  <body>
+    <button onclick="deviceOrientationHandler.requestPermission();">Enable Device Orientation</button>
     <script>
       const deviceOrientationHandler = new DeviceOrientationHandler();
       
