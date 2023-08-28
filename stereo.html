@@ -14,7 +14,10 @@
   </head>
   <body>
     <script src="https://threejs.org/build/three.js"></script>
+    <script src="helper/DeviceOrientationHandler.js"></script>
     <script>
+      const deviceOrientationHandler = new DeviceOrientationHandler();
+      
       var scene, camera, renderer;
 
       // Szene erstellen
@@ -35,9 +38,21 @@
       var cube = new THREE.Mesh(geometry, material);
       scene.add(cube);
 
+      // EventListener um Berechtigung für Geräteorientierung zu beantragen
+      document.addEventListener("click", function() {
+        deviceOrientationHandler.requestPermission();
+      });
+
       // Render-Schleife
       function animate() {
         requestAnimationFrame(animate);
+
+        if (deviceOrientationHandler.permissionGranted) {
+          // Kamera-Drehung entsprechend der Geräteorientierung
+          camera.rotation.x = THREE.Math.degToRad(deviceOrientationHandler.beta);
+          camera.rotation.y = THREE.Math.degToRad(deviceOrientationHandler.alpha);
+          camera.rotation.z = THREE.Math.degToRad(deviceOrientationHandler.gamma);
+        }
 
         // Objekt drehen
         cube.rotation.x += 0.01;
