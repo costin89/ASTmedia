@@ -1,4 +1,3 @@
-// script.js
 document.addEventListener("DOMContentLoaded", function() {
     const alphaLabel = document.getElementById('alphaLabel');
     const betaLabel = document.getElementById('betaLabel');
@@ -18,18 +17,17 @@ document.addEventListener("DOMContentLoaded", function() {
         deviceOrientation.beta = event.beta;
         deviceOrientation.gamma = event.gamma;
     }
-
-   // Button-Event für die Erlaubnisanforderung
+    
     requestPermissionButton.addEventListener('click', function() {
         // Erlaubnis anfordern, falls erforderlich (nur für iOS 13+)
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        if (DeviceOrientationEvent.requestPermission && typeof DeviceOrientationEvent.requestPermission === 'function') {
             DeviceOrientationEvent.requestPermission()
                 .then(permissionState => {
                     if (permissionState === 'granted') {
                         deviceOrientation.hasPermission = true;
                         window.addEventListener('deviceorientation', handleOrientation, true);
                     } else {
-                        alert('Berechtigung wurde nicht erteilt.');
+                        alert('Berechtigung nicht erteilt');
                     }
                 })
                 .catch(error => {
@@ -41,4 +39,5 @@ document.addEventListener("DOMContentLoaded", function() {
             window.addEventListener('deviceorientation', handleOrientation, true);
         }
     });
+
 });
