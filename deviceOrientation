@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Device Orientation</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+<body>
+    <label id="alphaLabel">Alpha: </label>
+    <label id="betaLabel">Beta: </label>
+    <label id="gammaLabel">Gamma: </label>
+    <button id="requestPermission">Erlaubnis anfordern</button>
+    
+    <script src="helper/DeviceOrientationHandler.js"></script>
+</body>
+</html>
