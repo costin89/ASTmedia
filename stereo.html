@@ -14,8 +14,6 @@
   </head>
   <body>
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="helper/DeviceOrientation.js"></script>
-    <button id="myButton">Klicken Sie mich!</button>
     <script>
       var scene, camera, renderer;
 
@@ -41,12 +39,6 @@
       function animate() {
         requestAnimationFrame(animate);
 
-        if (deviceOrientation.hasPermission) {
-          cube.rotation.x = THREE.MathUtils.degToRad(deviceOrientation.alpha);
-          cube.rotation.y = THREE.MathUtils.degToRad(deviceOrientation.beta);
-          cube.rotation.z = THREE.MathUtils.degToRad(deviceOrientation.gamma);
-        }
-        
         // Erste Hälfte rendern
         renderer.setViewport(0, 0, window.innerWidth / 2, window.innerHeight);
         renderer.setScissor(0, 0, window.innerWidth / 2, window.innerHeight);
@@ -66,16 +58,6 @@
       }
 
       animate();
-
-      // Füge Event-Listener für den Button hinzu
-      document.addEventListener('DOMContentLoaded', function() {
-        const button = document.getElementById('myButton');
-        
-        button.addEventListener('click', function() {
-          // Führe eine Aktion durch, wenn der Button geklickt wird
-          alert('Button geklickt!');
-        });
-      });
     </script>
   </body>
 </html>
