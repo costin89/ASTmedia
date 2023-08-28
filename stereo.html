@@ -14,7 +14,7 @@
   </head>
   <body>
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="helper/"></script>
+    <script src="helper/DeviceOrientation.js"></script>
     <script>
       var scene, camera, renderer;
 
@@ -39,6 +39,12 @@
       // Render-Schleife
       function animate() {
         requestAnimationFrame(animate);
+
+        if (deviceOrientation.hasPermission) {
+          cube.rotation.x = THREE.MathUtils.degToRad(deviceOrientation.alpha);
+          cube.rotation.y = THREE.MathUtils.degToRad(deviceOrientation.beta);
+          cube.rotation.z = THREE.MathUtils.degToRad(deviceOrientation.gamma);
+        }
 
         // Objekt drehen
         cube.rotation.x += 0.01;
