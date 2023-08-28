@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: row;
+        }
+
+        #sidebar {
+            display: none;
+        }
+
+        canvas {
+            display: block;
+        }
+
+        #fullscreenButton {
+            position: absolute;
+            z-index: 2;
+            top: 20px;
+            right: 20px;
+        }
+    </style>
+    <title>Webcam Stream in Canvas</title>
+</head>
+<body>
+    <center>
+    <button id="fullscreenButton">FULLSCREEN</button>
+    </center>
+    <div id="sidebar">
+        <!-- Sidebar content goes here -->
+    </div>
+    <canvas id="leftCanvas"></canvas>
+    <canvas id="rightCanvas"></canvas>
+    <script>
+        const leftCanvas = document.getElementById('leftCanvas');
+        const rightCanvas = document.getElementById('rightCanvas');
+        const leftContext = leftCanvas.getContext('2d');
+        const rightContext = rightCanvas.getContext('2d');
+
+        async function setupWebcam() {
+            const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            const videoElement = document.createElement('video');
+            videoElement.srcObject = stream;
+            await videoElement.play();
+
+            return videoElement;
+        }
+
+        async function main() {
+            const videoElement = await setupWebcam();
+            
+            const updateCanvas = () => {
+                // Adjust canvas size to window size
+                const windowWidth = window.innerWidth;
+                const windowHeight = window.innerHeight;
+                leftCanvas.width = windowWidth / 2;
+                leftCanvas.height = windowHeight;
+                rightCanvas.width = windowWidth / 2;
+                rightCanvas.height = windowHeight;
+
+                leftContext.drawImage(videoElement, 0, 0, leftCanvas.width, leftCanvas.height);
+                const videoFrame = leftContext.getImageData(0, 0, leftCanvas.width, leftCanvas.height);
+
+                // Shift video frame to the left by 15 pixels
+                rightContext.clearRect(0, 0, rightCanvas.width, rightCanvas.height);
+                rightContext.putImageData(videoFrame, -15, 0);
+
+                requestAnimationFrame(updateCanvas);
+            };
+
+            updateCanvas();
+
+            const fullscreenButton = document.getElementById('fullscreenButton');
+            fullscreenButton.addEventListener('click', () => {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                }
+            });
+        }
+
+        main();
+    </script>
+</body>
+</html>
