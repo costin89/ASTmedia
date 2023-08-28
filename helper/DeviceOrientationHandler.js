@@ -7,12 +7,16 @@ class DeviceOrientationHandler {
   }
 
   async requestPermission() {
-    if ('DeviceOrientationEvent' in window) {
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
       const permission = await DeviceOrientationEvent.requestPermission();
       if (permission === 'granted') {
         this.permissionGranted = true;
-        window.addEventListener("deviceorientation", this.handleOrientation.bind(this));
+        window.addEventListener("deviceorientation", this.handleOrientation.bind(this), true);
       }
+    } else {
+      // Für Browser, die keine Berechtigungen benötigen
+      this.permissionGranted = true;
+      window.addEventListener("deviceorientation", this.handleOrientation.bind(this), true);
     }
   }
 
