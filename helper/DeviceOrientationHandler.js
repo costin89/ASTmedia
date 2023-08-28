@@ -1,35 +1,34 @@
-class DeviceOrientationHandler {
-  constructor() {
-    this.alpha = 0;
-    this.beta = 0;
-    this.gamma = 0;
-    this.permissionGranted = false;
-  }
+// script.js
+document.addEventListener("DOMContentLoaded", function() {
+    const alphaLabel = document.getElementById('alphaLabel');
+    const betaLabel = document.getElementById('betaLabel');
+    const gammaLabel = document.getElementById('gammaLabel');
+    const requestPermissionButton = document.getElementById('requestPermission');
 
-  async requestPermission() {
-    if (window.DeviceOrientationEvent && typeof DeviceOrientationEvent.requestPermission === 'function') {
-      try {
-        const permission = await DeviceOrientationEvent.requestPermission();
-        if (permission === 'granted') {
-          this.permissionGranted = true;
-          window.addEventListener('deviceorientation', this.handleOrientation.bind(this));
-        }
-      } catch (error) {
-        console.error('Permission denied:', error);
-      }
-    } else {
-      // Für Browser, die keine Berechtigungen benötigen
-      this.permissionGranted = true;
-      window.addEventListener('deviceorientation', this.handleOrientation.bind(this));
+    function handleOrientation(event) {
+        const alpha = event.alpha;
+        const beta = event.beta;
+        const gamma = event.gamma;
+
+        alphaLabel.textContent = `Alpha: ${alpha}`;
+        betaLabel.textContent = `Beta: ${beta}`;
+        gammaLabel.textContent = `Gamma: ${gamma}`;
     }
-  }
 
-  handleOrientation(event) {
-    this.alpha = event.alpha;
-    this.beta = event.beta;
-    this.gamma = event.gamma;
-  }
-}
-
-const deviceOrientationHandler = new DeviceOrientationHandler();
-document.getElementById('requestPermissionButton').addEventListener('click', () => deviceOrientationHandler.requestPermission());
+    // Button-Event für die Erlaubnisanforderung
+    requestPermissionButton.addEventListener('click', function() {
+        // Erlaubnis anfordern, falls erforderlich (nur für iOS 13+)
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+                .then(permissionState => {
+                    if (permissionState === 'granted') {
+                        window.addEventListener('deviceorientation', handleOrientation, true);
+                    }
+                })
+                .catch(console.error);
+        } else {
+            // Für andere Browser einfach den Event-Listener hinzufügen
+            window.addEventListener('deviceorientation', handleOrientation, true);
+        }
+    });
+});
