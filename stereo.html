@@ -29,14 +29,13 @@
     <title>Webcam Stream in Canvas</title>
 </head>
 <body>
-    <center>
-    <button id="fullscreenButton">FULLSCREEN</button>
-    </center>
     <div id="sidebar">
         <!-- Sidebar content goes here -->
     </div>
     <canvas id="leftCanvas"></canvas>
     <canvas id="rightCanvas"></canvas>
+    <button id="fullscreenButton">Vollbildmodus aktivieren</button>
+
     <script>
         const leftCanvas = document.getElementById('leftCanvas');
         const rightCanvas = document.getElementById('rightCanvas');
@@ -65,10 +64,10 @@
             }
         }
 
-
         async function main() {
             const videoElement = await setupWebcam();
-            
+            if (!videoElement) return;
+
             const updateCanvas = () => {
                 // Adjust canvas size to window size
                 const windowWidth = window.innerWidth;
