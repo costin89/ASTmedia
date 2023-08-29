@@ -5,10 +5,8 @@ AFRAME.registerComponent('geo-locator', {
     longitude: { type: 'number', default: 0.0 },
     deviation: { type: 'number', default: 0.0 }
   },
-
+  
   init: function() {
-    this.deviceHeading = 0.0;
-
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
         this.onGeoSuccess.bind(this),
@@ -20,14 +18,8 @@ AFRAME.registerComponent('geo-locator', {
     } else {
       console.warn("Geolocation is not available in this browser.");
     }
-
-    if (window.DeviceOrientationEvent) {
-      window.addEventListener('deviceorientation', this.onDeviceOrientation.bind(this));
-    } else {
-      console.warn("DeviceOrientation is not available in this browser.");
-    }
   },
-
+  
   onGeoSuccess: function(position) {
     const userLat = position.coords.latitude;
     const userLong = position.coords.longitude;
@@ -35,18 +27,14 @@ AFRAME.registerComponent('geo-locator', {
     const targetLong = this.data.longitude;
 
     const distance = this.computeHaversineDistance(userLat, userLong, targetLat, targetLong);
-    let heading = this.computeHeading(userLat, userLong, targetLat, targetLong) - this.data.deviation - this.deviceHeading;
-    
+    let heading = this.computeHeading(userLat, userLong, targetLat, targetLong) - this.data.deviation;
     const coords = this.convertToAFrameCoords(distance, heading);
+
     this.el.setAttribute('position', {x: coords.x, y: 0, z: coords.z});
   },
 
   onGeoError: function(error) {
     console.warn('Geolocation error: ', error);
-  },
-
-  onDeviceOrientation: function(event) {
-    this.deviceHeading = event.alpha;
   },
 
   computeHaversineDistance: function(lat1, lon1, lat2, lon2) {
