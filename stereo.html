@@ -13,6 +13,8 @@
     </style>
   </head>
   <body>
+    <!-- Button hinzufügen -->
+    <button id="requestPermissionButton">Erlaubnis für Gyroskop-Zugriff anfordern</button>
     <script src="https://threejs.org/build/three.js"></script>
     <script src="helper/DeviceOrientationControls.js"></script>
     <script>
@@ -71,6 +73,28 @@
         camera.updateProjectionMatrix();
       
         renderer.setSize(newWidth, newHeight);
+      });
+      // Event-Handler für den Button
+      document.getElementById("requestPermissionButton").addEventListener("click", function () {
+        if (typeof DeviceOrientationEvent.requestPermission === "function") {
+          DeviceOrientationEvent.requestPermission()
+            .then((response) => {
+              if (response === "granted") {
+                // Jetzt können Sie die DeviceOrientationControls aktivieren
+                // (oder was immer Sie tun möchten, sobald die Berechtigung erteilt ist)
+                // z.B.: controls.enabled = true;
+              } else {
+                // Der Benutzer hat den Zugriff verweigert
+                alert("Zugriff auf Gyroskop verweigert.");
+              }
+            })
+            .catch((error) => {
+              console.error("Ein Fehler ist aufgetreten:", error);
+            });
+        } else {
+          // Die API DeviceOrientationEvent.requestPermission() ist nicht verfügbar
+          // Sie können hier Fallback-Code einfügen
+        }
       });
       animate();
     </script>
