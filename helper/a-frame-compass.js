@@ -9,9 +9,14 @@ AFRAME.registerComponent('a-comp', {
     const el = this.el;
 
     const setRotation = (alpha, beta, gamma) => {
-      if (alpha !== null) {
-        el.setAttribute('rotation', {y: 360 - alpha});
-        el.setAttribute('a-comp', {alpha, beta, gamma});
+      let correctedAlpha = alpha;
+      const orientation = window.orientation;
+      if (orientation === 90 || orientation === -90) {
+        correctedAlpha = (alpha + 90) % 360;
+      }
+      if (correctedAlpha !== null) {
+        el.setAttribute('rotation', {y: 360 - correctedAlpha});
+        el.setAttribute('a-comp', {alpha: correctedAlpha, beta, gamma});
       }
     };
 
