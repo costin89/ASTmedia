@@ -1,26 +1,22 @@
 // a-frame-geolocator.js
-
-AFRAME.registerComponent('a-geo-comp', {
+AFRAME.registerComponent('geo-locator', {
   schema: {
     latitude: { type: 'number', default: 0.0 },
     longitude: { type: 'number', default: 0.0 },
-    deviation: { type: 'number', default: 0.0 },
-    gps: { type: 'boolean', default: false }
+    deviation: { type: 'number', default: 0.0 }
   },
 
   init: function() {
-    if (this.data.gps) {
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          position => this.onGeoSuccess(position),
-          error => this.onGeoError(error),
-          {
-            enableHighAccuracy: true
-          }
-        );
-      } else {
-        console.warn("Geolocation is not available in this browser");
-      }
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        this.onGeoSuccess.bind(this),
+        this.onGeoError.bind(this),
+        {
+          enableHighAccuracy: true
+        }
+      );
+    } else {
+      console.warn("Geolocation is not available in this browser.");
     }
   },
 
