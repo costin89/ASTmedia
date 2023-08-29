@@ -30,8 +30,8 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
 
-      // DeviceOrientationControls hinzufügen
-      controls = new THREE.DeviceOrientationControls(camera);
+      // DeviceOrientationControls instanzieren
+      const controls = new THREE.DeviceOrientationControls(camera);
       
       // Objekt hinzufügen
       var geometry = new THREE.BoxGeometry();
@@ -43,7 +43,7 @@
       function animate() {
         requestAnimationFrame(animate);
 
-        // Update Controls
+        // Aktualisieren der DeviceOrientationControls
         controls.update();
 
         // Kamera-Seitenverhältnis und Projektionsmatrix aktualisieren
@@ -62,7 +62,16 @@
         renderer.setScissorTest(true);
         renderer.render(scene, camera);
       }
-
+      // Fenstergrößenänderungen abfangen
+      window.addEventListener('resize', () => {
+        const newWidth = window.innerWidth;
+        const newHeight = window.innerHeight;
+      
+        camera.aspect = newWidth / newHeight;
+        camera.updateProjectionMatrix();
+      
+        renderer.setSize(newWidth, newHeight);
+      });
       animate();
     </script>
   </body>
