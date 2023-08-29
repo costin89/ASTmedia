@@ -16,7 +16,6 @@
     <!-- Button hinzufügen -->
     <button id="requestPermissionButton">Erlaubnis für Gyroskop-Zugriff anfordern</button>
     <script src="https://threejs.org/build/three.js"></script>
-    <script src="helper/DeviceOrientationControls.js"></script>
     <script>
       var scene, camera, renderer, controls;
 
@@ -31,9 +30,6 @@
       renderer = new THREE.WebGLRenderer({ alpha: true });
       renderer.setSize(window.innerWidth, window.innerHeight);
       document.body.appendChild(renderer.domElement);
-
-      // DeviceOrientationControls instanzieren
-      const controls = new THREE.DeviceOrientationControls(camera);
       
       // Objekt hinzufügen
       var geometry = new THREE.BoxGeometry();
@@ -44,9 +40,6 @@
       // Render-Schleife
       function animate() {
         requestAnimationFrame(animate);
-
-        // Aktualisieren der DeviceOrientationControls
-        controls.update();
 
         // Kamera-Seitenverhältnis und Projektionsmatrix aktualisieren
         camera.aspect = (window.innerWidth / 2) / window.innerHeight;
@@ -64,39 +57,6 @@
         renderer.setScissorTest(true);
         renderer.render(scene, camera);
       }
-      // Fenstergrößenänderungen abfangen
-      window.addEventListener('resize', () => {
-        const newWidth = window.innerWidth;
-        const newHeight = window.innerHeight;
-      
-        camera.aspect = newWidth / newHeight;
-        camera.updateProjectionMatrix();
-      
-        renderer.setSize(newWidth, newHeight);
-      });
-      // Event-Handler für den Button
-      document.getElementById("requestPermissionButton").addEventListener("click", function () {
-        if (typeof DeviceOrientationEvent.requestPermission === "function") {
-          DeviceOrientationEvent.requestPermission()
-            .then((response) => {
-              if (response === "granted") {
-                controls.enabled = true;
-                // Jetzt können Sie die DeviceOrientationControls aktivieren
-                // (oder was immer Sie tun möchten, sobald die Berechtigung erteilt ist)
-                // z.B.: controls.enabled = true;
-              } else {
-                // Der Benutzer hat den Zugriff verweigert
-                alert("Zugriff auf Gyroskop verweigert.");
-              }
-            })
-            .catch((error) => {
-              console.error("Ein Fehler ist aufgetreten:", error);
-            });
-        } else {
-          // Die API DeviceOrientationEvent.requestPermission() ist nicht verfügbar
-          // Sie können hier Fallback-Code einfügen
-        }
-      });
       animate();
     </script>
   </body>
