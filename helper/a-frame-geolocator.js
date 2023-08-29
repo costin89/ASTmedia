@@ -66,7 +66,7 @@ AFRAME.registerComponent('geo-locator', {
   convertToAFrameCoords: function(distance, heading) {
     const x = distance * Math.sin(this.toRadians(heading));
     const z = distance * Math.cos(this.toRadians(heading));
-    return { x: x, z: -z };
+    return { x: x, z: z };
   }
 });
 
