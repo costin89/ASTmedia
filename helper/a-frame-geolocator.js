@@ -5,7 +5,7 @@ AFRAME.registerComponent('geo-locator', {
     longitude: { type: 'number', default: 0.0 },
     deviation: { type: 'number', default: 0.0 }
   },
-
+  
   init: function() {
     if ("geolocation" in navigator) {
       navigator.geolocation.getCurrentPosition(
@@ -19,7 +19,7 @@ AFRAME.registerComponent('geo-locator', {
       console.warn("Geolocation is not available in this browser.");
     }
   },
-
+  
   onGeoSuccess: function(position) {
     const userLat = position.coords.latitude;
     const userLong = position.coords.longitude;
@@ -30,7 +30,7 @@ AFRAME.registerComponent('geo-locator', {
     let heading = this.computeHeading(userLat, userLong, targetLat, targetLong) - this.data.deviation;
     const coords = this.convertToAFrameCoords(distance, heading);
 
-    this.el.object3D.position.set(coords.x, 0, coords.z);
+    this.el.setAttribute('position', {x: coords.x, y: 0, z: coords.z});
   },
 
   onGeoError: function(error) {
@@ -72,6 +72,11 @@ AFRAME.registerComponent('geo-locator', {
 
 AFRAME.registerPrimitive('a-geo', {
   defaultComponents: {
-    'a-geo-comp': {}
+    'geo-locator': {},
+  },
+  mappings: {
+    latitude: 'geo-locator.latitude',
+    longitude: 'geo-locator.longitude',
+    deviation: 'geo-locator.deviation'
   }
 });
