@@ -1,59 +1,14 @@
+<!-- index.html -->
 <!DOCTYPE html>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Video Canvas</title>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <style>
-        /* Stil für ein fensterfüllendes Video */
-        #video {
-            width: 100vw; 
-            height: 100vh;
-            object-fit: cover;
-            z-index: -1;
-        }
-    </style>
-</head>
-<body>
-    <video id="video" autoplay playsinline></video>
-    <a-scene renderer="alpha: true">
-        <!-- Kamera mit device-orientation Steuerung -->
-        <a-camera look-controls="enabled: false;"></a-camera>
-        <!-- Würfel -->
-        <a-box position="0 1.5 -3" rotation="0 45 45" color="#4CC3D9"></a-box>
+<html>
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="helper/a-frame-geolocator.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-geo latitude="48.8566" longitude="2.3522" deviation="10" gps="true"></a-geo>
+        <a-box color="tomato" depth="2" height="4" width="0.5"></a-box>
     </a-scene>
-    <script>
-        const videoElement = document.getElementById('video');
-
-        // Funktion, um zu überprüfen, ob der Benutzer ein Mobilgerät verwendet
-        function isMobileDevice() {
-            return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-        }
-
-        // Entscheidung für Constraints basierend auf Gerätetyp
-        let constraints;
-        if (isMobileDevice()) {
-            constraints = {
-                video: {
-                    facingMode: 'environment'
-                }
-            };
-        } 
-
-        // Stream der Kamera erhalten
-        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia(constraints)
-                .then(stream => {
-                    videoElement.srcObject = stream;
-                    videoElement.play();
-                })
-                .catch(error => {
-                    console.error("Es gab einen Fehler beim Zugriff auf die Kamera:", error);
-                });
-        } else {
-            alert("Ihr Browser unterstützt die MediaDevices-API nicht.");
-        }
-    </script>
-</body>
+  </body>
 </html>
