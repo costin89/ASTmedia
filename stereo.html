@@ -80,6 +80,7 @@
           DeviceOrientationEvent.requestPermission()
             .then((response) => {
               if (response === "granted") {
+                controls.enabled = true;
                 // Jetzt können Sie die DeviceOrientationControls aktivieren
                 // (oder was immer Sie tun möchten, sobald die Berechtigung erteilt ist)
                 // z.B.: controls.enabled = true;
