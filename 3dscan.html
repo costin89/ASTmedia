@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+		<title>Webcam Processing</title>
+		<style>
+			canvas {
+				max-width: 100%;
+				height: auto;
+			}
+		</style>
+	</head>
+	<body>
+		<h1>Webcam Processing</h1>
+		<video id="video" autoplay style="display:none;"></video>
+		<canvas id="canvas" width="640" height="480"></canvas>
+		
+		<script src="cam.js"></script>
+		<script src="gray.js"></script>
+		<script src="sobel.js"></script>
+		<script src="binary.js"></script>
+		<script src="main.js"></script>
+	</body>
+</html>
