@@ -2,16 +2,11 @@ document.addEventListener("DOMContentLoaded", function() {
   const video = document.getElementById('video');
   const canvas = document.getElementById('canvas');
   const webcam = new Webcam(video, canvas);
-
-  document.addEventListener("DOMContentLoaded", function() {
-    const video = document.getElementById('video');
-    const canvas = document.getElementById('canvas');
-    const webcam = new Webcam(video, canvas);
-    
-    webcam.init().then(() => {
-      video.addEventListener('loadedmetadata', () => {
-        webcam.adjustVideoSize();
-      });
+  
+  webcam.init().then(() => {
+    video.addEventListener('loadedmetadata', () => {
+      webcam.adjustVideoSize();
+    });
     setInterval(() => {
       let imageData = webcam.captureFrame();
       
