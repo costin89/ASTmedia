@@ -29,7 +29,7 @@ class Cam {
         Gray.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height);
         
         // Anwendung des bilateralen Filters
-        Bilateral.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height, 5, 50);
+        //Bilateral.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height, 5, 50);
 
         // Anwendung des Blurs
         //Blur.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height, 2);
