@@ -26,7 +26,7 @@ class Cam {
         this.ctx.drawImage(this.video, 0, 0, this.canvas.width, this.canvas.height);
         
         // Anwendung der Graustufen-Transformation
-        Gray.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height);
+        //Gray.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height);
         
         // Anwendung des bilateralen Filters
         //Bilateral.applyToCanvasContext(this.ctx, this.canvas.width, this.canvas.height, 5, 50);
