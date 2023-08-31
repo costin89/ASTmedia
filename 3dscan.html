@@ -1,25 +1,20 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-		<title>Webcam Processing</title>
-		<style>
-			canvas {
-				max-width: 100%;
-				height: auto;
-			}
-		</style>
-	</head>
-	<body>
-		<h1>Webcam Processing</h1>
-		<video id="video" autoplay style="display:none;"></video>
-		<canvas id="canvas" width="360" height="640"></canvas>
-		
-		<script src="helper/3dscan/cam.js"></script>
-		<script src="helper/3dscan/gray.js"></script>
-		<script src="helper/3dscan/sobel.js"></script>
-		<script src="helper/3dscan/binary.js"></script>
-		<script src="helper/3dscan/3dscan.js"></script>
-	</body>
+<head>
+    <title>Environment Cam to Canvas</title>
+</head>
+<body>
+    <canvas id="myCanvas"></canvas>
+    <script src="helper/3dscan/cam.js"></script>
+    <script src="helper/3dscan/gray.js"></script>
+    <script src="helper/3dscan/blur.js"></script>
+    <script src="helper/3dscan/canny.js"></script>
+    <script src="helper/3dscan/hough.js"></script>
+    <script src="helper/3dscan/bilateral.js"></script>
+    <script>
+        window.addEventListener('load', () => {
+            const cam = new Cam('myCanvas');
+        });
+    </script>
+</body>
 </html>
