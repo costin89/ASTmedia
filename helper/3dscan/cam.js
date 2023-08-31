@@ -32,7 +32,8 @@ class Webcam {
   
   adjustVideoSize() {
     const aspectRatio = this.videoElement.videoWidth / this.videoElement.videoHeight;
-    this.videoElement.width = this.canvasElement.width;
-    this.videoElement.height = Math.round(this.canvasElement.width / aspectRatio);
+    this.videoElement.height = this.canvasElement.height;
+    this.videoElement.width = Math.round(this.canvasElement.height * aspectRatio);
+    this.canvasElement.width = this.videoElement.width; // Stellen Sie sicher, dass der Canvas die gleiche Größe wie das Video hat
   }
 }
