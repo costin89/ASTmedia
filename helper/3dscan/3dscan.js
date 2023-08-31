@@ -12,11 +12,11 @@ document.addEventListener("DOMContentLoaded", function() {
       
       GrayFilter.applyFilter(webcam.context, imageData);
       imageData = webcam.captureFrame();
-
-      SobelFilter.applyFilter(webcam.context, imageData);
-      imageData = webcam.captureFrame();
       
       BinaryFilter.applyFilter(webcam.context, imageData);
+      imageData = webcam.captureFrame();
+      
+      SobelFilter.applyFilter(webcam.context, imageData);
     }, 50);
   }).catch(error => {
     console.error("Webcam initialization failed:", error);
