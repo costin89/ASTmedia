@@ -4,8 +4,8 @@ class Cam {
         this.ctx = this.canvas.getContext('2d');
         
         // Größe des Canvas an den Bildschirm anpassen
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
+        this.canvas.width = 640;//window.innerWidth;
+        this.canvas.height = 480;//window.innerHeight;
 
         navigator.mediaDevices.getUserMedia({ video: true }).then((stream) => {
             this.video = document.createElement('video');
