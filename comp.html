@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Kompass mit Canvas</title>
+  <style>
+    canvas {
+      border: 1px solid black;
+    }
+    #permission-popup {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+    #permission-popup h1, #permission-popup button {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="permission-popup">
+    <h1>Bitte erteilen Sie die Berechtigung für den Zugriff auf die Device Orientation</h1>
+    <button onclick="requestPermission()">Erlauben</button>
+  </div>
+
+  <h1>Kompass</h1>
+  <canvas id="canvas" width="400" height="400"></canvas>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    const permissionPopup = document.getElementById('permission-popup');
+
+    function drawArrow(angle) {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.save();
+      ctx.translate(200, 200);
+      ctx.rotate(angle * Math.PI / 180);
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.lineTo(100, 0);
+      ctx.lineTo(80, 20);
+      ctx.moveTo(100, 0);
+      ctx.lineTo(80, -20);
+      ctx.lineWidth = 5;
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    function requestPermission() {
+      // Das Popup ausblenden
+      permissionPopup.style.display = 'none';
+
+      window.addEventListener('deviceorientation', (event) => {
+        const angle = event.alpha;
+        drawArrow(angle);
+      });
+    }
+  </script>
+
+</body>
+</html>
