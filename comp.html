@@ -20,17 +20,19 @@
     function handleOrientation(event) {
       var compassHeading = 0;
       var absoluteAngle = event.alpha;
+      var windowOrientation = window.orientation || 0;
 
       if (event.webkitCompassHeading) {
         // für iOS/Safari
-        compassHeading = event.webkitCompassHeading;
+        compassHeading = event.webkitCompassHeading - windowOrientation;
       } else if (event.alpha !== null) {
         // für Android/andere Browser
-        compassHeading = 360 - event.alpha;
+        compassHeading = 360 - event.alpha - windowOrientation;
       }
 
       document.getElementById("status").innerHTML = "Kompassrichtung: " + compassHeading.toFixed(2) + " Grad";
       document.getElementById("absolute").innerHTML = "Absoluter Winkel: " + absoluteAngle.toFixed(2) + " Grad";
+      document.getElementById("windowOrientation").innerHTML = "Fenster Orientierung: " + windowOrientation + " Grad";
     }
   </script>
 </head>
@@ -38,5 +40,6 @@
   <h1>Kompass Beispiel</h1>
   <p id="status">Warte auf Kompassdaten...</p>
   <p id="absolute">Warte auf absoluten Winkel...</p>
+  <p id="windowOrientation">Warte auf Fensterausrichtung...</p>
 </body>
 </html>
