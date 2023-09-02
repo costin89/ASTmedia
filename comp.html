@@ -1,59 +1,59 @@
 <!DOCTYPE html>
 <html>
-<head>
-  <title>Kompass App</title>
-  <style>
-    #kompass {
-      width: 200px;
-      height: 200px;
-      border: 10px solid #000;
-      border-radius: 50%;
-      position: relative;
-    }
-    #nadel {
-      width: 10px;
-      height: 100px;
-      background-color: red;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform-origin: 50% 0%;
-    }
-  </style>
-</head>
-<body>
-  <button onclick="initOrientation()">Berechtigung anfordern und Kompass starten</button>
-  <div id="kompass">
-    <div id="nadel"></div>
-  </div>
-  <script>
-    function initOrientation() {
-      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-        DeviceOrientationEvent.requestPermission()
-          .then(permissionState => {
-            if (permissionState === 'granted') {
-              window.addEventListener('deviceorientationabsolute', updateCompass);
-            } else {
-              alert('Berechtigung abgelehnt.');
-            }
-          })
-          .catch(console.error);
-      } else {
-        // handle regular non iOS 13+ devices
-        window.addEventListener('deviceorientationabsolute', updateCompass);
-      }
-    }
+  <head>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script>
+      AFRAME.registerComponent("abs-orientation", {
+        init: function () {
+          var camera = this.el;
+          var handleOrientation = function (event) {
+            var alpha = event.alpha;
+            var beta = event.beta;
+            var gamma = event.gamma;
 
-    function updateCompass(event) {
-      if (event.absolute) {
-        var alpha = event.alpha;
-        console.log("Alpha: ", alpha);  // Loggen Sie den Wert
-        var nadel = document.getElementById("nadel");
-        nadel.style.transform = `rotate(${alpha}deg)`;
-      } else {
-        console.log("Die Ausrichtung ist nicht absolut!");
-      }
-    }
-  </script>
-</body>
+            camera.setAttribute("rotation", { x: beta, y: alpha, z: gamma });
+          };
+
+          // Funktion, um Berechtigung anzufordern
+          var requestPermission = function () {
+            if (typeof DeviceOrientationEvent.requestPermission === "function") {
+              DeviceOrientationEvent.requestPermission()
+                .then(function (response) {
+                  if (response === "granted") {
+                    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+                  } else {
+                    alert("Berechtigung nicht erteilt");
+                  }
+                })
+                .catch(function (error) {
+                  alert("Ein Fehler ist aufgetreten: " + error);
+                });
+            } else {
+              // Für Browser, die keine Berechtigungen benötigen
+              window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+            }
+          };
+
+          // Fügen Sie eine Schaltfläche hinzu, um die Berechtigung anzufordern
+          var button = document.createElement("button");
+          button.innerHTML = "Berechtigung für Geräteorientierung anfordern";
+          button.style.position = "absolute";
+          button.style.zIndex = "1";
+          button.onclick = requestPermission;
+
+          document.body.appendChild(button);
+        },
+      });
+    </script>
+  </head>
+  <body>
+    <a-scene>
+      <a-entity camera abs-orientation></a-entity>
+      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
+      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
+      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <a-sky color="#ECECEC"></a-sky>
+    </a-scene>
+  </body>
 </html>
