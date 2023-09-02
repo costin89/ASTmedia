@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Geolocation und Device Orientation API Beispiel</title>
+    <title>Geolocation und Absolute Device Orientation</title>
     <script>
         let currentBearingToNorthPole;
 
@@ -28,13 +28,13 @@
                 const permission = await DeviceOrientationEvent.requestPermission();
 
                 if (permission === 'granted') {
-                    window.addEventListener("deviceorientation", handleOrientation, true);
+                    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
                 } else {
                     alert("Device Orientation Permission nicht erteilt");
                 }
             } else {
                 // Für nicht-iOS-Geräte
-                window.addEventListener("deviceorientation", handleOrientation, true);
+                window.addEventListener("deviceorientationabsolute", handleOrientation, true);
             }
         }
 
@@ -53,9 +53,13 @@
         }
 
         function handleOrientation(event) {
-            const alpha = event.alpha;
-            const difference = (alpha - currentBearingToNorthPole + 360) % 360;
-            document.getElementById("difference").textContent = "Differenz zur Nordpol-Richtung: " + difference.toFixed(2) + "°";
+            if(event.absolute) {
+                const alpha = event.alpha;
+                const difference = (alpha - currentBearingToNorthPole + 360) % 360;
+                document.getElementById("difference").textContent = "Differenz zur Nordpol-Richtung: " + difference.toFixed(2) + "°";
+            } else {
+                alert('Ihr Gerät unterstützt keine absolute Orientierung.');
+            }
         }
 
     </script>
