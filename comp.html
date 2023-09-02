@@ -1,66 +1,42 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Kompass und Fensterausrichtung</title>
-</head>
-<body>
+  <title>Kompass Beispiel</title>
+  <script type="text/javascript">
+    function requestPermission() {
+      alert("Diese Anwendung muss auf den Kompass Ihres Geräts zugreifen. Bitte erlauben Sie den Zugriff, wenn Sie dazu aufgefordert werden.");
+      init();
+    }
 
-<h1>Kompass und Fensterausrichtung</h1>
-<button id="requestPermission">Berechtigung anfordern</button>
-<p>Absolute Ausrichtung: <span id="absoluteOrientation">Lädt...</span> Grad</p>
-<p>Fensterausrichtung: <span id="windowOrientation">Lädt...</span> Grad</p>
-
-<script>
-  let correctedOrientation = null;
-
-  async function requestPermission() {
-    // DeviceOrientationEvent.requestPermission ist speziell für iOS 13+
-    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-      const permission = await DeviceOrientationEvent.requestPermission();
-      if (permission === 'granted') {
-        // Berechtigung erteilt, Event-Listener hinzufügen
-        addOrientationListener();
+    function init() {
+      if (window.DeviceOrientationEvent) {
+        // Hinzufügen eines EventListeners für das deviceorientation Event
+        window.addEventListener('deviceorientation', handleOrientation, true);
       } else {
-        alert('Berechtigung nicht erteilt');
+        document.getElementById("status").innerHTML = "Ihr Browser unterstützt keine Device Orientation Events.";
       }
-    } else {
-      // Nicht iOS 13+, fügen Sie den Event-Listener direkt hinzu
-      addOrientationListener();
     }
-  }
 
-  function addOrientationListener() {
-    if ('DeviceOrientationEvent' in window) {
-      window.addEventListener('deviceorientationabsolute', function(event) {
-        let alpha = event.alpha;
-        let windowAngle = window.orientation || 0;
-        correctedOrientation = (alpha - windowAngle + 360) % 360;
-        updateDisplay();
-      }, true);
-    } else {
-      document.getElementById('absoluteOrientation').innerText = 'Ihr Gerät unterstützt diese Funktion nicht.';
+    function handleOrientation(event) {
+      var compassHeading = 0;
+      var absoluteAngle = event.alpha;
+
+      if (event.webkitCompassHeading) {
+        // für iOS/Safari
+        compassHeading = event.webkitCompassHeading;
+      } else if (event.alpha !== null) {
+        // für Android/andere Browser
+        compassHeading = 360 - event.alpha;
+      }
+
+      document.getElementById("status").innerHTML = "Kompassrichtung: " + compassHeading.toFixed(2) + " Grad";
+      document.getElementById("absolute").innerHTML = "Absoluter Winkel: " + absoluteAngle.toFixed(2) + " Grad";
     }
-  }
-
-  function updateDisplay() {
-    document.getElementById('windowOrientation').innerText = window.orientation || 0;
-    if (correctedOrientation !== null) {
-      document.getElementById('absoluteOrientation').innerText = correctedOrientation.toFixed(2);
-    }
-  }
-
-  // Event-Listener für Änderungen der Fensterausrichtung hinzufügen
-  window.addEventListener("orientationchange", function() {
-    updateDisplay();
-  }, false);
-
-  // Anfangswerte setzen
-  updateDisplay();
-
-  // Button für Berechtigungsanfrage
-  document.getElementById("requestPermission").addEventListener("click", requestPermission);
-
-</script>
-
+  </script>
+</head>
+<body onload="requestPermission()">
+  <h1>Kompass Beispiel</h1>
+  <p id="status">Warte auf Kompassdaten...</p>
+  <p id="absolute">Warte auf absoluten Winkel...</p>
 </body>
 </html>
