@@ -1,73 +1,66 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Himmelsrichtungen</title>
+  <title>Kompass und Fensterausrichtung</title>
 </head>
 <body>
 
-  <h1>Himmelsrichtungen</h1>
+<h1>Kompass und Fensterausrichtung</h1>
+<button id="requestPermission">Berechtigung anfordern</button>
+<p>Absolute Ausrichtung: <span id="absoluteOrientation">Lädt...</span> Grad</p>
+<p>Fensterausrichtung: <span id="windowOrientation">Lädt...</span> Grad</p>
 
-  <label id="absoluteDirection">Absolute Richtung: Unbekannt</label><br>
-  <label id="relativeDirection">Relative Richtung: Unbekannt</label>
+<script>
+  let correctedOrientation = null;
 
-  <script>
-    // Prüfen, ob die APIs unterstützt werden
-    if ("geolocation" in navigator && 'DeviceOrientationEvent' in window) {
-      
-      // Berechtigungsanfrage für Geolocation
-      navigator.permissions.query({name:'geolocation'}).then(function(permissionStatus) {
-        if (permissionStatus.state === 'granted') {
-          // Erlaubnis wurde bereits erteilt
-          startTracking();
-        } else if (permissionStatus.state === 'prompt') {
-          // Fragen Sie nach Erlaubnis
-          navigator.geolocation.getCurrentPosition(function() {
-            startTracking();
-          });
-        }
-      });
-
-      // Starte die Ortung und die Device Orientation Erfassung
-      function startTracking() {
-
-        let alphaOffset = 0; // Zur Anpassung des Kompasswinkels (Alpha)
-        
-        // Geolocation
-        navigator.geolocation.watchPosition(function(position) {
-          const lat = position.coords.latitude;
-          const lon = position.coords.longitude;
-          const absoluteDirection = `Latitude: ${lat}, Longitude: ${lon}`;
-          document.getElementById("absoluteDirection").textContent = "Absolute Richtung: " + absoluteDirection;
-        });
-
-        // Device Orientation
-        window.addEventListener('deviceorientation', function(event) {
-          let alpha = event.alpha - alphaOffset;
-          if (alpha < 0) alpha += 360;
-          if (alpha > 360) alpha -= 360;
-          document.getElementById("relativeDirection").textContent = "Relative Richtung: " + alpha.toFixed(2) + "°";
-        });
-
-        // iOS spezifische Einstellungen
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          DeviceOrientationEvent.requestPermission()
-            .then(response => {
-              if (response === 'granted') {
-                // Erlaubnis für Device Orientation auf iOS
-                window.addEventListener('deviceorientation', (event) => {
-                  // Verarbeiten der Device Orientation Daten
-                });
-              }
-            })
-            .catch(console.error);
-        }
+  async function requestPermission() {
+    // DeviceOrientationEvent.requestPermission ist speziell für iOS 13+
+    if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+      const permission = await DeviceOrientationEvent.requestPermission();
+      if (permission === 'granted') {
+        // Berechtigung erteilt, Event-Listener hinzufügen
+        addOrientationListener();
+      } else {
+        alert('Berechtigung nicht erteilt');
       }
-      
     } else {
-      // APIs nicht unterstützt
-      alert("Ihr Browser unterstützt nicht die benötigten APIs für dieses Beispiel.");
+      // Nicht iOS 13+, fügen Sie den Event-Listener direkt hinzu
+      addOrientationListener();
     }
-  </script>
+  }
+
+  function addOrientationListener() {
+    if ('DeviceOrientationEvent' in window) {
+      window.addEventListener('deviceorientationabsolute', function(event) {
+        let alpha = event.alpha;
+        let windowAngle = window.orientation || 0;
+        correctedOrientation = (alpha - windowAngle + 360) % 360;
+        updateDisplay();
+      }, true);
+    } else {
+      document.getElementById('absoluteOrientation').innerText = 'Ihr Gerät unterstützt diese Funktion nicht.';
+    }
+  }
+
+  function updateDisplay() {
+    document.getElementById('windowOrientation').innerText = window.orientation || 0;
+    if (correctedOrientation !== null) {
+      document.getElementById('absoluteOrientation').innerText = correctedOrientation.toFixed(2);
+    }
+  }
+
+  // Event-Listener für Änderungen der Fensterausrichtung hinzufügen
+  window.addEventListener("orientationchange", function() {
+    updateDisplay();
+  }, false);
+
+  // Anfangswerte setzen
+  updateDisplay();
+
+  // Button für Berechtigungsanfrage
+  document.getElementById("requestPermission").addEventListener("click", requestPermission);
+
+</script>
 
 </body>
 </html>
