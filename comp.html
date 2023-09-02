@@ -4,51 +4,44 @@
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   </head>
   <body>
-    <!-- Modal -->
-    <div id="permissionModal" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.5); z-index: 1; display: none; align-items: center; justify-content: center;">
-      <div style="background: white; padding: 20px;">
-        <p>Bitte erlauben Sie den Zugriff auf die Geräteausrichtung.</p>
-        <button id="requestPermissionButton">Erlauben</button>
-      </div>
-    </div>
-    <!-- A-Frame Scene -->
-     <a-scene device-orientation-permission-ui="enabled: false">
-      <a-entity id="cameraRig">
-        <a-camera></a-camera>
-      </a-entity>
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+    <a-scene>
+      <a-entity id="myEntity" geometry="primitive: box"></a-entity>
       <a-sky color="#ECECEC"></a-sky>
     </a-scene>
 
     <script>
-      let cameraRig = document.getElementById('cameraRig');
-      let permissionModal = document.getElementById('permissionModal');
-      let requestPermissionButton = document.getElementById('requestPermissionButton');
-
-      // Funktion, um die Erlaubnis für die Geräteausrichtung zu überprüfen und anzufordern
-      async function requestOrientationPermission() {
-        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-          try {
-            const permissionState = await DeviceOrientationEvent.requestPermission();
-            if (permissionState === 'granted') {
-              permissionModal.style.display = 'none';
-              // ... (Eventlistener für deviceorientationabsolute hinzufügen, siehe vorheriges Beispiel) ...
-            }
-          } catch (error) {
-            console.error('Permission error:', error);
+      AFRAME.registerComponent('absolute-orientation', {
+        init: function () {
+          // Anfrage für die Berechtigung zur Geräteausrichtung
+          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+            DeviceOrientationEvent.requestPermission()
+              .then(response => {
+                if (response == 'granted') {
+                  // Berechtigung erteilt, Event-Listener hinzufügen
+                  window.addEventListener('deviceorientationabsolute', this.onDeviceOrientationAbsolute.bind(this), true);
+                } else {
+                  // Berechtigung verweigert
+                  console.log('Permission denied.');
+                }
+              })
+              .catch(console.error);
+          } else {
+            // Für Browser, die keine Berechtigungsanforderung erfordern
+            window.addEventListener('deviceorientationabsolute', this.onDeviceOrientationAbsolute.bind(this), true);
           }
+        },
+        // Callback-Funktion für das 'deviceorientationabsolute' Event
+        onDeviceOrientationAbsolute: function(event) {
+          // Alpha-Wert ist die Ausrichtung um die Z-Achse und entspricht der magnetischen Nordausrichtung
+          let alpha = event.alpha;
+
+          // Setzen der Rotation der A-Frame-Entität
+          this.el.setAttribute('rotation', `0 ${alpha} 0`);
+
+          // Event-Listener entfernen, da wir nur eine einmalige Ausrichtung wollen
+          window.removeEventListener('deviceorientationabsolute', this.onDeviceOrientationAbsolute.bind(this));
         }
-      }
-
-      // Wenn das Gerät iOS ist oder die requestPermission-Methode vorhanden ist, Modal anzeigen
-      if (/iPhone|iPad|iPod|iOS/i.test(navigator.userAgent) || typeof DeviceOrientationEvent.requestPermission === 'function') {
-        permissionModal.style.display = 'flex';
-      }
-
-      // Button-Eventlistener
-      requestPermissionButton.addEventListener('click', requestOrientationPermission);
+      });
     </script>
   </body>
 </html>
