@@ -3,50 +3,54 @@
   <head>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script>
-      AFRAME.registerComponent("abs-orientation", {
+      // Global variable to hold the alpha value (direction to the magnetic North)
+      let alphaToNorth = null;
+
+      AFRAME.registerComponent('abs-orientation', {
         init: function () {
           var camera = this.el;
-          var box = document.querySelector("#northBox");
-
+          
           var handleOrientation = function (event) {
-            var alpha = event.alpha;
+            alphaToNorth = event.alpha;
             var beta = event.beta;
             var gamma = event.gamma;
-
-            camera.setAttribute("rotation", { x: beta, y: alpha, z: gamma });
-
-            // Richten Sie die Box nach Norden aus
-            if (box) {
-              box.setAttribute("rotation", { x: 0, y: -alpha, z: 0 });
-            }
+            camera.setAttribute('rotation', {x: beta, y: alphaToNorth, z: gamma});
           };
 
           var requestPermission = function () {
-            if (typeof DeviceOrientationEvent.requestPermission === "function") {
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
               DeviceOrientationEvent.requestPermission()
                 .then(function (response) {
-                  if (response === "granted") {
-                    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+                  if (response === 'granted') {
+                    window.addEventListener('deviceorientationabsolute', handleOrientation, true);
                   } else {
-                    alert("Berechtigung nicht erteilt");
+                    alert('Permission not granted.');
                   }
                 })
                 .catch(function (error) {
-                  alert("Ein Fehler ist aufgetreten: " + error);
+                  alert('An error occurred: ' + error);
                 });
             } else {
-              window.addEventListener("deviceorientationabsolute", handleOrientation, true);
+              // For browsers that don't require permission
+              window.addEventListener('deviceorientationabsolute', handleOrientation, true);
             }
           };
 
-          var button = document.createElement("button");
-          button.innerHTML = "Berechtigung für Geräteorientierung anfordern";
-          button.style.position = "absolute";
-          button.style.zIndex = "1";
+          var button = document.createElement('button');
+          button.innerHTML = 'Request Device Orientation Permission';
+          button.style.position = 'absolute';
+          button.style.zIndex = '1';
           button.onclick = requestPermission;
-
           document.body.appendChild(button);
         },
+      });
+
+      AFRAME.registerComponent('face-north', {
+        tick: function() {
+          if (alphaToNorth !== null) {
+            this.el.setAttribute('rotation', {x: 0, y: -alphaToNorth, z: 0});
+          }
+        }
       });
     </script>
   </head>
