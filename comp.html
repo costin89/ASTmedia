@@ -3,9 +3,20 @@
 <head>
   <title>Kompass Beispiel</title>
   <script type="text/javascript">
-    function requestPermission() {
-      alert("Diese Anwendung muss auf den Kompass Ihres Geräts zugreifen. Bitte erlauben Sie den Zugriff, wenn Sie dazu aufgefordert werden.");
-      init();
+    async function requestPermission() {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // iOS 13+
+        const permission = await DeviceOrientationEvent.requestPermission();
+        if (permission === 'granted') {
+          init();
+        } else {
+          alert('Berechtigung nicht erteilt');
+        }
+      } else {
+        // Für ältere Versionen
+        alert("Diese Anwendung muss auf den Kompass Ihres Geräts zugreifen. Bitte erlauben Sie den Zugriff, wenn Sie dazu aufgefordert werden.");
+        init();
+      }
     }
 
     function init() {
@@ -36,8 +47,9 @@
     }
   </script>
 </head>
-<body onload="requestPermission()">
+<body>
   <h1>Kompass Beispiel</h1>
+  <button onclick="requestPermission()">Berechtigung anfordern</button>
   <p id="status">Warte auf Kompassdaten...</p>
   <p id="absolute">Warte auf absoluten Winkel...</p>
   <p id="windowOrientation">Warte auf Fensterausrichtung...</p>
