@@ -1,65 +1,56 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene>
-      <a-camera position="0 0 0" ></a-camera>
-      <a-entity id="myEntity" geometry="primitive: box" absolute-orientation>
-        <a-box position="0 0 -6" color="red"></a-box>
-      </a-entity>
-      <a-box position="0 0 -6" color="blau"></a-box>
-      <a-sky color="#ECECEC"></a-sky>
-    </a-scene>
-
+<head>
+    <title>Geolocation API Beispiel</title>
     <script>
-      AFRAME.registerComponent('absolute-orientation', {
-        init: function () {
-          // Anfrage für die Berechtigung zur Geräteausrichtung
-          if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-            DeviceOrientationEvent.requestPermission()
-              .then(response => {
-                if (response === 'granted') {
-                  // Berechtigung erteilt, Event-Listener hinzufügen
-                  window.addEventListener('deviceorientation', this.onDeviceOrientation.bind(this), true);
-                } else {
-                  // Berechtigung verweigert
-                  console.log('Permission denied.');
-                }
-              })
-              .catch(console.error);
-          } else {
-            // Für Browser, die keine Berechtigungsanforderung erfordern
-            window.addEventListener('deviceorientation', this.onDeviceOrientation.bind(this), true);
-          }
-        },
-        // Callback-Funktion für das 'deviceorientation' Event
-        onDeviceOrientation: function(event) {
-          let alpha;
+        // Funktion, um die Vorpeilung (initial bearing) zwischen zwei Punkten zu berechnen
+        function calculateBearing(lat1, lon1, lat2, lon2) {
+            const phi1 = lat1 * Math.PI / 180; // Umwandlung in Bogenmaß
+            const phi2 = lat2 * Math.PI / 180;
+            const deltaLambda = (lon2 - lon1) * Math.PI / 180;
 
-          if (event.webkitCompassHeading) {
-            // Safari auf iOS
-            alpha = event.webkitCompassHeading;
-          } else if (event.alpha !== null) {
-            // Andere Browser
-            if (event.absolute) {
-              alpha = event.alpha;
-            } else {
-              // Fallback, falls die absolute Ausrichtung nicht verfügbar ist
-              alpha = event.alpha;
-            }
-          }
+            const x = Math.sin(deltaLambda) * Math.cos(phi2);
+            const y = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
 
-          if (alpha !== undefined) {
-            // Setzen der Rotation der A-Frame-Entität
-            this.el.setAttribute('rotation', `0 ${alpha} 0`);
+            let bearing = Math.atan2(x, y) * 180 / Math.PI;
 
-            // Event-Listener entfernen, da wir nur eine einmalige Ausrichtung wollen
-            window.removeEventListener('deviceorientation', this.onDeviceOrientation.bind(this));
-          }
+            // Umwandlung in einen Winkel von 0 bis 360 Grad
+            bearing = (bearing + 360) % 360;
+            
+            return bearing;
         }
-      });
+
+        // Funktion, die aufgerufen wird, wenn der Benutzer auf den Button klickt
+        function getMyLocation() {
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const myLat = position.coords.latitude;
+                    const myLon = position.coords.longitude;
+
+                    // Koordinaten des geografischen Nordpols
+                    const northPoleLat = 90;
+                    const northPoleLon = 0;
+
+                    const bearing = calculateBearing(myLat, myLon, northPoleLat, northPoleLon);
+
+                    // Ausgabe der Ergebnisse
+                    document.getElementById("myCoords").textContent = "Ihre Koordinaten: " + myLat + ", " + myLon;
+                    document.getElementById("bearing").textContent = "Richtung zum Nordpol: " + bearing.toFixed(2) + "°";
+                });
+            } else {
+                alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
+            }
+        }
     </script>
-  </body>
+</head>
+<body>
+
+<h1>Finden Sie Ihre Richtung zum geografischen Nordpol</h1>
+
+<button onclick="getMyLocation()">Meine Position abrufen</button>
+
+<p id="myCoords"></p>
+<p id="bearing"></p>
+
+</body>
 </html>
