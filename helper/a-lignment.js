@@ -14,7 +14,7 @@ AFRAME.registerComponent('a-lignment', {
         const el = this.el;
         const data = this.data;
 
-        // Popup-Fenster für Berechtigungsanforderung
+        // Popup für Berechtigungsanforderung
         const permissionGranted = window.confirm("Darf diese Anwendung auf die Geräteausrichtung zugreifen?");
 
         if (permissionGranted) {
@@ -22,7 +22,14 @@ AFRAME.registerComponent('a-lignment', {
                 window.addEventListener("deviceorientation", function(event) {
                     const alpha = event.alpha;
 
-                    if (data.north) {
+                    // Ausgabe des Kompasskurses
+                    if (alpha !== null) {
+                        console.log("Kompasskurs:", alpha);
+                    } else {
+                        console.log("Kompasskurs nicht verfügbar");
+                    }
+
+                    if (data.north && alpha !== null) {
                         const adjustedAlpha = alpha + data.deviation;
                         el.object3D.rotation.y = THREE.Math.degToRad(360 - adjustedAlpha);
                     }
