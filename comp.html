@@ -1,69 +1,64 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-  <title>Kompass mit Canvas</title>
-  <style>
-    canvas {
-      border: 1px solid black;
-    }
-    #permission-popup {
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background-color: rgba(0,0,0,0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-    }
-    #permission-popup h1, #permission-popup button {
-      margin: 10px;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <title>Device Orientation und Geolocation</title>
 </head>
 <body>
-
-  <div id="permission-popup">
-    <h1>Bitte erteilen Sie die Berechtigung für den Zugriff auf die Device Orientation</h1>
-    <button onclick="requestPermission()">Erlauben</button>
-  </div>
-
-  <h1>Kompass</h1>
-  <canvas id="canvas" width="400" height="400"></canvas>
+  <button id="startBtn">Start</button>
+  <label id="output">Warten...</label>
 
   <script>
-    const canvas = document.getElementById('canvas');
-    const ctx = canvas.getContext('2d');
-    const permissionPopup = document.getElementById('permission-popup');
+    document.addEventListener("DOMContentLoaded", () => {
+  const outputLabel = document.getElementById("output");
 
-    function drawArrow(angle) {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.save();
-      ctx.translate(200, 200);
-      ctx.rotate(angle * Math.PI / 180);
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.lineTo(100, 0);
-      ctx.lineTo(80, 20);
-      ctx.moveTo(100, 0);
-      ctx.lineTo(80, -20);
-      ctx.lineWidth = 5;
-      ctx.stroke();
-      ctx.restore();
-    }
+  const startBtn = document.getElementById("startBtn");
+  startBtn.addEventListener("click", async () => {
+    try {
+      // Permission für Device Orientation erfragen
+      const deviceOrientationPermission = await DeviceOrientationEvent.requestPermission();
+      if (deviceOrientationPermission !== 'granted') {
+        throw new Error("Device Orientation Permission not granted");
+      }
 
-    function requestPermission() {
-      // Das Popup ausblenden
-      permissionPopup.style.display = 'none';
-
-      window.addEventListener('deviceorientation', (event) => {
-        const angle = event.alpha;
-        drawArrow(angle);
+      // Permission für Geolocation erfragen
+      const geoPermission = await new Promise((resolve) => {
+        navigator.permissions.query({ name: 'geolocation' }).then(result => {
+          resolve(result.state);
+        });
       });
-    }
-  </script>
 
+      if (geoPermission !== 'granted') {
+        throw new Error("Geolocation Permission not granted");
+      }
+
+      // Device Orientation abfragen
+      let alpha = 0;
+      window.addEventListener("deviceorientation", (event) => {
+        alpha = event.alpha;
+        update();
+      });
+
+      // Geolocation abfragen
+      let latitude = 0;
+      let longitude = 0;
+      navigator.geolocation.watchPosition((position) => {
+        latitude = position.coords.latitude;
+        longitude = position.coords.longitude;
+        update();
+      });
+
+      // Ausrichtung berechnen und Label updaten
+      function update() {
+        const computedValue = `Alpha: ${alpha}, Latitude: ${latitude}, Longitude: ${longitude}`;
+        outputLabel.textContent = computedValue;
+      }
+    } catch (error) {
+      outputLabel.textContent = error.message;
+    }
+  });
+});
+
+  </script>
 </body>
 </html>
