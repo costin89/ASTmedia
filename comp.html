@@ -47,6 +47,7 @@
     function updateCompass(event) {
       if (event.absolute) {
         var alpha = event.alpha;
+        console.log("Alpha: ", alpha);  // Loggen Sie den Wert
         var nadel = document.getElementById("nadel");
         nadel.style.transform = `rotate(${alpha}deg)`;
       } else {
