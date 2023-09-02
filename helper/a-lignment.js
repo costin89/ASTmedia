@@ -1,4 +1,4 @@
-AFRAME.registerComponent('a-ligment', {
+AFRAME.registerComponent('a-lignment', {
   schema: {
     north: { type: 'boolean', default: true },
     deviation: { type: 'number', default: 0 }
