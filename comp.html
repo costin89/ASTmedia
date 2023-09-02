@@ -1,14 +1,11 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   </head>
   <body>
     <a-scene>
-      <a-entity id="myEntity" absolute-orientation>
-        <a-box position="0 0 -6" color="red"></a-box>
-      </a-entity>
-      <a-box position="0 0 -6" color="blue"></a-box>
+      <a-entity id="myEntity" geometry="primitive: box" absolute-orientation></a-entity>
       <a-sky color="#ECECEC"></a-sky>
     </a-scene>
 
@@ -19,9 +16,9 @@
           if (typeof DeviceOrientationEvent.requestPermission === 'function') {
             DeviceOrientationEvent.requestPermission()
               .then(response => {
-                if (response == 'granted') {
+                if (response === 'granted') {
                   // Berechtigung erteilt, Event-Listener hinzufügen
-                  window.addEventListener('deviceorientationabsolute', this.onDeviceOrientationAbsolute.bind(this), true);
+                  window.addEventListener('deviceorientation', this.onDeviceOrientation.bind(this), true);
                 } else {
                   // Berechtigung verweigert
                   console.log('Permission denied.');
@@ -30,19 +27,33 @@
               .catch(console.error);
           } else {
             // Für Browser, die keine Berechtigungsanforderung erfordern
-            window.addEventListener('deviceorientationabsolute', this.onDeviceOrientationAbsolute.bind(this), true);
+            window.addEventListener('deviceorientation', this.onDeviceOrientation.bind(this), true);
           }
         },
-        // Callback-Funktion für das 'deviceorientationabsolute' Event
-        onDeviceOrientationAbsolute: function(event) {
-          // Alpha-Wert ist die Ausrichtung um die Z-Achse und entspricht der magnetischen Nordausrichtung
-          let alpha = event.alpha;
+        // Callback-Funktion für das 'deviceorientation' Event
+        onDeviceOrientation: function(event) {
+          let alpha;
 
-          // Setzen der Rotation der A-Frame-Entität
-          this.el.setAttribute('rotation', `0 ${alpha} 0`);
+          if (event.webkitCompassHeading) {
+            // Safari auf iOS
+            alpha = event.webkitCompassHeading;
+          } else if (event.alpha !== null) {
+            // Andere Browser
+            if (event.absolute) {
+              alpha = event.alpha;
+            } else {
+              // Fallback, falls die absolute Ausrichtung nicht verfügbar ist
+              alpha = event.alpha;
+            }
+          }
 
-          // Event-Listener entfernen, da wir nur eine einmalige Ausrichtung wollen
-          window.removeEventListener('deviceorientationabsolute', this.onDeviceOrientationAbsolute.bind(this));
+          if (alpha !== undefined) {
+            // Setzen der Rotation der A-Frame-Entität
+            this.el.setAttribute('rotation', `0 ${alpha} 0`);
+
+            // Event-Listener entfernen, da wir nur eine einmalige Ausrichtung wollen
+            window.removeEventListener('deviceorientation', this.onDeviceOrientation.bind(this));
+          }
         }
       });
     </script>
