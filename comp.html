@@ -1,78 +1,73 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Geolocation und Absolute Device Orientation</title>
-    <script>
-        let currentBearingToNorthPole;
-
-        async function getMyLocation() {
-            // Geolocation Permission
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const myLat = position.coords.latitude;
-                    const myLon = position.coords.longitude;
-                    const northPoleLat = 90;
-                    const northPoleLon = 0;
-
-                    currentBearingToNorthPole = calculateBearing(myLat, myLon, northPoleLat, northPoleLon);
-
-                    document.getElementById("myCoords").textContent = "Ihre Koordinaten: " + myLat + ", " + myLon;
-                    document.getElementById("bearing").textContent = "Richtung zum Nordpol: " + currentBearingToNorthPole.toFixed(2) + "°";
-                });
-            } else {
-                alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
-            }
-
-            // Device Orientation Permission (insbesondere für iOS)
-            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
-                const permission = await DeviceOrientationEvent.requestPermission();
-
-                if (permission === 'granted') {
-                    window.addEventListener("deviceorientationabsolute", handleOrientation, true);
-                } else {
-                    alert("Device Orientation Permission nicht erteilt");
-                }
-            } else {
-                // Für nicht-iOS-Geräte
-                window.addEventListener("deviceorientationabsolute", handleOrientation, true);
-            }
-        }
-
-        function calculateBearing(lat1, lon1, lat2, lon2) {
-            const phi1 = lat1 * Math.PI / 180;
-            const phi2 = lat2 * Math.PI / 180;
-            const deltaLambda = (lon2 - lon1) * Math.PI / 180;
-
-            const x = Math.sin(deltaLambda) * Math.cos(phi2);
-            const y = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
-
-            let bearing = Math.atan2(x, y) * 180 / Math.PI;
-            bearing = (bearing + 360) % 360;
-
-            return bearing;
-        }
-
-        function handleOrientation(event) {
-            if(event.absolute) {
-                const alpha = event.alpha;
-                const difference = (alpha - currentBearingToNorthPole + 360) % 360;
-                document.getElementById("difference").textContent = "Differenz zur Nordpol-Richtung: " + difference.toFixed(2) + "°";
-            } else {
-                alert('Ihr Gerät unterstützt keine absolute Orientierung.');
-            }
-        }
-
-    </script>
+  <title>Himmelsrichtungen</title>
 </head>
 <body>
 
-<h1>Finden Sie Ihre Richtung zum geografischen Nordpol</h1>
+  <h1>Himmelsrichtungen</h1>
 
-<button onclick="getMyLocation()">Meine Position und Geräteausrichtung abrufen</button>
+  <label id="absoluteDirection">Absolute Richtung: Unbekannt</label><br>
+  <label id="relativeDirection">Relative Richtung: Unbekannt</label>
 
-<p id="myCoords"></p>
-<p id="bearing"></p>
-<p id="difference"></p>
+  <script>
+    // Prüfen, ob die APIs unterstützt werden
+    if ("geolocation" in navigator && 'DeviceOrientationEvent' in window) {
+      
+      // Berechtigungsanfrage für Geolocation
+      navigator.permissions.query({name:'geolocation'}).then(function(permissionStatus) {
+        if (permissionStatus.state === 'granted') {
+          // Erlaubnis wurde bereits erteilt
+          startTracking();
+        } else if (permissionStatus.state === 'prompt') {
+          // Fragen Sie nach Erlaubnis
+          navigator.geolocation.getCurrentPosition(function() {
+            startTracking();
+          });
+        }
+      });
+
+      // Starte die Ortung und die Device Orientation Erfassung
+      function startTracking() {
+
+        let alphaOffset = 0; // Zur Anpassung des Kompasswinkels (Alpha)
+        
+        // Geolocation
+        navigator.geolocation.watchPosition(function(position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+          const absoluteDirection = `Latitude: ${lat}, Longitude: ${lon}`;
+          document.getElementById("absoluteDirection").textContent = "Absolute Richtung: " + absoluteDirection;
+        });
+
+        // Device Orientation
+        window.addEventListener('deviceorientation', function(event) {
+          let alpha = event.alpha - alphaOffset;
+          if (alpha < 0) alpha += 360;
+          if (alpha > 360) alpha -= 360;
+          document.getElementById("relativeDirection").textContent = "Relative Richtung: " + alpha.toFixed(2) + "°";
+        });
+
+        // iOS spezifische Einstellungen
+        if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+          DeviceOrientationEvent.requestPermission()
+            .then(response => {
+              if (response === 'granted') {
+                // Erlaubnis für Device Orientation auf iOS
+                window.addEventListener('deviceorientation', (event) => {
+                  // Verarbeiten der Device Orientation Daten
+                });
+              }
+            })
+            .catch(console.error);
+        }
+      }
+      
+    } else {
+      // APIs nicht unterstützt
+      alert("Ihr Browser unterstützt nicht die benötigten APIs für dieses Beispiel.");
+    }
+  </script>
 
 </body>
 </html>
