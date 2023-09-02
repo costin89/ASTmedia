@@ -1,11 +1,45 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Geolocation API Beispiel</title>
+    <title>Geolocation und Device Orientation API Beispiel</title>
     <script>
-        // Funktion, um die Vorpeilung (initial bearing) zwischen zwei Punkten zu berechnen
+        let currentBearingToNorthPole;
+
+        async function getMyLocation() {
+            // Geolocation Permission
+            if ("geolocation" in navigator) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const myLat = position.coords.latitude;
+                    const myLon = position.coords.longitude;
+                    const northPoleLat = 90;
+                    const northPoleLon = 0;
+
+                    currentBearingToNorthPole = calculateBearing(myLat, myLon, northPoleLat, northPoleLon);
+
+                    document.getElementById("myCoords").textContent = "Ihre Koordinaten: " + myLat + ", " + myLon;
+                    document.getElementById("bearing").textContent = "Richtung zum Nordpol: " + currentBearingToNorthPole.toFixed(2) + "°";
+                });
+            } else {
+                alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
+            }
+
+            // Device Orientation Permission (insbesondere für iOS)
+            if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+                const permission = await DeviceOrientationEvent.requestPermission();
+
+                if (permission === 'granted') {
+                    window.addEventListener("deviceorientation", handleOrientation, true);
+                } else {
+                    alert("Device Orientation Permission nicht erteilt");
+                }
+            } else {
+                // Für nicht-iOS-Geräte
+                window.addEventListener("deviceorientation", handleOrientation, true);
+            }
+        }
+
         function calculateBearing(lat1, lon1, lat2, lon2) {
-            const phi1 = lat1 * Math.PI / 180; // Umwandlung in Bogenmaß
+            const phi1 = lat1 * Math.PI / 180;
             const phi2 = lat2 * Math.PI / 180;
             const deltaLambda = (lon2 - lon1) * Math.PI / 180;
 
@@ -13,44 +47,28 @@
             const y = Math.cos(phi1) * Math.sin(phi2) - Math.sin(phi1) * Math.cos(phi2) * Math.cos(deltaLambda);
 
             let bearing = Math.atan2(x, y) * 180 / Math.PI;
-
-            // Umwandlung in einen Winkel von 0 bis 360 Grad
             bearing = (bearing + 360) % 360;
-            
+
             return bearing;
         }
 
-        // Funktion, die aufgerufen wird, wenn der Benutzer auf den Button klickt
-        function getMyLocation() {
-            if ("geolocation" in navigator) {
-                navigator.geolocation.getCurrentPosition(function(position) {
-                    const myLat = position.coords.latitude;
-                    const myLon = position.coords.longitude;
-
-                    // Koordinaten des geografischen Nordpols
-                    const northPoleLat = 90;
-                    const northPoleLon = 0;
-
-                    const bearing = calculateBearing(myLat, myLon, northPoleLat, northPoleLon);
-
-                    // Ausgabe der Ergebnisse
-                    document.getElementById("myCoords").textContent = "Ihre Koordinaten: " + myLat + ", " + myLon;
-                    document.getElementById("bearing").textContent = "Richtung zum Nordpol: " + bearing.toFixed(2) + "°";
-                });
-            } else {
-                alert("Geolocation wird von Ihrem Browser nicht unterstützt.");
-            }
+        function handleOrientation(event) {
+            const alpha = event.alpha;
+            const difference = (alpha - currentBearingToNorthPole + 360) % 360;
+            document.getElementById("difference").textContent = "Differenz zur Nordpol-Richtung: " + difference.toFixed(2) + "°";
         }
+
     </script>
 </head>
 <body>
 
 <h1>Finden Sie Ihre Richtung zum geografischen Nordpol</h1>
 
-<button onclick="getMyLocation()">Meine Position abrufen</button>
+<button onclick="getMyLocation()">Meine Position und Geräteausrichtung abrufen</button>
 
 <p id="myCoords"></p>
 <p id="bearing"></p>
+<p id="difference"></p>
 
 </body>
 </html>
