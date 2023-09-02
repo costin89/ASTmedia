@@ -1,12 +1,24 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
-    <script src="helper/a-frame-trueorientation.js"></script>
+    <meta charset="utf-8">
+    <title>Meine A-Frame Szene</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="helper/a-ligment.js"></script>
   </head>
   <body>
     <a-scene>
-      <a-camera a-trueorientation="heading: true; deviation: 20;" ></a-camera>
+      <!-- Kamera -->
+      <a-camera position="0 1.6 0"></a-camera>
+
+      <!-- Verwendung des benutzerdefinierten Tags -->
+      <a-ligment a-ligment="north: true; deviation: 20">
+         <!-- Roter Würfel 5 Meter vor der Kamera -->
+      <a-box position="0 1.6 -5" rotation="0 45 0" color="#FF0000"></a-box>
+      </a-ligment>
+
+      <!-- Hintergrund -->
+      <a-sky color="#ECECEC"></a-sky>
     </a-scene>
   </body>
 </html>
