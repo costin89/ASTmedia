@@ -1,64 +1,54 @@
 <!DOCTYPE html>
-<html lang="de">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Device Orientation und Geolocation</title>
+  <title>Kompass App</title>
+  <style>
+    #kompass {
+      width: 200px;
+      height: 200px;
+      border: 10px solid #000;
+      border-radius: 50%;
+      position: relative;
+    }
+    #nadel {
+      width: 10px;
+      height: 100px;
+      background-color: red;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 50% 0%;
+    }
+  </style>
 </head>
 <body>
-  <button id="startBtn">Start</button>
-  <label id="output">Warten...</label>
-
+  <button onclick="requestPermission()">Berechtigung anfordern</button>
+  <div id="kompass">
+    <div id="nadel"></div>
+  </div>
   <script>
-    document.addEventListener("DOMContentLoaded", () => {
-  const outputLabel = document.getElementById("output");
-
-  const startBtn = document.getElementById("startBtn");
-  startBtn.addEventListener("click", async () => {
-    try {
-      // Permission für Device Orientation erfragen
-      const deviceOrientationPermission = await DeviceOrientationEvent.requestPermission();
-      if (deviceOrientationPermission !== 'granted') {
-        throw new Error("Device Orientation Permission not granted");
+    async function requestPermission() {
+      // Berechtigungsanfrage für den Zugriff auf die Geräteorientierung
+      const state = await navigator.permissions.query({ name: 'accelerometer' });
+      
+      if (state.state === 'granted') {
+        initOrientation();
+      } else {
+        alert("Zugriff auf den Sensor wurde verweigert.");
       }
-
-      // Permission für Geolocation erfragen
-      const geoPermission = await new Promise((resolve) => {
-        navigator.permissions.query({ name: 'geolocation' }).then(result => {
-          resolve(result.state);
-        });
-      });
-
-      if (geoPermission !== 'granted') {
-        throw new Error("Geolocation Permission not granted");
-      }
-
-      // Device Orientation abfragen
-      let alpha = 0;
-      window.addEventListener("deviceorientation", (event) => {
-        alpha = event.alpha;
-        update();
-      });
-
-      // Geolocation abfragen
-      let latitude = 0;
-      let longitude = 0;
-      navigator.geolocation.watchPosition((position) => {
-        latitude = position.coords.latitude;
-        longitude = position.coords.longitude;
-        update();
-      });
-
-      // Ausrichtung berechnen und Label updaten
-      function update() {
-        const computedValue = `Alpha: ${alpha}, Latitude: ${latitude}, Longitude: ${longitude}`;
-        outputLabel.textContent = computedValue;
-      }
-    } catch (error) {
-      outputLabel.textContent = error.message;
     }
-  });
-});
 
+    function initOrientation() {
+      window.addEventListener("deviceorientationabsolute", function(event) {
+        if (event.absolute) {
+          var alpha = event.alpha;
+          var nadel = document.getElementById("nadel");
+          nadel.style.transform = `rotate(${alpha}deg)`;
+        } else {
+          console.log("Die Ausrichtung ist nicht absolut!");
+        }
+      }, false);
+    }
   </script>
 </body>
 </html>
