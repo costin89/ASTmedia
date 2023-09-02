@@ -22,32 +22,36 @@
   </style>
 </head>
 <body>
-  <button onclick="requestPermission()">Berechtigung anfordern</button>
+  <button onclick="initOrientation()">Berechtigung anfordern und Kompass starten</button>
   <div id="kompass">
     <div id="nadel"></div>
   </div>
   <script>
-    async function requestPermission() {
-      // Berechtigungsanfrage für den Zugriff auf die Geräteorientierung
-      const state = await navigator.permissions.query({ name: 'accelerometer' });
-      
-      if (state.state === 'granted') {
-        initOrientation();
+    function initOrientation() {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        DeviceOrientationEvent.requestPermission()
+          .then(permissionState => {
+            if (permissionState === 'granted') {
+              window.addEventListener('deviceorientationabsolute', updateCompass);
+            } else {
+              alert('Berechtigung abgelehnt.');
+            }
+          })
+          .catch(console.error);
       } else {
-        alert("Zugriff auf den Sensor wurde verweigert.");
+        // handle regular non iOS 13+ devices
+        window.addEventListener('deviceorientationabsolute', updateCompass);
       }
     }
 
-    function initOrientation() {
-      window.addEventListener("deviceorientationabsolute", function(event) {
-        if (event.absolute) {
-          var alpha = event.alpha;
-          var nadel = document.getElementById("nadel");
-          nadel.style.transform = `rotate(${alpha}deg)`;
-        } else {
-          console.log("Die Ausrichtung ist nicht absolut!");
-        }
-      }, false);
+    function updateCompass(event) {
+      if (event.absolute) {
+        var alpha = event.alpha;
+        var nadel = document.getElementById("nadel");
+        nadel.style.transform = `rotate(${alpha}deg)`;
+      } else {
+        console.log("Die Ausrichtung ist nicht absolut!");
+      }
     }
   </script>
 </body>
