@@ -9,10 +9,10 @@
 
       if (windowOrientation === 90) {
         // Gerät ist im Landschaftsmodus und gedreht
-        adjustedCompassHeading = (compassHeading - 90 + 360) % 360;
+        adjustedCompassHeading = (compassHeading - 180 + 360) % 360;
       } else if (windowOrientation === -90) {
         // Gerät ist im Landschaftsmodus und entgegengesetzt gedreht
-        adjustedCompassHeading = (compassHeading + 90) % 360;
+        adjustedCompassHeading = (compassHeading + 180) % 360;
       }
       // Bei windowOrientation === 0 oder 180 muss nichts angepasst werden
 
