@@ -3,9 +3,12 @@
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script>
+    let measureCounter = 0;
+
     AFRAME.registerComponent('alignment', {
       schema: {
-        north: {type: 'boolean', default: false}
+        north: {type: 'boolean', default: false},
+        measure: {type: 'int', default: 1}
       },
       init: function () {
         if (this.data.north) {
@@ -19,11 +22,15 @@
         window.removeEventListener('deviceorientation', this.handleOrientation);
       },
       handleOrientation: function(event) {
-        var compassHeading = event.webkitCompassHeading || 360 - event.alpha;
-        var windowOrientation = window.orientation || 0;
-        var adjustedCompassHeading = this.adjustCompass(compassHeading, windowOrientation);
+        measureCounter++;
         
-        this.el.setAttribute('rotation', {x: 0, y: adjustedCompassHeading, z: 0});
+        if (measureCounter <= this.data.measure) {
+          var compassHeading = event.webkitCompassHeading || 360 - event.alpha;
+          var windowOrientation = window.orientation || 0;
+          var adjustedCompassHeading = this.adjustCompass(compassHeading, windowOrientation);
+          
+          this.el.setAttribute('rotation', {x: 0, y: adjustedCompassHeading, z: 0});
+        }
       },
       adjustCompass: function(compassHeading, windowOrientation) {
         var adjustedCompassHeading = compassHeading;
@@ -52,10 +59,7 @@
 </head>
 <body>
   <a-scene>
-    <a-entity alignment="north: true;">
-      <a-box position="0 0 10" color="red"></a-box>
-    </a-entity>
-    
+    <a-entity geometry="primitive: box" material="color: blue" alignment="north: true; measure: 2;"></a-entity>
     <a-camera position="0 2 5"></a-camera>
   </a-scene>
 </body>
