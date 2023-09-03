@@ -52,7 +52,10 @@
 </head>
 <body>
   <a-scene>
-    <a-entity geometry="primitive: box" material="color: blue" alignment="north: true;"></a-entity>
+    <a-entity alignment="north: true;">
+      <a-box> position="0 0 10"</a-box>
+    </a-entity>
+    
     <a-camera position="0 2 5"></a-camera>
   </a-scene>
 </body>
