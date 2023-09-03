@@ -1,29 +1,59 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>Meine A-Frame Szene</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="helper/a-lignment.js"></script>
-  </head>
-  <body>
-    <a-scene>
-      <!-- Kamera -->
-      <a-camera position="0 1.6 3"></a-camera>
+<head>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script>
+    AFRAME.registerComponent('alignment', {
+      schema: {
+        north: {type: 'boolean', default: false}
+      },
+      init: function () {
+        if (this.data.north) {
+          requestPermission();
+        }
+        this.handleOrientation = this.handleOrientation.bind(this);
+        this.adjustCompass = this.adjustCompass.bind(this);
+        window.addEventListener('deviceorientation', this.handleOrientation, true);
+      },
+      remove: function () {
+        window.removeEventListener('deviceorientation', this.handleOrientation);
+      },
+      handleOrientation: function(event) {
+        var compassHeading = event.webkitCompassHeading || 360 - event.alpha;
+        var windowOrientation = window.orientation || 0;
+        var adjustedCompassHeading = this.adjustCompass(compassHeading, windowOrientation);
+        
+        this.el.setAttribute('rotation', {x: 0, y: adjustedCompassHeading, z: 0});
+      },
+      adjustCompass: function(compassHeading, windowOrientation) {
+        var adjustedCompassHeading = compassHeading;
+        if (windowOrientation === 90) {
+          adjustedCompassHeading = (compassHeading - 90 + 360) % 360;
+        } else if (windowOrientation === -90) {
+          adjustedCompassHeading = (compassHeading + 90) % 360;
+        }
+        return adjustedCompassHeading;
+      }
+    });
 
-      <!-- Dim ambient lighting. -->
-      <a-light type="ambient"></a-light>
-      
-      <!-- Ausrichtung der Szene nach NORDEN -->
-      <a-lignment alignment="north: true;">
-        <a-box position="0 0 10" color="blue"></a-box>
-      </a-lignment>
-
-      <!-- Geometrische Objekte -->
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="red"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
-    </a-scene>
-  </body>
+    async function requestPermission() {
+      if (typeof DeviceOrientationEvent.requestPermission === 'function') {
+        const permission = await DeviceOrientationEvent.requestPermission();
+        if (permission === 'granted') {
+          console.log('Berechtigung erteilt');
+        } else {
+          console.log('Berechtigung nicht erteilt');
+        }
+      } else {
+        console.log("Diese Anwendung muss auf den Kompass Ihres Geräts zugreifen. Bitte erlauben Sie den Zugriff, wenn Sie dazu aufgefordert werden.");
+      }
+    }
+  </script>
+</head>
+<body>
+  <a-scene>
+    <a-entity geometry="primitive: box" material="color: blue" alignment="north: true;"></a-entity>
+    <a-camera position="0 2 5"></a-camera>
+  </a-scene>
+</body>
 </html>
