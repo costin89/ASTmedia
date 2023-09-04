@@ -19,10 +19,11 @@
       init: function () {
         this.handleOrientation = this.handleOrientation.bind(this);
         this.adjustCompass = this.adjustCompass.bind(this);
-        document.querySelector('#measureNorthButton').addEventListener('click', async () => {
-          await requestPermission();
-          window.addEventListener('deviceorientation', this.handleOrientation, {once: true});
-        });
+        document.addEventListener('DOMContentLoaded', (event) => {
+          document.querySelector('#measureNorthButton').addEventListener('click', async () => {
+            await requestPermission();
+            window.addEventListener('deviceorientation', this.handleOrientation, {once: true});
+          });
       },
       remove: function () {
         window.removeEventListener('deviceorientation', this.handleOrientation);
