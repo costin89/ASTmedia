@@ -1,6 +1,15 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <style>
+    /* CSS um den Button über dem A-Frame Canvas anzuzeigen */
+    #measureNorthButton {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      z-index: 1;  /* höherer z-index, um sicherzustellen, dass der Button oben ist */
+    }
+  </style>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
    <script>
     AFRAME.registerComponent('alignment', {
