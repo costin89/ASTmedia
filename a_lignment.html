@@ -5,39 +5,33 @@
   <script>
     AFRAME.registerComponent('alignment', {
       schema: {
-        north: { type: 'boolean', default: false },
-        measure: { type: 'int', default: 1 },
-        time: { type: 'int', default: 0 }
+        north: {type: 'boolean', default: false},
+        time: {type: 'number', default: 0}
       },
       init: function () {
         if (this.data.north) {
           requestPermission().then(() => {
-            let scene = document.querySelector('a-scene');
-            if (scene.hasLoaded) {
-              this.startMeasurement();
+            if (this.data.time > 0) {
+              setTimeout(() => {
+                window.addEventListener('deviceorientation', this.handleOrientation, true);
+              }, this.data.time * 1000);
             } else {
-              scene.addEventListener('loaded', this.startMeasurement.bind(this));
+              window.addEventListener('deviceorientation', this.handleOrientation, true);
             }
           });
         }
-      },
-      startMeasurement: function () {
-        setTimeout(() => {
-          this.measurementsLeft = this.data.measure;
-          window.addEventListener('deviceorientation', this.handleOrientation);
-        }, this.data.time * 1000);
+        this.handleOrientation = this.handleOrientation.bind(this);
+        this.adjustCompass = this.adjustCompass.bind(this);
       },
       handleOrientation: function(event) {
         var compassHeading = event.webkitCompassHeading || 360 - event.alpha;
         var windowOrientation = window.orientation || 0;
         var adjustedCompassHeading = this.adjustCompass(compassHeading, windowOrientation);
-
+        
         this.el.setAttribute('rotation', {x: 0, y: adjustedCompassHeading, z: 0});
         
-        this.measurementsLeft--;
-        if (this.measurementsLeft <= 0) {
-          window.removeEventListener('deviceorientation', this.handleOrientation);
-        }
+        // Remove the event listener after one measurement
+        window.removeEventListener('deviceorientation', this.handleOrientation);
       },
       adjustCompass: function(compassHeading, windowOrientation) {
         var adjustedCompassHeading = compassHeading;
@@ -53,11 +47,16 @@
     async function requestPermission() {
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         const permission = await DeviceOrientationEvent.requestPermission();
-        if (permission !== 'granted') {
+        if (permission === 'granted') {
+          console.log('Berechtigung erteilt');
+          return true;
+        } else {
           console.log('Berechtigung nicht erteilt');
+          return false;
         }
       } else {
         console.log("Diese Anwendung muss auf den Kompass Ihres Geräts zugreifen. Bitte erlauben Sie den Zugriff, wenn Sie dazu aufgefordert werden.");
+        return true;
       }
     }
   </script>
