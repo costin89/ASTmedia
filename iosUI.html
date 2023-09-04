@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS UI-Design mit CSS</title>
+    <style>
+        /* Allgemeine Styles */
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f3f4f6;
+            padding: 20px;
+        }
+
+        /* Button im iOS-Stil */
+        .ios-button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007AFF;
+            color: #fff;
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .ios-button:active {
+            background-color: #0051c7;
+        }
+
+        /* Switch im iOS-Stil */
+        .ios-switch {
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            position: relative;
+            background-color: #e5e5ea;
+            cursor: pointer;
+        }
+
+        .ios-switch input[type="checkbox"] {
+            display: none;
+        }
+
+        .ios-switch .switch-thumb {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background-color: #fff;
+            position: absolute;
+            top: 1px;
+            left: 1px;
+            transition: left 0.3s ease;
+        }
+
+        .ios-switch input[type="checkbox"]:checked + .switch-thumb {
+            left: 31px;
+        }
+
+        /* Alert Box im iOS-Stil */
+        .ios-alert {
+            max-width: 300px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+
+        .ios-alert h2 {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        .ios-alert p {
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .ios-alert .buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .ios-alert .buttons.single {
+            justify-content: center;
+        }
+        
+        /* Suchfeld im iOS-Stil */
+        .ios-search {
+            display: flex;
+            align-items: center;
+            padding: 5px 10px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            margin: 20px 0;
+        }
+        
+        .ios-search input[type="text"] {
+            flex-grow: 1;
+            border: none;
+            background: transparent;
+            padding-left: 10px;
+            font-size: 16px;
+            outline: none;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .ios-search .search-icon {
+            color: #8e8e93;
+            margin-right: 10px;
+        }
+        /* Slider im iOS-Stil */
+        .ios-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            border-radius: 4px;
+            background: #e5e5ea;
+            outline: none;
+            padding: 0;
+            margin: 25px 0;
+        }
+        
+        .ios-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007AFF;
+            cursor: pointer;
+        }
+        
+        .ios-slider::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #007AFF;
+            cursor: pointer;
+        }
+        
+        /* Radiobutton im iOS-Stil */
+        .ios-radio {
+            display: none;
+        }
+        
+        .ios-radio + label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 24px;
+            display: inline-block;
+            color: #666;
+        }
+        
+        .ios-radio + label:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid #007AFF;
+            border-radius: 50%;
+            background-color: transparent;
+        }
+        
+        .ios-radio:checked + label:after {
+            content: "";
+            position: absolute;
+            left: 7px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background-color: #007AFF;
+        }
+        
+        /* Checkbox im iOS-Stil */
+        .ios-checkbox {
+            display: none;
+        }
+        
+        .ios-checkbox + label {
+            position: relative;
+            padding-left: 30px;
+            cursor: pointer;
+            font-size: 16px;
+            line-height: 24px;
+            display: inline-block;
+            color: #666;
+        }
+        
+        .ios-checkbox + label:before {
+            content: "";
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            border: 2px solid #007AFF;
+            border-radius: 5px;
+            background-color: transparent;
+        }
+        
+        .ios-checkbox:checked + label:after {
+            content: "✔";
+            position: absolute;
+            left: 3px;
+            top: 50%;
+            transform: translateY(-50%) scale(1.5);
+            font-size: 16px;
+            color: #007AFF;
+        }
+        /* iOS Titelbar */
+        .ios-navbar {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 60px;
+            background-color: #f7f7f8;
+            border-bottom: 1px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .ios-navbar .title {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            color: #333;
+        }
+        /* iOS Navbar */
+        .ios-navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 60px;
+            background-color: #f7f7f8;
+            border-bottom: 1px solid #e5e5ea;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            padding: 0 15px; /* Ein wenig Padding an den Seiten */
+        }
+        
+        .ios-navbar .title {
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            color: #333;
+        }
+        
+        .ios-navbar .nav-button {
+            color: #007AFF;
+            background: none;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+    </style>
+</head>
+
+<body>
+    <!-- Titelbar -->
+    <div class="ios-navbar">
+        <span class="title">Ihr Titel</span>
+    </div>
+    
+    <br><br>
+    
+    <div class="ios-navbar">
+        <button class="nav-button">Zurück</button>
+        <span class="title">Ihr Titel</span>
+        <button class="nav-button">Bearbeiten</button>
+    </div>
+    
+    <br><br>
+    
+    <!-- Button -->
+    <button class="ios-button">iOS Button</button>
+
+    <br><br>
+    
+    <!-- Switch -->
+    <label class="ios-switch">
+        <input type="checkbox">
+        <span class="switch-thumb"></span>
+    </label>
+    
+    <br><br>
+
+    <!-- Alert Box mit einem Button -->
+    <div class="ios-alert">
+        <h2>Alert Title</h2>
+        <p>This is an iOS-style alert box with one button.</p>
+        <div class="buttons single">
+            <button class="ios-button">OK</button>
+        </div>
+    </div>
+    
+    <br><br>
+
+    <!-- Alert Box mit zwei Buttons -->
+    <div class="ios-alert">
+        <h2>Alert Title</h2>
+        <p>This is an iOS-style alert box with two buttons.</p>
+        <div class="buttons">
+            <button class="ios-button">Cancel</button>
+            <button class="ios-button">Confirm</button>
+        </div>
+    </div>
+    
+    <br><br>
+
+    <!-- Suchfeld im iOS-Stil -->
+    <div class="ios-search">
+        <span class="search-icon">🔍</span>
+        <input type="text" placeholder="Search">
+    </div>
+    
+    <br><br>
+    
+    <!-- Slider im iOS-Stil -->
+    <input type="range" min="0" max="100" class="ios-slider">
+    
+    <br><br>
+    
+    <!-- Radiobutton im iOS-Stil -->
+    <input type="radio" id="radio1" name="radiogroup" class="ios-radio">
+    <label for="radio1">Option 1</label>
+    <input type="radio" id="radio2" name="radiogroup" class="ios-radio">
+    <label for="radio2">Option 2</label>
+    
+    <br><br>
+    
+    <!-- Checkbox im iOS-Stil -->
+    <input type="checkbox" id="checkbox1" class="ios-checkbox">
+    <label for="checkbox1">Check me</label>
+</body>
+</html>
