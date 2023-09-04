@@ -2,26 +2,21 @@
 <html>
 <head>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  <script>
+   <script>
     AFRAME.registerComponent('alignment', {
       schema: {
-        north: {type: 'boolean', default: false},
-        time: {type: 'number', default: 0}
+        north: {type: 'boolean', default: false}
       },
       init: function () {
-        if (this.data.north) {
-          requestPermission().then(() => {
-            if (this.data.time > 0) {
-              setTimeout(() => {
-                window.addEventListener('deviceorientation', this.handleOrientation, true);
-              }, this.data.time * 1000);
-            } else {
-              window.addEventListener('deviceorientation', this.handleOrientation, true);
-            }
-          });
-        }
         this.handleOrientation = this.handleOrientation.bind(this);
         this.adjustCompass = this.adjustCompass.bind(this);
+        document.querySelector('#measureNorthButton').addEventListener('click', async () => {
+          await requestPermission();
+          window.addEventListener('deviceorientation', this.handleOrientation, {once: true});
+        });
+      },
+      remove: function () {
+        window.removeEventListener('deviceorientation', this.handleOrientation);
       },
       handleOrientation: function(event) {
         var compassHeading = event.webkitCompassHeading || 360 - event.alpha;
@@ -29,9 +24,7 @@
         var adjustedCompassHeading = this.adjustCompass(compassHeading, windowOrientation);
         
         this.el.setAttribute('rotation', {x: 0, y: adjustedCompassHeading, z: 0});
-        
-        // Remove the event listener after one measurement
-        window.removeEventListener('deviceorientation', this.handleOrientation);
+        alert(`Norden gemessen bei: ${adjustedCompassHeading.toFixed(2)} Grad`);
       },
       adjustCompass: function(compassHeading, windowOrientation) {
         var adjustedCompassHeading = compassHeading;
@@ -48,7 +41,6 @@
       if (typeof DeviceOrientationEvent.requestPermission === 'function') {
         const permission = await DeviceOrientationEvent.requestPermission();
         if (permission === 'granted') {
-          console.log('Berechtigung erteilt');
           return true;
         } else {
           console.log('Berechtigung nicht erteilt');
@@ -69,5 +61,6 @@
     <a-box position="0 0 10" color="blue"></a-box>
     <a-camera position="0 0 0"></a-camera>
   </a-scene>
+  <button id="measureNorthButton">Norden messen</button>
 </body>
 </html>
