@@ -6,7 +6,7 @@
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 </head>
 <body>
-    <a-scene vr-mode-ui="enabled: true">
+    <a-scene vr-mode-ui="enabled: true" wasd-controls look-controls>
         <!-- Boden -->
         <a-plane id="floor" position="0 0 -4" rotation="-90 0 0" width="8" height="8" color="#7BC8A4"></a-plane>
         
@@ -57,16 +57,7 @@
             cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
         });
 
-        let controller = document.querySelector('[oculus-touch-controls="hand: left"]');
-        let plane = document.querySelector('#myPlane');
         
-        controller.addEventListener('buttondown', function(event) {
-            if (event.detail.button === 'xbutton') {
-                // Umschalten der Sichtbarkeit der Plane
-                let isVisible = plane.getAttribute('visible');
-                plane.setAttribute('visible', !isVisible);
-            }
-        });
     </script>
 </body>
 </html>
