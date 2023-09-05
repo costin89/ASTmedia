@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Oculus Quest A-Frame Szene</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+</head>
+<body>
+    <a-scene vr-mode-ui="enabled: true">
+        <!-- Boden -->
+        <a-plane position="0 0 -4" rotation="-90 0 0" width="8" height="8" color="#7BC8A4"></a-plane>
+
+        <!-- Box zum Interagieren -->
+        <a-box position="0 1.5 -3" rotation="0 45 0" color="#4CC3D9" shadow></a-box>
+
+        <!-- Himmel -->
+        <a-sky color="#ECECEC"></a-sky>
+
+        <!-- Oculus Quest Controller -->
+        <a-entity oculus-touch-controls="hand: left"></a-entity>
+        <a-entity oculus-touch-controls="hand: right"></a-entity>
+        
+        <!-- Kamera und Aussehen -->
+        <a-camera position="0 1.6 0">
+            <a-cursor></a-cursor>
+        </a-camera>
+    </a-scene>
+</body>
+</html>
