@@ -18,9 +18,32 @@
         <a-entity oculus-touch-controls="hand: right"></a-entity>
         
         <!-- Kamera und Aussehen -->
-        <a-camera position="0 1.6 0">
-            <a-cursor raycaster="objects: none"></a-cursor>
-        </a-camera>
+        <a-camera position="0 1.6 0"></a-camera>
     </a-scene>
+    <script>
+        // Zugriff auf das Scene-Element und das Cursor-Element
+        let scene = document.querySelector('a-scene');
+        let cursor = document.querySelector('a-cursor');
+        
+        // Event-Listener für den VR-Modus
+        scene.addEventListener('enter-vr', function() {
+            cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
+        });
+        
+        scene.addEventListener('exit-vr', function() {
+            cursor.setAttribute('raycaster', ''); // Aktiviert den Cursor
+        });
+        
+        // Event-Listener für WASD-Steuerung (angenommen, dass Sie die Steuerung auf einem Entity haben, z. B. der Kamera)
+        let wasdControls = document.querySelector('[wasd-controls]');
+        
+        wasdControls.addEventListener('move-start', function() {
+            cursor.setAttribute('raycaster', ''); // Aktiviert den Cursor
+        });
+        
+        wasdControls.addEventListener('move-end', function() {
+            cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
+        });
+    </script>
 </body>
 </html>
