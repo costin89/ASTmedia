@@ -269,7 +269,26 @@
             font-size: 16px;
             cursor: pointer;
         }
-
+        /* iOS Input Feld */
+        .ios-input-container {
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden; /* um sicherzustellen, dass das innere Eingabefeld die Ecken des Containers nicht überlappt */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .ios-input {
+            width: 100%;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 10px; /* diese Ecken werden vom umgebenden Container abgeschnitten */
+            font-size: 16px;
+            outline: none;
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+        }
     </style>
 </head>
 
@@ -349,5 +368,13 @@
     <!-- Checkbox im iOS-Stil -->
     <input type="checkbox" id="checkbox1" class="ios-checkbox">
     <label for="checkbox1">Check me</label>
+
+    <br><br>
+    
+    <!-- Input-Feld im iOS-Stil -->
+    <div class="ios-input-container">
+    <input type="text" class="ios-input" placeholder="Geben Sie hier etwas ein...">
+</div>
+
 </body>
 </html>
