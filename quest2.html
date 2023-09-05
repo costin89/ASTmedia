@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Online Oculus Quest</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 </head>
 <body>
     <a-scene vr-mode-ui="enabled: true">
@@ -26,9 +26,8 @@
         // Zugriff auf das Scene-Element und das Cursor-Element
         let scene = document.querySelector('a-scene');
         let cursor = document.querySelector('a-cursor');
-        let plane = document.querySelector('a-plane');
-        let leftController = document.querySelector('[oculus-touch-controls="hand: left"]');
-        let plane = document.querySelector('#myPlane');
+        
+        let ui = document.querySelector('#myPlane');
 
         // Event-Listener für den VR-Modus
         scene.addEventListener('enter-vr', function() {
@@ -62,10 +61,10 @@
         // Event-Listener für den Button "X"
         document.querySelector('a-entity[oculus-touch-controls="hand: left"]').addEventListener('buttondown', function(event) {
             if (event.detail.id === 'xbutton') { // Überprüfen, ob der gedrückte Button der Button "X" ist
-                if (plane.getAttribute('visible')) { // Überprüfen, ob die Plane sichtbar ist
-                     plane.setAttribute('visible', false); // Plane ausblenden
+                if (ui.getAttribute('visible')) { // Überprüfen, ob die Plane sichtbar ist
+                     ui.setAttribute('visible', false); // Plane ausblenden
                 } else {
-                     plane.setAttribute('visible', true); // Plane einblenden
+                     ui.setAttribute('visible', true); // Plane einblenden
                 }
             }
         });
