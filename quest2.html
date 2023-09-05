@@ -59,16 +59,16 @@
             cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
         });
 
-        // Steuert die Opacity der Plane
-        leftController.addEventListener('buttondown', function(event) {
-        if (event.detail.id === 0) { // X-Button des linken Controllers
-            if (plane.getAttribute('material').opacity === 1) {
-                plane.setAttribute('material', 'opacity', 0); // Plane ausblenden
-            } else {
-                plane.setAttribute('material', 'opacity', 1); // Plane einblenden
+        // Event-Listener für den Button "X"
+        document.querySelector('a-entity[oculus-touch-controls="hand: left"]').addEventListener('buttondown', function(event) {
+            if (event.detail.id === 'xbutton') { // Überprüfen, ob der gedrückte Button der Button "X" ist
+                if (plane.getAttribute('visible')) { // Überprüfen, ob die Plane sichtbar ist
+                     plane.setAttribute('visible', false); // Plane ausblenden
+                } else {
+                     plane.setAttribute('visible', true); // Plane einblenden
+                }
             }
-        }
-    });
+        });
     </script>
 </body>
 </html>
