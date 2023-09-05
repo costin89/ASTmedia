@@ -65,12 +65,12 @@
             // Event-Listener für den linken Controller hinzufügen
             leftController.addEventListener('triggerdown', function() {
                 // Prüfe, ob die Plane aktuell sichtbar ist
-                if (ui.getAttribute('visible')) {
+                if (ui.getAttribute('visible') === false) {
                     // Wenn sichtbar, mache sie unsichtbar
-                    ui.setAttribute('visible', false);
+                    ui.setAttribute('visible', true);
                 } else {
                     // Wenn unsichtbar, mache sie sichtbar
-                    ui.setAttribute('visible', true);
+                    ui.setAttribute('visible', false);
                 }
             });
         });
