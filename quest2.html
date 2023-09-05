@@ -24,6 +24,16 @@
         // Zugriff auf das Scene-Element und das Cursor-Element
         let scene = document.querySelector('a-scene');
         let cursor = document.querySelector('a-cursor');
+        let plane = document.querySelector('a-plane');
+
+        // Event-Listener für den VR-Modus
+        scene.addEventListener('enter-vr', function() {
+            plane.setAttribute('color', 'red'); // Ändert die Farbe der Plane in Rot
+        });
+        
+        scene.addEventListener('exit-vr', function() {
+            plane.setAttribute('color', '#7BC8A4'); // Setzt die Farbe der Plane zurück
+        });
         
         // Event-Listener für den VR-Modus
         scene.addEventListener('enter-vr', function() {
