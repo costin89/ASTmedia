@@ -58,14 +58,13 @@
         });
 
         let controller = document.querySelector('[oculus-touch-controls="hand: left"]');
-        let ui = document.querySelector('#UIplane');
-
-        // Event-Listener für den Button "X"
+        let plane = document.querySelector('#myPlane');
+        
         controller.addEventListener('buttondown', function(event) {
-            if (event.detail === 'xbutton') {
+            if (event.detail.button === 'xbutton') {
                 // Umschalten der Sichtbarkeit der Plane
-                let isVisible = ui.getAttribute('visible');
-                ui.setAttribute('visible', !isVisible);
+                let isVisible = plane.getAttribute('visible');
+                plane.setAttribute('visible', !isVisible);
             }
         });
     </script>
