@@ -8,43 +8,43 @@
 <body>
     <a-scene vr-mode-ui="enabled: true">
         <!-- Boden -->
-        <a-plane class="collidable" position="0 0 -4" rotation="-90 0 0" width="8" height="8" color="#7BC8A4"></a-plane>
+        <a-plane id="floor" position="0 0 -4" rotation="-90 0 0" width="8" height="8" color="#7BC8A4"></a-plane>
         
         <!-- Himmel -->
         <a-sky color="#ECECEC"></a-sky>
 
         <!-- Oculus Quest Controller -->
         <a-entity oculus-touch-controls="hand: left" a-port="active: true">
-            <a-plane id="UIplane" position="0 0 0" width="0.5" height="0.2" color="blue" visible="true"></a-plane>
+            <a-plane id="UIplane" position="0 0 0" width="0.35" height="0.15" color="blue" visible="true"></a-plane>
         </a-entity>
         <a-entity oculus-touch-controls="hand: right" ></a-entity>
         
         <!-- Kamera und Aussehen -->
-        <a-camera position="0 1.6 0"></a-camera>
+        <a-camera position="0 1.70 0"></a-camera>
     </a-scene>
     <script>
         // Zugriff auf das Scene-Element und das Cursor-Element
         let scene = document.querySelector('a-scene');
         let cursor = document.querySelector('a-cursor');
-        
+        let floor = document.querySelector('#floor');
         let ui = document.querySelector('#UIplane');
 
         // Event-Listener für den VR-Modus
         scene.addEventListener('enter-vr', function() {
-            plane.setAttribute('color', 'red'); // Ändert die Farbe der Plane in Rot
+            floor.setAttribute('color', 'red'); // Ändert die Farbe der Plane in Rot
         });
         
         scene.addEventListener('exit-vr', function() {
-            plane.setAttribute('color', '#7BC8A4'); // Setzt die Farbe der Plane zurück
+            floor.setAttribute('color', '#7BC8A4'); // Setzt die Farbe der Plane zurück
         });
         
         // Event-Listener für den VR-Modus
         scene.addEventListener('enter-vr', function() {
-            cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
+            floor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
         });
         
         scene.addEventListener('exit-vr', function() {
-            cursor.setAttribute('raycaster', ''); // Aktiviert den Cursor
+            floor.setAttribute('raycaster', ''); // Aktiviert den Cursor
         });
         
         // Event-Listener für WASD-Steuerung (angenommen, dass Sie die Steuerung auf einem Entity haben, z. B. der Kamera)
@@ -61,10 +61,10 @@
         // Event-Listener für den Button "X"
         document.querySelector('a-entity[oculus-touch-controls="hand: left"]').addEventListener('buttondown', function(event) {
             if (event.detail.id === 'xbutton') { // Überprüfen, ob der gedrückte Button der Button "X" ist
-                if (ui.getAttribute('visible') === true) { // Überprüfen, ob die Plane sichtbar ist
-                     ui.setAttribute('visible', false); // Plane ausblenden
+                if (ui.getAttribute('visible') === false) { // Überprüfen, ob die Plane sichtbar ist
+                     ui.setAttribute('visible', true); // Plane ausblenden
                 } else {
-                     ui.setAttribute('visible', true); // Plane einblenden
+                     ui.setAttribute('visible', false); // Plane einblenden
                 }
             }
         });
