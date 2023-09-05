@@ -305,6 +305,36 @@
         html {
             scroll-behavior: smooth;
         }
+
+        /* iOS Tab Bar Stil */
+        .ios-tab-bar {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 50px;
+            background-color: #f7f7f8;
+            border-top: 1px solid #e5e5ea;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+        
+        .ios-tab-bar .tab-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 5px;
+            font-size: 10px;
+            color: #8e8e93;
+        }
+        
+        .ios-tab-bar .tab-item img {
+            width: 24px;
+            height: 24px;
+            margin-bottom: 4px;
+        }
+
     </style>
 </head>
 
@@ -397,7 +427,23 @@
     <!-- Hier können Sie eine Menge Inhalte hinzufügen, um den Scroll-Effekt zu sehen. -->
     <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. ...</p>
     <!-- Wiederholen Sie den obigen Absatz oder fügen Sie andere Inhalte hinzu, um den Scrollbereich zu füllen. -->
+   
+    <!-- Tab-Bar im iOS-Stil -->
     </div>
-    
+        <div class="ios-tab-bar">
+        <div class="tab-item">
+            <img src="path/to/home-icon.png" alt="Home">
+            <span>Home</span>
+        </div>
+        <div class="tab-item">
+            <img src="path/to/search-icon.png" alt="Search">
+            <span>Search</span>
+        </div>
+        <div class="tab-item">
+            <img src="path/to/settings-icon.png" alt="Settings">
+            <span>Settings</span>
+        </div>
+    </div>
+
 </body>
 </html>
