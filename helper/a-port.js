@@ -1,6 +1,8 @@
 AFRAME.registerComponent('a-port', {
   schema: {
-    active: { default: true }
+    active: { default: true },
+    maxDistance: { type: 'number', default: 5 },
+    collisionEntities: { type: 'string', default: '.collidable' }
   },
 
   init: function () {
@@ -8,14 +10,24 @@ AFRAME.registerComponent('a-port', {
     var data = this.data;
     var self = this;
 
-    // Eventlistener für den Trigger des Controllers hinzufügen
+    this.raycaster = new THREE.Raycaster();
+
     el.addEventListener('triggerdown', function () {
       if (!data.active) return;
 
       var currentPosition = el.getAttribute('position');
-      var targetPosition = /* Hier musst du bestimmen, wohin teleportiert werden soll, z.B. basierend auf der Blickrichtung oder einem festgelegten Ziel. */
+      var cameraEl = el.sceneEl.camera.el;
+      var direction = new THREE.Vector3();
 
-      el.setAttribute('position', targetPosition);
+      cameraEl.object3D.getWorldDirection(direction);
+      self.raycaster.set(currentPosition, direction);
+
+      var intersections = self.raycaster.intersectObjects(el.sceneEl.querySelectorAll(data.collisionEntities), true);
+
+      if (intersections.length > 0 && intersections[0].distance <= data.maxDistance) {
+        var targetPosition = intersections[0].point;
+        el.setAttribute('position', targetPosition);
+      }
     });
   }
 });
