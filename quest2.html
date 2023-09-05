@@ -61,7 +61,7 @@
         // Event-Listener für den Button "X"
         document.querySelector('a-entity[oculus-touch-controls="hand: left"]').addEventListener('buttondown', function(event) {
             if (event.detail.id === 'xbutton') { // Überprüfen, ob der gedrückte Button der Button "X" ist
-                if (ui.getAttribute('visible')) { // Überprüfen, ob die Plane sichtbar ist
+                if (ui.getAttribute('visible') === true) { // Überprüfen, ob die Plane sichtbar ist
                      ui.setAttribute('visible', false); // Plane ausblenden
                 } else {
                      ui.setAttribute('visible', true); // Plane einblenden
