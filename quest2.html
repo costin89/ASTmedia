@@ -59,13 +59,11 @@
         });
 
         // Event-Listener für den Button "X"
-        document.querySelector('a-entity[oculus-touch-controls="hand: left"]').addEventListener('buttondown', function(event) {
-            if (event.detail.id === 'xbutton') { // Überprüfen, ob der gedrückte Button der Button "X" ist
-                if (ui.getAttribute('visible') === false) { // Überprüfen, ob die Plane sichtbar ist
-                     ui.setAttribute('visible', true); // Plane ausblenden
-                } else {
-                     ui.setAttribute('visible', false); // Plane einblenden
-                }
+        controller.addEventListener('buttondown', function(event) {
+            if (event.detail === 'xbutton') {
+                // Umschalten der Sichtbarkeit der Plane
+                let isVisible = ui.getAttribute('visible');
+                ui.setAttribute('visible', !isVisible);
             }
         });
     </script>
