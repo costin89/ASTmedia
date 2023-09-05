@@ -335,6 +335,52 @@
             margin-bottom: 4px;
         }
 
+        /* iOS Table View Stil */
+        .ios-table-view {
+            width: 100%;
+            border-top: 1px solid #e5e5ea;
+            border-bottom: 1px solid #e5e5ea;
+            background-color: #f7f7f8;
+        }
+        
+        .ios-table-view .cell {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            background-color: #fff;
+            border-bottom: 1px solid #e5e5ea;
+            position: relative;
+            transition: background-color 0.3s;
+        }
+        
+        .ios-table-view .cell:last-child {
+            border-bottom: none;
+        }
+        
+        .ios-table-view .cell:hover {
+            background-color: #f0f0f5;
+        }
+        
+        .ios-table-view .cell img {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+        
+        .ios-table-view .cell .cell-label {
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .ios-table-view .cell .disclosure-indicator {
+            position: absolute;
+            right: 10px;
+            border: 4px solid transparent;
+            border-left: 7px solid #8e8e93; /* ein kleiner Pfeil */
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
     </style>
 </head>
 
@@ -450,6 +496,26 @@
     </div>
 
     <br><br>
+
+    <div class="ios-table-view">
+        <div class="cell">
+            <img src="path/to/icon1.png" alt="Icon 1">
+            <span class="cell-label">Item 1</span>
+            <div class="disclosure-indicator"></div>
+        </div>
+        <div class="cell">
+            <img src="path/to/icon2.png" alt="Icon 2">
+            <span class="cell-label">Item 2</span>
+            <div class="disclosure-indicator"></div>
+        </div>
+        <div class="cell">
+            <img src="path/to/icon3.png" alt="Icon 3">
+            <span class="cell-label">Item 3</span>
+            <div class="disclosure-indicator"></div>
+        </div>
+        <!-- Weitere Zellen nach Bedarf -->
+    </div>
+
 
 </body>
 </html>
