@@ -289,6 +289,22 @@
             outline: none;
             font-family: 'Helvetica Neue', Arial, sans-serif;
         }
+
+        /* iOS Scroll View Stil */
+        .ios-scroll-view {
+            width: 100%;
+            max-height: 300px; /* oder eine andere Höhe, die Sie festlegen möchten */
+            overflow-y: auto; /* erlaubt vertikales Scrollen */
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 10px;
+            background-color: #fff;
+        }
+        
+        /* Optional: Globaler Stil, um das Scrollen geschmeidiger zu machen (ähnlich wie auf iOS-Geräten) */
+        html {
+            scroll-behavior: smooth;
+        }
     </style>
 </head>
 
@@ -376,5 +392,12 @@
     <input type="text" class="ios-input" placeholder="Geben Sie hier etwas ein...">
     </div>
 
+    <!-- Scroll-View im iOS-Stil -->
+    <div class="ios-scroll-view">
+    <!-- Hier können Sie eine Menge Inhalte hinzufügen, um den Scroll-Effekt zu sehen. -->
+    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. ...</p>
+    <!-- Wiederholen Sie den obigen Absatz oder fügen Sie andere Inhalte hinzu, um den Scrollbereich zu füllen. -->
+    </div>
+    
 </body>
 </html>
