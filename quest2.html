@@ -14,10 +14,11 @@
         <a-sky color="#ECECEC"></a-sky>
 
         <!-- Oculus Quest Controller -->
-        <a-entity oculus-touch-controls="hand: left" a-port="active: true">
+        <!-- Oculus Quest linker Controller -->
+        <a-entity id="leftController" oculus-touch-controls="hand: left">
             <a-plane id="UIplane" position="0 0.1 0" rotation="-90 0 0" width="0.15" height="0.10" color="blue" visible="false"></a-plane>
         </a-entity>
-        <a-entity oculus-touch-controls="hand: right" ></a-entity>
+        <a-entity id="rightController" oculus-touch-controls="hand: right" ></a-entity>
         
         <!-- Kamera und Aussehen -->
         <a-camera position="0 1.70 0"></a-camera>
