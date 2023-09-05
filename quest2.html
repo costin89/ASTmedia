@@ -60,17 +60,17 @@
         document.addEventListener('DOMContentLoaded', function() {
             // Referenzen zu unseren Entitäten
             const leftController = document.querySelector('#leftController');
-            const myPlane = document.querySelector('#myPlane');
+            const ui = document.querySelector('#UIplane');
         
             // Event-Listener für den linken Controller hinzufügen
             leftController.addEventListener('triggerdown', function() {
                 // Prüfe, ob die Plane aktuell sichtbar ist
-                if (myPlane.getAttribute('visible')) {
+                if (ui.getAttribute('visible')) {
                     // Wenn sichtbar, mache sie unsichtbar
-                    myPlane.setAttribute('visible', false);
+                    ui.setAttribute('visible', false);
                 } else {
                     // Wenn unsichtbar, mache sie sichtbar
-                    myPlane.setAttribute('visible', true);
+                    ui.setAttribute('visible', true);
                 }
             });
         });
