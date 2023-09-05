@@ -15,7 +15,7 @@
 
         <!-- Oculus Quest Controller -->
         <a-entity oculus-touch-controls="hand: left" a-port="active: true">
-            <a-plane id="UIplane" position="0 0 0" width="0.25" height="0.10" color="blue" visible="true"></a-plane>
+            <a-plane id="UIplane" position="0 0.25 0" rtation="-90 0 0" width="0.25" height="0.10" color="blue" visible="true"></a-plane>
         </a-entity>
         <a-entity oculus-touch-controls="hand: right" ></a-entity>
         
@@ -27,9 +27,6 @@
         let scene = document.querySelector('a-scene');
         let cursor = document.querySelector('a-cursor');
         let floor = document.querySelector('#floor');
-
-        let controller = document.querySelector('[oculus-touch-controls="hand: left"]');
-        let ui = document.querySelector('#UIplane');
 
         // Event-Listener für den VR-Modus
         scene.addEventListener('enter-vr', function() {
@@ -59,6 +56,9 @@
         wasdControls.addEventListener('move-end', function() {
             cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
         });
+
+        let controller = document.querySelector('[oculus-touch-controls="hand: left"]');
+        let ui = document.querySelector('#UIplane');
 
         // Event-Listener für den Button "X"
         controller.addEventListener('buttondown', function(event) {
