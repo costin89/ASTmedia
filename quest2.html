@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Online Oculus Quest</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="helper/a-port.js"></script>
 </head>
 <body>
     <a-scene vr-mode-ui="enabled: true">
@@ -15,7 +14,9 @@
         <a-sky color="#ECECEC"></a-sky>
 
         <!-- Oculus Quest Controller -->
-        <a-entity oculus-touch-controls="hand: left" a-port="active: true"></a-entity>
+        <a-entity oculus-touch-controls="hand: left" a-port="active: true">
+            <a-plane id="myPlane" position="0 0 0" width="0.5" height="0.5" color="blue"></a-plane>
+        </a-entity>
         <a-entity oculus-touch-controls="hand: right" a-port="active: true"></a-entity>
         
         <!-- Kamera und Aussehen -->
@@ -26,6 +27,8 @@
         let scene = document.querySelector('a-scene');
         let cursor = document.querySelector('a-cursor');
         let plane = document.querySelector('a-plane');
+        let leftController = document.querySelector('[oculus-touch-controls="hand: left"]');
+        let plane = document.querySelector('#myPlane');
 
         // Event-Listener für den VR-Modus
         scene.addEventListener('enter-vr', function() {
@@ -55,6 +58,17 @@
         wasdControls.addEventListener('move-end', function() {
             cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
         });
+
+        // Steuert die Opacity der Plane
+        leftController.addEventListener('buttondown', function(event) {
+        if (event.detail.id === 0) { // X-Button des linken Controllers
+            if (plane.getAttribute('material').opacity === 1) {
+                plane.setAttribute('material', 'opacity', 0); // Plane ausblenden
+            } else {
+                plane.setAttribute('material', 'opacity', 1); // Plane einblenden
+            }
+        }
+    });
     </script>
 </body>
 </html>
