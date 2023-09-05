@@ -57,7 +57,23 @@
             cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
         });
 
+        document.addEventListener('DOMContentLoaded', function() {
+            // Referenzen zu unseren Entitäten
+            const leftController = document.querySelector('#leftController');
+            const myPlane = document.querySelector('#myPlane');
         
+            // Event-Listener für den linken Controller hinzufügen
+            leftController.addEventListener('triggerdown', function() {
+                // Prüfe, ob die Plane aktuell sichtbar ist
+                if (myPlane.getAttribute('visible')) {
+                    // Wenn sichtbar, mache sie unsichtbar
+                    myPlane.setAttribute('visible', false);
+                } else {
+                    // Wenn unsichtbar, mache sie sichtbar
+                    myPlane.setAttribute('visible', true);
+                }
+            });
+        });
     </script>
 </body>
 </html>
