@@ -1,79 +1,30 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Online Oculus Quest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A-Frame Cube Scene</title>
     <script src="https://aframe.io/releases/1.4.2/aframe.min.js"></script>
 </head>
 <body>
-    <a-scene vr-mode-ui="enabled: true" wasd-controls look-controls>
-        <!-- Boden -->
-        <a-plane id="floor" position="0 0 -4" rotation="-90 0 0" width="8" height="8" color="#7BC8A4"></a-plane>
-        
-        <!-- Himmel -->
-        <a-sky color="#ECECEC"></a-sky>
-
-        <!-- Oculus Quest Controller -->
-        <!-- Oculus Quest linker Controller -->
-        <a-entity id="leftController" oculus-touch-controls="hand: left">
-            <a-plane id="UIplane" position="0 0.1 0" rotation="-90 0 0" width="0.15" height="0.10" color="blue" visible="false"></a-plane>
-        </a-entity>
-        <a-entity id="rightController" oculus-touch-controls="hand: right" ></a-entity>
-        
-        <!-- Kamera und Aussehen -->
-        <a-camera position="0 1.70 0"></a-camera>
+    <a-scene>
+        <a-entity camera position="0 1.6 0"></a-entity>
+        <a-box id="myBox" position="0 1.5 -10" color="red"></a-box>
     </a-scene>
+
     <script>
-        // Zugriff auf das Scene-Element und das Cursor-Element
-        let scene = document.querySelector('a-scene');
-        let cursor = document.querySelector('a-cursor');
-        let floor = document.querySelector('#floor');
+        // Das Element des Würfels auswählen.
+        const box = document.querySelector('#myBox');
+        
+        // Auf das 'click'-Event hören.
+        box.addEventListener('click', function() {
+            // Die Farbe des Würfels auf blau setzen.
+            box.setAttribute('color', 'blue');
 
-        // Event-Listener für den VR-Modus
-        scene.addEventListener('enter-vr', function() {
-            floor.setAttribute('color', 'red'); // Ändert die Farbe der Plane in Rot
-        });
-        
-        scene.addEventListener('exit-vr', function() {
-            floor.setAttribute('color', '#7BC8A4'); // Setzt die Farbe der Plane zurück
-        });
-        
-        // Event-Listener für den VR-Modus
-        scene.addEventListener('enter-vr', function() {
-            floor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
-        });
-        
-        scene.addEventListener('exit-vr', function() {
-            floor.setAttribute('raycaster', ''); // Aktiviert den Cursor
-        });
-        
-        // Event-Listener für WASD-Steuerung (angenommen, dass Sie die Steuerung auf einem Entity haben, z. B. der Kamera)
-        let wasdControls = document.querySelector('[wasd-controls]');
-        
-        wasdControls.addEventListener('move-start', function() {
-            cursor.setAttribute('raycaster', ''); // Aktiviert den Cursor
-        });
-        
-        wasdControls.addEventListener('move-end', function() {
-            cursor.setAttribute('raycaster', 'objects: none'); // Deaktiviert den Cursor
-        });
-
-        document.addEventListener('DOMContentLoaded', function() {
-            // Referenzen zu unseren Entitäten
-            const leftController = document.querySelector('#leftController');
-            const ui = document.querySelector('#UIplane');
-        
-            // Event-Listener für den linken Controller hinzufügen
-            leftController.addEventListener('triggerdown', function() {
-                // Prüfe, ob die Plane aktuell sichtbar ist
-                if (ui.getAttribute('visible') === false) {
-                    // Wenn sichtbar, mache sie unsichtbar
-                    ui.setAttribute('visible', true);
-                } else {
-                    // Wenn unsichtbar, mache sie sichtbar
-                    ui.setAttribute('visible', false);
-                }
-            });
+            // Nach 2 Sekunden die Farbe wieder auf rot setzen.
+            setTimeout(function() {
+                box.setAttribute('color', 'red');
+            }, 2000);
         });
     </script>
 </body>
