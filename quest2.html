@@ -10,8 +10,10 @@
     <a-scene>
         <a-entity camera position="0 1.6 0"></a-entity>
         
-        <a-entity tracked-controls="controller: 4;hand:left; idPrefix: Hand"  laser-controls raycaster="lineColor: green"></a-entity>
-        <a-entity tracked-controls="controller: 5;hand:right; idPrefix: Hand" laser-controls raycaster="lineColor: red"></a-entity>
+        <a-entity tracked-controls="controller: 4;hand:left; idPrefix: Hand"></a-entity>
+        <a-entity tracked-controls="controller: 5;hand:right; idPrefix: Hand">
+            <a-cursor></a-cursor>
+        </a-entity>
         
         <a-box id="myBox" position="0 1.7 -1" color="red"></a-box>
     </a-scene>
