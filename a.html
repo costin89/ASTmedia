@@ -1,47 +1,29 @@
- <!DOCTYPE html>
 <html>
-  <head>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-  </head>
-  <body>
-    <a-scene touch-move vr-mode-ui="enabled: false">
-      <a-entity id="cameraRig">
-        <!-- Camera mit Look Controls für Drehbewegungen -->
-        <a-camera position="0 1.6 0" look-controls="enabled: false;" wasd-controls="enabled: false;"></a-camera>
-      </a-entity>
-
-      <!-- Ein einfacher Boden und Licht für die Szene -->
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="8" height="8" color="#7BC8A4"></a-plane>
-      <a-sky color="#ECECEC"></a-sky>
-      <a-light type="ambient" color="#888"></a-light>
-    </a-scene>
-
+<head>
+  <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+  <script src="https://mixedreality.mozilla.org/webxr-polyfill/build/webxr-polyfill.js"></script>
+</head>
+<body>
+  <a-scene xrweb="arMode: true">
+    <a-text value="test" color="black" position="0 1.5 -2" background-color="white"></a-text>
+    <a-camera></a-camera>
     <script>
-      const rig = document.getElementById('cameraRig');
-
-      let touchStartX = 0;
-      let touchStartY = 0;
-
-      document.addEventListener('touchstart', (event) => {
-        touchStartX = event.touches[0].clientX;
-        touchStartY = event.touches[0].clientY;
-      });
-
-      document.addEventListener('touchmove', (event) => {
-        let deltaX = event.touches[0].clientX - touchStartX;
-        let deltaY = event.touches[0].clientY - touchStartY;
-
-        // Horizontalbewegung (links-rechts)
-        rig.object3D.position.x += deltaX / 1000;
-
-        // Vertikalbewegung (oben-unten) mit einem 45° Winkel
-        rig.object3D.position.y += deltaY / 1000;
-        rig.object3D.position.z -= deltaY / (1000 * Math.tan(THREE.Math.degToRad(45)));
-
-        // Update touch start points
-        touchStartX = event.touches[0].clientX;
-        touchStartY = event.touches[0].clientY;
+      // Get the XR system
+      const xr = navigator.xr;
+      // Check if the device supports immersive-ar mode
+      xr.isSessionSupported('immersive-ar').then((supported) => {
+        if (supported) {
+          // Request a session with local-floor and depth-sensing features
+          xr.requestSession('immersive-ar', {
+            requiredFeatures: ['local-floor', 'depth-sensing']
+          }).then((session) => {
+            // Start rendering the scene
+            const renderer = document.querySelector('a-scene').renderer;
+            renderer.xr.setSession(session);
+          });
+        }
       });
     </script>
-  </body>
+  </a-scene>
+</body>
 </html>
