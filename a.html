@@ -9,7 +9,10 @@
     <!-- Hand-Tracking-Controller für linke und rechte Hand -->
     <a-entity oculus-hand-controls="hand: left"></a-entity>
     <a-entity oculus-hand-controls="hand: right"></a-entity>
-    <a-camera></a-camera>
+    <a-camera>
+      <a-cursor></a-cursor> 
+    </a-camera>
+    
     <script>
       // Get the XR system
       const xr = navigator.xr;
