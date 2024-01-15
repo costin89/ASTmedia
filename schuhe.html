@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title></title>
+		<script>
+			function calculateShoeSize(footLengthCm, brand) {
+				switch (brand) {
+					case 'adidas':
+						return (footLengthCm + 1.5) / 0.667;
+					case 'nike':
+						return (footLengthCm + 1.5) / 0.65;
+					case 'reebok':
+						return (footLengthCm + 1.5) / 0.655;
+					case 'puma':
+						return (footLengthCm + 1.5) / 0.66;
+					default:
+						return (footLengthCm + 1.5) / 0.667; // Standardberechnung
+				}
+			}
+			
+			function displaySize() {
+				var footLength = parseFloat(document.getElementById('footLength').value);
+				var brand = document.getElementById('brand').value;
+				if (!isNaN(footLength)) {
+					var size = calculateShoeSize(footLength, brand);
+					document.getElementById('result').innerHTML = "Ihre Schuhgröße für " + brand.charAt(0).toUpperCase() + brand.slice(1) + ": " + size.toFixed(0);
+				} else {
+					document.getElementById('result').innerHTML = "Bitte geben Sie eine gültige Fußlänge in cm ein.";
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<h2>Schuhgrößen-Rechner</h2>
+		<p>Bitte geben Sie Ihre Fußlänge in cm ein und wählen Sie eine Marke:</p>
+		<input type="number" id="footLength" placeholder="Fußlänge in cm">
+		<select id="brand">
+			<option value="adidas">Adidas</option>
+			<option value="nike">Nike</option>
+			<option value="reebok">Reebok</option>
+			<option value="puma">Puma</option>
+		</select>
+		<button onclick="displaySize()">Größe berechnen</button>
+		<p id="result"></p>
+	</body>
+</html>
