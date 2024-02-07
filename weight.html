@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gewichtsziel-Rechner</title>
+<style>
+  body, html {
+    height: 100%;
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: Arial, sans-serif;
+  }
+  .container {
+    text-align: center;
+    border: 1px solid #ddd;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  input, select {
+    margin: 10px 0;
+    padding: 10px;
+    width: 80%;
+  }
+  button {
+    padding: 10px 20px;
+    cursor: pointer;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <h2>Gewichtsziel-Rechner</h2>
+  <input type="number" id="currentWeight" placeholder="Derzeitiges Gewicht in kg">
+  <input type="number" id="height" placeholder="Größe in cm">
+  <input type="number" id="age" placeholder="Alter">
+  <input type="number" id="targetWeight" placeholder="Wunschgewicht in kg">
+  <input type="number" id="dailyCalories" placeholder="Täglicher Kalorienverbrauch">
+  <select id="gender">
+    <option value="male">Männlich</option>
+    <option value="female">Weiblich</option>
+  </select>
+  <br>
+  <button onclick="calculateDays()">Berechnen</button>
+  <br><br><br>
+  <div id="result"></div>
+</div>
+
+<script>
+function calculateDays() {
+  const weightLossPerDay = 7000; // Anzahl der Kalorien zum Verlieren von 1kg
+  const currentWeight = document.getElementById('currentWeight').value;
+  const targetWeight = document.getElementById('targetWeight').value;
+  const dailyCalories = document.getElementById('dailyCalories').value;
+  const caloricDeficitPerDay = dailyCalories - (currentWeight - targetWeight) * weightLossPerDay; // Diese Formel ist nur ein Platzhalter
+  const days = Math.abs(targetWeight - currentWeight) * weightLossPerDay / dailyCalories;
+
+  document.getElementById('result').innerHTML = `Ungefähre Tage bis zum Erreichen des Zielgewichts: ${days.toFixed(0)}`;
+}
+</script>
+</body>
+</html>
