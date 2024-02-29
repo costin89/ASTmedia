@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Tabelle mit Dropdown-Menüs</title>
+<style>
+    table {
+        border-collapse: collapse;
+        width: 60%;
+    }
+    th, td {
+        border: 1px solid black;
+        text-align: center;
+        padding: 8px;
+    }
+    .dropdown {
+        width: 100%; /* Setzt die Breite auf 100% der Zellenbreite */
+        box-sizing: border-box; /* Stellt sicher, dass Padding und Border innerhalb der angegebenen Breite enthalten sind */
+    }
+</style>
+</head>
+<body>
+<center>
+<h1>Wochenplan</h1>
+<table>
+<thead>
+    <tr>
+        <th>Tag</th>
+        <th>Morgen</th>
+        <th>Mittag</th>
+        <th>Abend</th>
+    </tr>
+</thead>
+<tbody>
+    <tr><td>Sa</td><td><select id="morgen0" class="dropdown"></select></td><td><select id="mittag0" class="dropdown"></select></td><td><select id="abend0" class="dropdown"></select></td></tr>
+    <tr><td>So</td><td><select id="morgen1" class="dropdown"></select></td><td><select id="mittag1" class="dropdown"></select></td><td><select id="abend1" class="dropdown"></select></td></tr>
+    <tr><td>Mo</td><td><select id="morgen2" class="dropdown"></select></td><td><select id="mittag2" class="dropdown"></select></td><td><select id="abend2" class="dropdown"></select></td></tr>
+    <tr><td>Di</td><td><select id="morgen3" class="dropdown"></select></td><td><select id="mittag3" class="dropdown"></select></td><td><select id="abend3" class="dropdown"></select></td></tr>
+    <tr><td>Mi</td><td><select id="morgen4" class="dropdown"></select></td><td><select id="mittag4" class="dropdown"></select></td><td><select id="abend4" class="dropdown"></select></td></tr>
+    <tr><td>Do</td><td><select id="morgen5" class="dropdown"></select></td><td><select id="mittag5" class="dropdown"></select></td><td><select id="abend5" class="dropdown"></select></td></tr>
+    <tr><td>Fr</td><td><select id="morgen6" class="dropdown"></select></td><td><select id="mittag6" class="dropdown"></select></td><td><select id="abend6" class="dropdown"></select></td></tr>
+</tbody>
+</table>
+</center>
+<script>
+// Beispiel für ein Array mit Elementen für das Dropdown-Menü
+const dropdownElemente1 = ["Quark m. Apfel", "Quark m. Früchte", "Quark m. Beeren", "Ei m. Gurke", "Ei m. Paprika", "Tomate Feta", "Gemüsesticks m. Dip", "Hafer Tag"];
+const dropdownElemente2 = ["Salat", "Tuna Salat", "Tomate Mozarella", "Hafer Tag", "Gyros", "Teegut Salat", "Tom Kha Gai","Asia Gemüse", "Gemüse Suppe", "Tomaten Suppe", "Gemüse Medi. Art","Hafer Tag","Cheat Meal", "Quiche" ,"Quiche Pizza"];
+
+// Funktion zum Befüllen der Dropdown-Menüs
+function befuellenDropdowns() {
+    for (let i = 0; i < 7; i++) { // Für jede Zeile
+        const morgenDropdown = document.getElementById(`morgen${i}`);
+        const mittagDropdown = document.getElementById(`mittag${i}`);
+        const abendDropdown = document.getElementById(`abend${i}`);
+        dropdownElemente1.forEach(element => {
+            const option = new Option(element, element);
+            morgenDropdown.add(option.cloneNode(true));
+        });
+        dropdownElemente2.forEach(element => {
+            const option = new Option(element, element);
+            mittagDropdown.add(option.cloneNode(true));
+            abendDropdown.add(option.cloneNode(true));
+        });
+    }
+}
+
+// Dropdowns beim Laden der Seite befüllen
+document.addEventListener("DOMContentLoaded", befuellenDropdowns);
+</script>
+
+</body>
+</html>
