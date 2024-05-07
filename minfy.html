@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Minifier</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 20px;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        .output {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>HTML Minifier</h1>
+    <textarea id="inputHtml" placeholder="Geben Sie Ihren HTML-Code hier ein..."></textarea>
+    <br>
+    <button onclick="minifyHtml()">Minify HTML</button>
+    <div class="output">
+        <h3>Minified HTML:</h3>
+        <pre id="outputHtml"></pre>
+    </div>
+
+    <script>
+        function minifyHtml() {
+            let inputHtml = document.getElementById('inputHtml').value;
+
+            // Remove comments
+            let minifiedHtml = inputHtml.replace(/<!--[\s\S]*?-->/g, '');
+
+            // Remove newlines and multiple spaces
+            minifiedHtml = minifiedHtml.replace(/\n+/g, '').replace(/\s{2,}/g, ' ');
+
+            // Remove spaces between tags
+            minifiedHtml = minifiedHtml.replace(/>\s+</g, '><');
+
+            document.getElementById('outputHtml').innerText = minifiedHtml;
+
+            // Copy to clipboard
+            copyToClipboard(minifiedHtml);
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('Minified HTML copied to clipboard!');
+            }, function(err) {
+                console.error('Could not copy text: ', err);
+            });
+        }
+    </script>
+</body>
+</html>
