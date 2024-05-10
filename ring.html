@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ringgrößenrechner</title>
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+        }
+        #container {
+            max-width: 400px;
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+        input, button {
+            margin: 10px 0;
+            padding: 8px;
+            width: 80%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        label {
+            font-weight: bold;
+            margin-top: 15px;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="container">
+        <h1>Ringgrößenrechner</h1>
+        <p>Geben Sie den Durchmesser in Millimetern ein:</p>
+        <input type="number" step="0.1" id="durchmesser" placeholder="Durchmesser (mm)">
+        <button onclick="berechneRingGroesse()">Ringgröße berechnen</button>
+        <label id="ringgroesse">Ringgröße: </label>
+    </div>
+
+    <script>
+        const ringGroessenTabelle = [
+            { durchmesser: 14.0, groesse: 44 },
+            { durchmesser: 14.3, groesse: 45 },
+            { durchmesser: 14.6, groesse: 46 },
+            { durchmesser: 15.0, groesse: 47 },
+            { durchmesser: 15.3, groesse: 48 },
+            { durchmesser: 15.6, groesse: 49 },
+            { durchmesser: 15.9, groesse: 50 },
+            { durchmesser: 16.2, groesse: 51 },
+            { durchmesser: 16.6, groesse: 52 },
+            { durchmesser: 16.9, groesse: 53 },
+            { durchmesser: 17.2, groesse: 54 },
+            { durchmesser: 17.5, groesse: 55 },
+            { durchmesser: 17.8, groesse: 56 },
+            { durchmesser: 18.1, groesse: 57 },
+            { durchmesser: 18.4, groesse: 58 },
+            { durchmesser: 18.8, groesse: 59 },
+            { durchmesser: 19.1, groesse: 60 },
+            { durchmesser: 19.4, groesse: 61 },
+            { durchmesser: 19.7, groesse: 62 },
+            { durchmesser: 20.0, groesse: 63 },
+            { durchmesser: 20.3, groesse: 64 },
+            { durchmesser: 20.6, groesse: 65 },
+            { durchmesser: 21.0, groesse: 66 },
+            { durchmesser: 21.3, groesse: 67 },
+            { durchmesser: 21.6, groesse: 68 },
+            { durchmesser: 21.9, groesse: 69 },
+            { durchmesser: 22.2, groesse: 70 },
+            { durchmesser: 22.5, groesse: 71 },
+            { durchmesser: 22.9, groesse: 72 }
+        ];
+
+        function berechneRingGroesse() {
+            const durchmesser = parseFloat(document.getElementById("durchmesser").value);
+            if (isNaN(durchmesser) || durchmesser <= 0) {
+                document.getElementById("ringgroesse").textContent = "Bitte geben Sie einen gültigen Durchmesser ein.";
+                return;
+            }
+
+            let ringGroesse = "Nicht gefunden";
+            for (const eintrag of ringGroessenTabelle) {
+                if (Math.abs(eintrag.durchmesser - durchmesser) < 0.2) {
+                    ringGroesse = eintrag.groesse;
+                    break;
+                }
+            }
+
+            document.getElementById("ringgroesse").textContent = `Ringgröße: ${ringGroesse}`;
+        }
+    </script>
+
+</body>
+</html>
