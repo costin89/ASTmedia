@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GretagMacbeth ColorChecker</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #333;
+        }
+
+        #colorChecker {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(6, 1fr);
+            gap: 2px;
+            width: 9cm;
+            height: 13cm;
+            background-color: black;
+            padding: 5px;
+            margin-bottom: 20px;
+        }
+
+        .color {
+            width: 80px;
+            height: 80px;
+        }
+
+        /* Anordnung der Farben entsprechend dem Original */
+        .color:nth-child(1) { background-color: rgb(115, 82, 68); }
+        .color:nth-child(2) { background-color: rgb(194, 150, 130); }
+        .color:nth-child(3) { background-color: rgb(98, 122, 157); }
+        .color:nth-child(4) { background-color: rgb(87, 108, 67); }
+        .color:nth-child(5) { background-color: rgb(133, 128, 177); }
+        .color:nth-child(6) { background-color: rgb(103, 189, 170); }
+        .color:nth-child(7) { background-color: rgb(214, 126, 44); }
+        .color:nth-child(8) { background-color: rgb(80, 91, 166); }
+        .color:nth-child(9) { background-color: rgb(193, 90, 99); }
+        .color:nth-child(10) { background-color: rgb(94, 60, 108); }
+        .color:nth-child(11) { background-color: rgb(157, 188, 64); }
+        .color:nth-child(12) { background-color: rgb(224, 163, 46); }
+        .color:nth-child(13) { background-color: rgb(56, 61, 150); }
+        .color:nth-child(14) { background-color: rgb(70, 148, 73); }
+        .color:nth-child(15) { background-color: rgb(175, 54, 60); }
+        .color:nth-child(16) { background-color: rgb(231, 199, 31); }
+        .color:nth-child(17) { background-color: rgb(187, 86, 149); }
+        .color:nth-child(18) { background-color: rgb(8, 133, 161); }
+        .color:nth-child(19) { background-color: rgb(243, 243, 242); }
+        .color:nth-child(20) { background-color: rgb(200, 200, 200); }
+        .color:nth-child(21) { background-color: rgb(160, 160, 160); }
+        .color:nth-child(22) { background-color: rgb(122, 122, 121); }
+        .color:nth-child(23) { background-color: rgb(85, 85, 85); }
+        .color:nth-child(24) { background-color: rgb(52, 52, 52); }
+
+        #downloadButton {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        #downloadButton:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div id="colorChecker">
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+        <div class="color"></div>
+    </div>
+
+    <button id="downloadButton" onclick="downloadImage()">Download als PNG</button>
+    
+    <script>
+        function downloadImage() {
+            html2canvas(document.querySelector("#colorChecker")).then(canvas => {
+                let link = document.createElement('a');
+                link.download = 'colorChecker.png';
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+</body>
+</html>
