@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <!-- Rest des Head-Bereichs bleibt unverändert -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modern Bootstrap Toolbar with Footer</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome für Icons -->
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+    <style>
+        /* Deine bestehenden Styles */
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        .toolbar {
+            background-color: #ffffff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 10px 20px;
+        }
+
+        .toolbar .btn {
+            background-color: #ffffff;
+            border: none;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .toolbar .btn:hover {
+            background-color: #e9ecef;
+        }
+
+        .toolbar .btn i {
+            margin-right: 8px;
+            font-size: 18px;
+            color: #007bff;
+        }
+
+        .toolbar .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #007bff;
+        }
+
+        .toolbar .spacer {
+            flex-grow: 1;
+        }
+
+        .footer {
+            background-color: #f8f9fa;
+            padding: 10px;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .footer p {
+            margin: 0;
+        }
+        
+        .enterddata{
+            overflow: auto;
+            max-height: 80vh;
+        }
+        
+        .badge.rounded-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2em;
+        }
+        
+        .containerMid {
+            display: flex;
+            flex-grow: 1; /* Nimmt den restlichen Platz ein */
+        }
+        .divLeft{
+            width: 35%;
+        }
+        .divRight{
+            width: 65%;
+        }
+        
+        .divLeft, .divRight {
+            padding: 20px;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toolbar -->
+    <nav class="navbar navbar-expand-lg toolbar">
+        <div class="container-fluid">
+            <a class="navbar-brand logo" href="#">.werkzeug</a>
+            <div class="d-flex">
+                <!-- Anpassung hier: accept=".json" und onchange="importFromJSON(event)" -->
+                <button class="btn d-flex align-items-center me-2" onclick="document.getElementById('importFile').click()">Open</button>
+                <input type="file" id="importFile" accept=".json" style="display:none" onchange="importFromJSON(event)">
+                <!-- Anpassung hier: onclick="exportToJSON()" -->
+                <button class="btn d-flex align-items-center me-2" onclick="exportToJSON()">Save</button>
+            </div>
+        </div>
+    </nav>
+
+        <div class="containerMid">
+            <div class="divLeft">
+                <form id="dataForm">
+                    <!-- Dein bestehendes Formular -->
+                    <div class="mb-3">
+                        <label for="Titel" class="form-label" style="font-weight: bold; ">Header</label>
+                        <input type="text" class="form-control" id="Titel" style="font-size: 10px;" placeholder="Enter the title" maxlength="100" >
+                        <small id="TitelCounter" class="form-text text-muted" style="font-size: 8px; font-style: italic;">0 / 100 Zeichen</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Maintext" class="form-label" style="font-weight: bold;">Instructions</label>
+                        <textarea class="form-control" id="Maintext" style="font-size: 10px;" placeholder="Enter the text for the instructions" maxlength="300" rows="3"></textarea>
+                        <small id="MaintextCounter" class="form-text text-muted" style="font-size: 8px; font-style: italic;">0 / 300 Zeichen</small>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Warning" class="form-label" style="font-weight: bold;">Hints</label>
+                        <input type="text" class="form-control" id="Warning" style="font-size: 10px;" placeholder="Enter a text for hints" maxlength="100">
+                        <small id="WarningCounter" class="form-text text-muted" style="font-size: 8px; font-style: italic;">0 / 100 Zeichen</small>
+                    </div>
+                    <!-- Anpassung hier: Anzeige des aktuellen Mediennamens und Option zum Entfernen -->
+                    <div class="mb-3">
+                        <label for="Media" class="form-label" style="font-weight: bold;">Import Media</label>
+                        <input type="file" class="form-control" id="Media" style="font-size: 10px;"  accept=".jpg,.mp4">
+                        <div id="currentMediaInfo" style="font-size: 10px; margin-top: 5px;"></div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="removeMedia">
+                            <label class="form-check-label" for="removeMedia" style="font-size: 10px;">
+                                Aktuelle Mediendatei entfernen
+                            </label>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="addOrUpdateEntry()">Generate Card</button>
+                </form>
+            </div>
+            <div class="divRight">
+                <label style="font-weight: bold;">Entered data</label>
+                <div id="cardContainer" class="row enterddata">
+                    <!-- Karten werden hier hinzugefügt -->
+                </div>
+            </div>
+        </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <p style="font-size: 8px;">&copy; 2024 Marcella Haller & Alexander Ast -  All rights reserved. </p>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS und Abhängigkeiten -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.min.js"></script>
+    <!-- SortableJS für Drag-and-Drop -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.14.0/Sortable.min.js"></script>
+    
+    <script>
+        let entries = [];
+        let editIndex = -1;
+        
+        function addOrUpdateEntry() {
+            const TitelInput = document.getElementById('Titel');
+            const MaintextInput = document.getElementById('Maintext');
+            const WarningInput = document.getElementById('Warning');
+            const MediaInput = document.getElementById('Media');
+            const removeMediaCheckbox = document.getElementById('removeMedia');
+            
+            const Titel = TitelInput.value.trim();
+            const Maintext = MaintextInput.value.trim();
+            const Warning = WarningInput.value.trim();
+            let MediaFileName = '';
+            
+            if (MediaInput.files.length > 0) {
+                MediaFileName = MediaInput.files[0].name;
+            } else if (editIndex >= 0 && !removeMediaCheckbox.checked) {
+                // Behalte die vorhandene Mediendatei bei
+                MediaFileName = entries[editIndex].Media;
+            } else {
+                MediaFileName = 'none';
+            }
+            
+            if (Titel || Maintext || Warning || MediaFileName !== 'none') {
+                if (editIndex === -1 && entries.length >= 99) {
+                    alert('Die maximale Anzahl von 99 Einträgen wurde erreicht.');
+                    return;
+                }
+                
+                const entry = {
+                    CardNumber: editIndex >= 0 ? entries[editIndex].CardNumber : (entries.length + 1).toString(),
+                    Titel: Titel || 'none',
+                    Maintext: Maintext || 'none',
+                    Warning: Warning || 'none',
+                    Media: MediaFileName,
+                    SwitchOn: '0',
+                    SelectedCard: 'none'
+                };
+                
+                if (editIndex >= 0) {
+                    entry.SwitchOn = entries[editIndex].SwitchOn;
+                    entry.SelectedCard = entries[editIndex].SelectedCard;
+                    entries[editIndex] = entry;
+                    editIndex = -1;
+                } else {
+                    entries.push(entry);
+                }
+                
+                // Zeichenzähler aktualisieren, bevor die Felder geleert werden
+                updateCharacterCounters();
+                
+                // Formularfelder zurücksetzen
+                // TitelInput.value = ''; // Titel bleibt erhalten
+                MaintextInput.value = '';
+                WarningInput.value = '';
+                MediaInput.value = '';
+                removeMediaCheckbox.checked = false;
+                document.getElementById('currentMediaInfo').textContent = '';
+                MediaInput.disabled = false;
+                
+                renderCards();
+            } else {
+                alert('Bitte geben Sie mindestens ein Feld ein oder wählen Sie eine Mediendatei aus.');
+            }
+        }
+        
+        function renderCards() {
+            const cardContainer = document.getElementById('cardContainer');
+            cardContainer.innerHTML = '';
+            
+            entries.forEach((entry, index) => {
+                entry.CardNumber = (index + 1).toString(); // Aktualisiere die Kartennummer
+                
+                const card = document.createElement('div');
+                card.className = 'col-md-4 mb-3';
+                
+                card.innerHTML = `
+                <div class="card">
+                    <div class="card-body">
+                        <span class="badge rounded-circle bg-primary p-3 mb-2">${entry.CardNumber}</span>
+                        <h5 class="card-title">${entry.Titel !== 'none' ? entry.Titel : ''}</h5>
+                        <p class="card-text">${entry.Maintext !== 'none' ? entry.Maintext : ''}</p>
+                        <p class="card-text"><small class="text-muted">${entry.Warning !== 'none' ? entry.Warning : ''}</small></p>
+                        ${entry.Media !== 'none' ? `<p class="card-text">Media: ${entry.Media}</p>` : ''}
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="switch${index}" onchange="toggleSwitch(${index})" ${entry.SwitchOn === '1' ? 'checked' : ''}>
+                            <label class="form-check-label" for="switch${index}">Jump</label>
+                        </div>
+                        <div id="optionContainer${index}" style="display: ${entry.SwitchOn === '1' ? 'block' : 'none'};">
+                            ${entry.SwitchOn === '1' ? generateOptionHtml(index) : ''}
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="editEntry(${index})">&#9998;</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteEntry(${index})">&#120</button>
+                        <button class="btn btn-secondary btn-sm" onclick="moveUp(${index})">&#x2B05;</button>
+                        <button class="btn btn-secondary btn-sm" onclick="moveDown(${index})">&#x27A1;</button>
+                    </div>
+                </div>
+            `;
+                
+                cardContainer.appendChild(card);
+            });
+            
+            if (!cardContainer.sortable) {
+                cardContainer.sortable = Sortable.create(cardContainer, {
+                    animation: 150,
+                    onEnd: function (evt) {
+                        const movedItem = entries.splice(evt.oldIndex, 1)[0];
+                        entries.splice(evt.newIndex, 0, movedItem);
+                        renderCards();
+                    },
+                });
+            }
+        }
+        
+        function generateOptionHtml(index) {
+            let optionsHtml = '<select id="cardSelect' + index + '" class="form-select form-select-sm mt-2" onchange="selectCard(' + index + ')">';
+            optionsHtml += '<option value="none">Select a card</option>';
+            entries.forEach((entry, idx) => {
+                if (idx !== index) {
+                    const selected = entries[index].SelectedCard === entry.CardNumber ? 'selected' : '';
+                    optionsHtml += `<option value="${entry.CardNumber}" ${selected}>Card ${entry.CardNumber}</option>`;
+                }
+            });
+            optionsHtml += '</select>';
+            return optionsHtml;
+        }
+        
+        function toggleSwitch(index) {
+            const switchElement = document.getElementById(`switch${index}`);
+            const optionContainer = document.getElementById(`optionContainer${index}`);
+            
+            entries[index].SwitchOn = switchElement.checked ? '1' : '0';
+            
+            if (switchElement.checked) {
+                optionContainer.innerHTML = generateOptionHtml(index);
+                optionContainer.style.display = 'block';
+            } else {
+                optionContainer.style.display = 'none';
+                optionContainer.innerHTML = '';
+                entries[index].SelectedCard = 'none';
+            }
+        }
+        
+        function selectCard(index) {
+            const selectElement = document.getElementById(`cardSelect${index}`);
+            const selectedValue = selectElement.value;
+            entries[index].SelectedCard = selectedValue !== 'none' ? selectedValue : 'none';
+        }
+        
+        function editEntry(index) {
+            const entry = entries[index];
+            document.getElementById('Titel').value = entry.Titel !== 'none' ? entry.Titel : '';
+            document.getElementById('Maintext').value = entry.Maintext !== 'none' ? entry.Maintext : '';
+            document.getElementById('Warning').value = entry.Warning !== 'none' ? entry.Warning : '';
+            editIndex = index;
+            updateCharacterCounters();
+            
+            // Zeige den aktuellen Mediendateinamen an
+            const currentMediaInfo = document.getElementById('currentMediaInfo');
+            const removeMediaCheckbox = document.getElementById('removeMedia');
+            const MediaInput = document.getElementById('Media');
+            
+            if (entry.Media && entry.Media !== 'none') {
+                currentMediaInfo.textContent = `Aktuelle Mediendatei: ${entry.Media}`;
+                removeMediaCheckbox.checked = false;
+                MediaInput.disabled = false;
+            } else {
+                currentMediaInfo.textContent = 'Keine Mediendatei ausgewählt.';
+                removeMediaCheckbox.checked = false;
+                MediaInput.disabled = false;
+            }
+        }
+        
+        function deleteEntry(index) {
+            if (confirm('Möchten Sie diesen Eintrag wirklich löschen?')) {
+                entries.splice(index, 1);
+                renderCards();
+            }
+        }
+        
+        function moveUp(index) {
+            if (index > 0) {
+                [entries[index - 1], entries[index]] = [entries[index], entries[index - 1]];
+                renderCards();
+            }
+        }
+        
+        function moveDown(index) {
+            if (index < entries.length - 1) {
+                [entries[index + 1], entries[index]] = [entries[index], entries[index + 1]];
+                renderCards();
+            }
+        }
+        
+        // Anpassung hier: exportToJSON-Funktion
+        function exportToJSON() {
+            if (entries.length === 0) {
+                alert('Keine Einträge zum Exportieren vorhanden.');
+                return;
+            }
+            
+            const jsonContent = JSON.stringify(entries, null, 2);
+            
+            const blob = new Blob([jsonContent], {type: 'application/json'});
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            
+            const filename = generateRandomFilename() + '.json';
+            link.setAttribute('download', filename);
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        function generateRandomFilename() {
+            const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz123456789';
+            let result = '';
+            for (let i = 0; i < 4; i++) {
+                result += characters.charAt(Math.floor(Math.random() * characters.length));
+            }
+            return result;
+        }
+        
+        // Anpassung hier: importFromJSON-Funktion
+        function importFromJSON(event) {
+            const file = event.target.files[0];
+            if (!file) {
+                alert('Keine Datei ausgewählt.');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const text = e.target.result;
+                try {
+                    const newEntries = JSON.parse(text);
+
+                    // Optional: Validierung der Datenstruktur
+                    if (Array.isArray(newEntries)) {
+                        entries = newEntries.map((entry, index) => ({
+                            CardNumber: (index + 1).toString(),
+                            Titel: entry.Titel || 'none',
+                            Maintext: entry.Maintext || 'none',
+                            Warning: entry.Warning || 'none',
+                            Media: entry.Media || 'none',
+                            SwitchOn: entry.SwitchOn || '0',
+                            SelectedCard: entry.SelectedCard || 'none'
+                        }));
+                        renderCards();
+                    } else {
+                        alert('Die importierte Datei hat ein ungültiges Format.');
+                    }
+                } catch (error) {
+                    alert('Fehler beim Lesen der JSON-Datei: ' + error.message);
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function updateCharacterCounters() {
+            const TitelInput = document.getElementById('Titel');
+            const MaintextInput = document.getElementById('Maintext');
+            const WarningInput = document.getElementById('Warning');
+            
+            document.getElementById('TitelCounter').textContent = `${TitelInput.value.length} / 100 Zeichen`;
+            document.getElementById('MaintextCounter').textContent = `${MaintextInput.value.length} / 300 Zeichen`;
+            document.getElementById('WarningCounter').textContent = `${WarningInput.value.length} / 100 Zeichen`;
+        }
+        
+        document.getElementById('Titel').addEventListener('input', updateCharacterCounters);
+        document.getElementById('Maintext').addEventListener('input', updateCharacterCounters);
+        document.getElementById('Warning').addEventListener('input', updateCharacterCounters);
+
+        // Event Listener für Änderungen am MediaInput hinzufügen
+        document.getElementById('Media').addEventListener('change', function() {
+            const currentMediaInfo = document.getElementById('currentMediaInfo');
+            if (this.files.length > 0) {
+                currentMediaInfo.textContent = `Ausgewählte Datei: ${this.files[0].name}`;
+            } else {
+                currentMediaInfo.textContent = '';
+            }
+        });
+
+        // Event Listener für Änderungen an der removeMediaCheckbox hinzufügen
+        document.getElementById('removeMedia').addEventListener('change', function() {
+            const MediaInput = document.getElementById('Media');
+            if (this.checked) {
+                // Deaktiviere das MediaInput, wenn der Benutzer die Mediendatei entfernen möchte
+                MediaInput.disabled = true;
+            } else {
+                MediaInput.disabled = false;
+            }
+        });
+    </script>
+    
+</body>
+</html>
