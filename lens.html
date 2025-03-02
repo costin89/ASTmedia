@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Distortion mit Intrinsic Matrix Anzeige</title>
+  <style>
+    body { font-family: sans-serif; }
+    canvas { border: 1px solid black; margin: 10px; }
+    button, input[type="radio"] { margin: 5px; }
+  </style>
+</head>
+<body>
+  <h1>Distortion in voller Auflösung mit Intrinsic Matrix Anzeige</h1>
+  <p>
+    Bild hochladen: <input type="file" id="fileInput" accept="image/*">
+  </p>
+  <p>
+    Modus:
+    <input type="radio" name="distortionMode" id="barrel" value="barrel" checked>
+    <label for="barrel">Barrel (k negativ)</label>
+    <input type="radio" name="distortionMode" id="pincushion" value="pincushion">
+    <label for="pincushion">Pincushion (k positiv)</label>
+  </p>
+  <p>
+    Verzerrungsparameter k:
+    <input type="range" id="distortionSlider" step="0.00000001">
+    <span id="kValue"></span>
+  </p>
+  <p>
+    Zoom Distortion:
+    <button id="zoomOutDistorted">-</button>
+    <span id="zoomValueDistorted">1.00</span>
+    <button id="zoomInDistorted">+</button>
+  </p>
+  <p>
+    Intrinsic Matrix K: 
+    <span id="intrinsicMatrix"></span>
+  </p>
+  <div>
+    <!-- Die Canvas-Größen werden dynamisch anhand des hochgeladenen Bildes gesetzt -->
+    <canvas id="originalCanvas"></canvas>
+    <canvas id="distortedCanvas"></canvas>
+  </div>
+
+  <script>
+    let img = null;
+    let imageLoaded = false;
+    let fullResCanvas, fullResCtx; // Offscreen-Canvas in voller Auflösung
+    let distortedZoomFactor = 1.0;
+    let previewWidth, previewHeight; // Vorschau-Dimensionen
+
+    const originalCanvas = document.getElementById("originalCanvas");
+    const distortedCanvas = document.getElementById("distortedCanvas");
+    const origCtx = originalCanvas.getContext("2d");
+    const distCtx = distortedCanvas.getContext("2d");
+
+    const slider = document.getElementById("distortionSlider");
+    const kValueDisplay = document.getElementById("kValue");
+    const intrinsicMatrixLabel = document.getElementById("intrinsicMatrix");
+
+    const barrelRadio = document.getElementById("barrel");
+    const pincushionRadio = document.getElementById("pincushion");
+
+    // Bestimmt Vorschau-Dimensionen, sodass maximal 500 Pixel genutzt werden und das Seitenverhältnis erhalten bleibt.
+    function getPreviewDimensions(width, height) {
+      const maxSize = 500;
+      const scale = Math.min(maxSize / width, maxSize / height, 1);
+      return { width: Math.round(width * scale), height: Math.round(height * scale) };
+    }
+
+    // Initialisiert den Slider abhängig vom gewählten Modus
+    function initSliderForMode() {
+      if (barrelRadio.checked) {
+        slider.min = -0.0000005;
+        slider.max = 0;
+        slider.value = -0.000000001;
+      } else {
+        slider.min = 0;
+        slider.max = 0.000002;
+        slider.value = 0.0000001;
+      }
+      kValueDisplay.innerText = parseFloat(slider.value).toFixed(6);
+      applyCurrentDistortion();
+    }
+
+    // Zeichnet die skalierte Vorschau des Originals (Offscreen-Bild wird auf die Preview-Größe skaliert)
+    function drawOriginalPreview() {
+      origCtx.clearRect(0, 0, originalCanvas.width, originalCanvas.height);
+      origCtx.drawImage(fullResCanvas, 0, 0, fullResCanvas.width, fullResCanvas.height,
+                        0, 0, previewWidth, previewHeight);
+    }
+
+    // Berechnet die inverse Verzerrung – arbeitet hier mit der vollen Bildauflösung
+    function inverseDistort(x, y, k, cx, cy) {
+      const dx = x - cx;
+      const dy = y - cy;
+      const rDist = Math.sqrt(dx * dx + dy * dy);
+      if (rDist === 0) return { x, y };
+      let r = rDist;
+      for (let i = 0; i < 5; i++) {
+        const factor = 1 + k * r * r;
+        r = rDist / factor;
+      }
+      const theta = Math.atan2(dy, dx);
+      return { x: cx + r * Math.cos(theta), y: cy + r * Math.sin(theta) };
+    }
+
+    // Wendet den Verzerrungseffekt auf das vollauflösende Bild an
+    function applyDistortion(k) {
+      const width = fullResCanvas.width;
+      const height = fullResCanvas.height;
+      const sourceData = fullResCtx.getImageData(0, 0, width, height);
+      const srcPixels = sourceData.data;
+      const outputData = fullResCtx.createImageData(width, height);
+      const outPixels = outputData.data;
+      const cx = width / 2;
+      const cy = height / 2;
+      
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const srcCoord = inverseDistort(x, y, k, cx, cy);
+          const srcX = Math.round(srcCoord.x);
+          const srcY = Math.round(srcCoord.y);
+          const destIndex = (y * width + x) * 4;
+          
+          if (srcX >= 0 && srcX < width && srcY >= 0 && srcY < height) {
+            const srcIndex = (srcY * width + srcX) * 4;
+            outPixels[destIndex]     = srcPixels[srcIndex];
+            outPixels[destIndex + 1] = srcPixels[srcIndex + 1];
+            outPixels[destIndex + 2] = srcPixels[srcIndex + 2];
+            outPixels[destIndex + 3] = srcPixels[srcIndex + 3];
+          } else {
+            outPixels[destIndex]     = 255;
+            outPixels[destIndex + 1] = 255;
+            outPixels[destIndex + 2] = 255;
+            outPixels[destIndex + 3] = 255;
+          }
+        }
+      }
+      
+      let offscreenCanvas = document.createElement("canvas");
+      offscreenCanvas.width = width;
+      offscreenCanvas.height = height;
+      let offCtx = offscreenCanvas.getContext("2d");
+      offCtx.putImageData(outputData, 0, 0);
+      
+      updateDistortedCanvas(offscreenCanvas);
+    }
+
+    // Skaliert das verzerrte Bild aus dem Offscreen-Canvas auf die Vorschau-Größe,
+    // zusätzlich angepasst an den Distortion-Zoomfaktor
+    function updateDistortedCanvas(offscreenCanvas) {
+      distCtx.clearRect(0, 0, distortedCanvas.width, distortedCanvas.height);
+      const newWidth = previewWidth * distortedZoomFactor;
+      const newHeight = previewHeight * distortedZoomFactor;
+      const dx = (previewWidth - newWidth) / 2;
+      const dy = (previewHeight - newHeight) / 2;
+      
+      distCtx.drawImage(offscreenCanvas, 0, 0, offscreenCanvas.width, offscreenCanvas.height,
+                        dx, dy, newWidth, newHeight);
+    }
+
+    // Aktualisiert das Label mit den intrinsischen Parametern.
+    // Hier wird angenommen: 
+    //   Cx = fullResCanvas.width / 2, Cy = fullResCanvas.height / 2,
+    //   Fx = fullResCanvas.width / 2, Fy = fullResCanvas.height / 2, gamma = 0.
+    function updateIntrinsicMatrixLabel() {
+      if (!fullResCanvas) return;
+      const cx = fullResCanvas.width / 2;
+      const cy = fullResCanvas.height / 2;
+      const fx = fullResCanvas.width / 2;
+      const fy = fullResCanvas.height / 2;
+      const gamma = 0;
+      intrinsicMatrixLabel.innerText = 
+        `Fx: ${fx.toFixed(2)}, Fy: ${fy.toFixed(2)}, Cx: ${cx.toFixed(2)}, Cy: ${cy.toFixed(2)}, gamma: ${gamma}`;
+    }
+
+    // Wendet den aktuellen Verzerrungsparameter an und aktualisiert alle Ansichten
+    function applyCurrentDistortion() {
+      if (!imageLoaded) return;
+      const k = parseFloat(slider.value);
+      kValueDisplay.innerText = k.toFixed(6);
+      applyDistortion(k);
+      drawOriginalPreview();
+      updateIntrinsicMatrixLabel();
+    }
+
+    // Bild-Upload: Beim Laden wird ein Offscreen-Canvas in voller Auflösung erzeugt.
+    document.getElementById("fileInput").addEventListener("change", function(e) {
+      const file = e.target.files[0];
+      if (file) {
+        img = new Image();
+        img.onload = function() {
+          imageLoaded = true;
+          fullResCanvas = document.createElement("canvas");
+          fullResCanvas.width = img.width;
+          fullResCanvas.height = img.height;
+          fullResCtx = fullResCanvas.getContext("2d");
+          fullResCtx.drawImage(img, 0, 0);
+          
+          const previewDims = getPreviewDimensions(img.width, img.height);
+          previewWidth = previewDims.width;
+          previewHeight = previewDims.height;
+          originalCanvas.width = previewWidth;
+          originalCanvas.height = previewHeight;
+          distortedCanvas.width = previewWidth;
+          distortedCanvas.height = previewHeight;
+          
+          initSliderForMode();
+          drawOriginalPreview();
+          applyCurrentDistortion();
+        }
+        img.src = URL.createObjectURL(file);
+      }
+    });
+
+    // Event-Listener
+    slider.addEventListener("input", applyCurrentDistortion);
+    [barrelRadio, pincushionRadio].forEach(radio => {
+      radio.addEventListener("change", initSliderForMode);
+    });
+    document.getElementById("zoomInDistorted").addEventListener("click", function() {
+      distortedZoomFactor *= 1.1;
+      document.getElementById("zoomValueDistorted").innerText = distortedZoomFactor.toFixed(2);
+      applyCurrentDistortion();
+    });
+    document.getElementById("zoomOutDistorted").addEventListener("click", function() {
+      distortedZoomFactor /= 1.1;
+      document.getElementById("zoomValueDistorted").innerText = distortedZoomFactor.toFixed(2);
+      applyCurrentDistortion();
+    });
+  </script>
+</body>
+</html>
