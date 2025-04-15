@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Bullitt Editor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+        margin: 0;
+        overflow: hidden;
+        font-family: 'Inter', sans-serif;
+        background: #f0f0f0;
+      }
+      .btn {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .btn:hover {
+        background-color: #e9ecef;
+      }
+      .toolbar {
+        background-color: #ffffff;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        padding: 10px 20px;
+      }
+      .toolbar .btn {
+        background-color: #ffffff;
+        border: none;
+        border-radius: 8px;
+        transition: background-color 0.3s ease;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 8px 12px;
+        cursor: pointer;
+      }
+      .toolbar .btn:hover {
+        background-color: #e9ecef;
+      }
+      .toolbar .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff;
+      }
+      .footer {
+        background-color: #f8f9fa;
+        padding: 10px;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+      }
+      .containerMid {
+        display: flex;
+        flex-grow: 1;
+        height: calc(100vh - 110px);
+      }
+      .divLeft {
+        width: 35%;
+        padding: 20px;
+        box-sizing: border-box;
+        overflow-y: auto;
+      }
+      .divRight {
+        width: 100%;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        gap: 40px;
+      }
+      .canvas-wrapper {
+        width: 512px;
+        height: 512px;
+        background: white;
+        box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+      }
+      canvas {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+      #pinTable {
+        width: 300px;
+        font-size: 12px;
+        border-collapse: collapse;
+      }
+      #pinTable thead {
+        position: sticky;
+        top: 0;
+        background-color: #888;
+        color: white;
+      }
+      .selected-row {
+        background-color: #ffa;
+      }
+      .controls {
+        min-width: 180px;
+      }
+      .controls > div {
+        margin-bottom: 0px;
+      }
+      .controls button {
+        margin: 3px 0;
+        display: block;
+        width: 100%;
+      }
+      .controls strong {
+        margin-bottom: 6px;
+        display: inline-block;
+      }
+      input[type="file"] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Toolbar -->
+    <nav class="navbar navbar-expand-lg toolbar">
+      <div class="container-fluid">
+        <span class="logo">.bullitt</span>
+        <div class="d-flex">
+          <button class="btn me-2" id="importBtn">Import</button>
+          <input type="file" id="imageLoader" accept="image/jpeg,image/png" />
+          <button class="btn me-2" id="exportBtn">Export</button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="containerMid">
+      <div class="divLeft">
+        <label style="font-size: 12px;">Pin Data</label>
+        <table id="pinTable">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>X</th>
+              <th>Y</th>
+              <th>Orientation (°)</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="divRight">
+        <!-- Canvas -->
+        <div class="canvas-wrapper">
+          <canvas id="myCanvas" width="512" height="512"></canvas>
+        </div>
+        <!-- Controls -->
+        <div class="controls">
+          <div>
+            <label style="font-size: 12px;">Pin</label>
+            <button class="btn" id="addPointBtn">Add</button>
+            <button class="btn" id="deletePointBtn">Delete</button>
+          </div>
+          <div>
+            <label style="font-size: 12px;">Pin Rotation</label>
+            <button class="btn" id="rotateCCWBtn">Left</button>
+            <button class="btn" id="rotateCWBtn">Right</button>
+          </div>
+          <div>
+            <label style="font-size: 12px;">Move Picture</label>
+            <div style="display: grid; grid-template-columns: repeat(3, 40px); gap: 5px; justify-content: center;">
+              <div></div>
+              <button class="btn" id="upPointBtn">↑</button>
+              <div></div>
+              <button class="btn" id="leftPointBtn">←</button>
+              <div></div>
+              <button class="btn" id="rightPointBtn">→</button>
+              <div></div>
+              <button class="btn" id="downPointBtn">↓</button>
+              <div></div>
+            </div>
+          </div>
+          <div>
+            <label style="font-size: 12px;">Picture Zoom</label>
+            <button class="btn" id="inPointBtn">Zoom In</button>
+            <button class="btn" id="outPointBtn">Zoom Out</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <p style="font-size: 8px;">&copy; 2024 Marcella Haller & Alexander Ast - All rights reserved.</p>
+      </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+      const canvas = document.getElementById('myCanvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 512;
+      canvas.height = 512;
+
+      const radiusBullet = 10;
+      const triangleSize = radiusBullet * 0.8;
+      const triangleOffset = radiusBullet + 6;
+      const bboxWidth = 40;
+      const bboxHeight = 60;
+
+      let img = null;
+      let imgX = 0;
+      let imgY = 0;
+      let imgScale = 1;
+      let importedFilename = 'canvas';
+
+      let bulletPoints = [];
+      let selectedPoint = null;
+      let dragging = false;
+
+      document.getElementById('importBtn').addEventListener('click', () => {
+        document.getElementById('imageLoader').click();
+      });
+
+      document.getElementById('imageLoader').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        importedFilename = file.name.split('.').slice(0, -1).join('.') || 'canvas';
+
+        const reader = new FileReader();
+        reader.onload = function(event) {
+          img = new Image();
+          img.onload = () => {
+            const canvasRatio = canvas.width / canvas.height;
+            const imgRatio = img.width / img.height;
+            imgScale = (imgRatio > canvasRatio) ? canvas.width / img.width : canvas.height / img.height;
+            imgX = (canvas.width - img.width * imgScale) / 2;
+            imgY = (canvas.height - img.height * imgScale) / 2;
+            draw();
+          };
+          img.src = event.target.result;
+        };
+        reader.readAsDataURL(file);
+      });
+
+      function drawTriangle(x, y, angle) {
+        ctx.save();
+        ctx.translate(x, y);
+        ctx.rotate(angle);
+        ctx.translate(0, -triangleOffset);
+        ctx.beginPath();
+        ctx.moveTo(0, -triangleSize);
+        ctx.lineTo(-triangleSize / 2, triangleSize);
+        ctx.lineTo(triangleSize / 2, triangleSize);
+        ctx.closePath();
+        ctx.fillStyle = '#ff4d4d';
+        ctx.fill();
+        ctx.restore();
+      }
+
+      function drawBoundingBox(p) {
+        ctx.strokeStyle = '#007bff';
+        ctx.lineWidth = 2;
+        ctx.strokeRect(p.x - bboxWidth / 2, p.y - bboxHeight / 2, bboxWidth, bboxHeight);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        if (img) {
+          const w = img.width * imgScale;
+          const h = img.height * imgScale;
+          ctx.drawImage(img, imgX, imgY, w, h);
+        }
+        bulletPoints.forEach(p => {
+          drawTriangle(p.x, p.y, p.angle || 0);
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, radiusBullet, 0, 2 * Math.PI);
+          ctx.fillStyle = '#ff4d4d';
+          ctx.fill();
+          ctx.fillStyle = 'white';
+          ctx.font = `${radiusBullet * 1.2}px Inter`;
+          ctx.textAlign = 'center';
+          ctx.textBaseline = 'middle';
+          ctx.fillText(p.id, p.x, p.y);
+          if (p === selectedPoint) drawBoundingBox(p);
+        });
+      }
+
+      document.getElementById('addPointBtn').addEventListener('click', () => {
+        if (bulletPoints.length < 10) {
+          const id = bulletPoints.length + 1;
+          bulletPoints.push({ x: canvas.width / 2, y: canvas.height / 2, id, angle: 0 });
+          draw();
+          updatePinTable();
+        } else {
+          alert("A maximum of 10 bullet points are allowed!");
+        }
+      });
+
+      document.getElementById('deletePointBtn').addEventListener('click', () => {
+        if (selectedPoint) {
+          bulletPoints = bulletPoints.filter(p => p !== selectedPoint);
+          selectedPoint = null;
+          draw();
+          updatePinTable();
+        }
+      });
+
+      document.getElementById('rotateCWBtn').addEventListener('click', () => {
+        if (selectedPoint) {
+          selectedPoint.angle += Math.PI / 8;
+          draw();
+          updatePinTable();
+        }
+      });
+
+      document.getElementById('rotateCCWBtn').addEventListener('click', () => {
+        if (selectedPoint) {
+          selectedPoint.angle -= Math.PI / 8;
+          draw();
+          updatePinTable();
+        }
+      });
+
+      canvas.addEventListener('mousedown', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        selectedPoint = bulletPoints.find(p => {
+          const dx = p.x - mouseX;
+          const dy = p.y - mouseY;
+          return dx * dx + dy * dy < radiusBullet * radiusBullet;
+        });
+        dragging = !!selectedPoint;
+        draw();
+        updatePinTable();
+      });
+
+      canvas.addEventListener('mousemove', (e) => {
+        if (dragging && selectedPoint) {
+          const rect = canvas.getBoundingClientRect();
+          selectedPoint.x = e.clientX - rect.left;
+          selectedPoint.y = e.clientY - rect.top;
+          draw();
+          updatePinTable();
+        }
+      });
+
+      canvas.addEventListener('mouseup', () => dragging = false);
+      canvas.addEventListener('mouseleave', () => dragging = false);
+
+      function updatePinTable() {
+        const tbody = document.querySelector("#pinTable tbody");
+        tbody.innerHTML = '';
+        bulletPoints.forEach(p => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${p.id}</td>
+            <td>${Math.round(p.x)}</td>
+            <td>${Math.round(p.y)}</td>
+            <td>${Math.round((p.angle || 0) * 180 / Math.PI)}°</td>
+          `;
+          row.style.cursor = 'pointer';
+          if (p === selectedPoint) row.classList.add('selected-row');
+          row.addEventListener('click', () => {
+            selectedPoint = p;
+            draw();
+            updatePinTable();
+          });
+          row.addEventListener('dblclick', () => {
+            bulletPoints = bulletPoints.filter(bp => bp !== p);
+            if (selectedPoint === p) selectedPoint = null;
+            draw();
+            updatePinTable();
+          });
+          tbody.appendChild(row);
+        });
+      }
+
+      function setupHoldButton(buttonId, dx, dy) {
+        const btn = document.getElementById(buttonId);
+        let intervalId;
+        const move = () => {
+          imgX += dx;
+          imgY += dy;
+          draw();
+        };
+        btn.addEventListener('click', move);
+        btn.addEventListener('mousedown', () => {
+          intervalId = setInterval(move, 50);
+        });
+        ['mouseup', 'mouseleave', 'mouseout'].forEach(event => {
+          btn.addEventListener(event, () => clearInterval(intervalId));
+        });
+      }
+
+      setupHoldButton('upPointBtn', 0, -10);
+      setupHoldButton('downPointBtn', 0, 10);
+      setupHoldButton('leftPointBtn', -10, 0);
+      setupHoldButton('rightPointBtn', 10, 0);
+
+      document.getElementById('inPointBtn').addEventListener('click', () => zoomCentered(1.1));
+      document.getElementById('outPointBtn').addEventListener('click', () => zoomCentered(1 / 1.1));
+
+      function zoomCentered(factor) {
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        imgX = centerX - (centerX - imgX) * factor;
+        imgY = centerY - (centerY - imgY) * factor;
+        imgScale *= factor;
+        draw();
+      }
+
+      document.getElementById('exportBtn').addEventListener('click', () => {
+        const prevSelected = selectedPoint;
+        selectedPoint = null;
+        draw();
+        const exportCanvas = document.createElement('canvas');
+        exportCanvas.width = 512;
+        exportCanvas.height = 512;
+        const exportCtx = exportCanvas.getContext('2d');
+        exportCtx.scale(512 / canvas.width, 512 / canvas.height);
+        exportCtx.drawImage(canvas, 0, 0);
+        selectedPoint = prevSelected;
+        draw();
+        exportCanvas.toBlob(blob => {
+          const filename = `${importedFilename}-export.jpg`;
+          const link = document.createElement('a');
+          link.download = filename;
+          link.href = URL.createObjectURL(blob);
+          link.click();
+        }, 'image/jpeg', 0.92);
+      });
+    </script>
+  </body>
+</html>
