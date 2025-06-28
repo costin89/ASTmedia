@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>Hauskauf Rechner Hessen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="number"] {
+            width: 100%;
+            padding: 5px;
+        }
+        button {
+            margin-top: 15px;
+            padding: 10px;
+            width: 100%;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #f0f0f0;
+        }
+    </style>
+</head>
+<body>
+
+    <h2>Hauskauf Gebührenrechner (Hessen)</h2>
+
+    <label for="price">Kaufpreis (€):</label>
+    <input type="number" id="price" placeholder="z.B. 350000">
+
+    <label>
+        <input type="checkbox" id="makler" checked>
+        Mit Maklerprovision (3,57%)
+    </label>
+
+    <button onclick="berechneKosten()">Berechnen</button>
+
+    <div class="result" id="ausgabe"></div>
+
+    <script>
+        function berechneKosten() {
+            const kaufpreis = parseFloat(document.getElementById('price').value);
+            const mitMakler = document.getElementById('makler').checked;
+
+            if (isNaN(kaufpreis) || kaufpreis <= 0) {
+                document.getElementById('ausgabe').innerHTML = "Bitte einen gültigen Kaufpreis eingeben.";
+                return;
+            }
+
+            const grunderwerbsteuer = kaufpreis * 0.06;
+            const notarGrundbuch = kaufpreis * 0.02;
+            const makler = mitMakler ? kaufpreis * 0.0357 : 0;
+            const gesamtkosten = grunderwerbsteuer + notarGrundbuch + makler;
+
+            document.getElementById('ausgabe').innerHTML = `
+                <strong>Berechnete Nebenkosten:</strong><br>
+                Grunderwerbsteuer (6%): €${grunderwerbsteuer.toFixed(2)}<br>
+                Notar & Grundbuch (2%): €${notarGrundbuch.toFixed(2)}<br>
+                Maklerprovision (3,57%): €${makler.toFixed(2)}<br>
+                <br>
+                <strong>Gesamtkosten: €${gesamtkosten.toFixed(2)}</strong>
+            `;
+        }
+    </script>
+
+</body>
+</html>
